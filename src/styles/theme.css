@@ -1,0 +1,42 @@
+/* ================= THEME VARIABLES ================= */
+
+:root {
+  /* Brand */
+  --primary: #6c63ff;
+  --primary-hover: #5a54d6;
+
+  /* Light mode */
+  --bg: #f4f6f8;
+  --card-bg: #ffffff;
+  --text: #111827;
+  --muted: #6b7280;
+  --border: #d1d5db;
+  --input-bg: #ffffff;
+
+  --success-bg: #e7f9f0;
+  --success-text: #1a7f4b;
+
+  --error-bg: #fdecea;
+  --error-text: #b42318;
+
+  --shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+}
+
+/* ================= DARK MODE ================= */
+
+[data-theme="dark"] {
+  --bg: #0f1115;
+  --card-bg: #161a22;
+  --text: #f3f4f6;
+  --muted: #9ca3af;
+  --border: #2a2f3a;
+  --input-bg: #1f2430;
+
+  --success-bg: #0f2f22;
+  --success-text: #34d399;
+
+  --error-bg: #3a1212;
+  --error-text: #f87171;
+
+  --shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+}

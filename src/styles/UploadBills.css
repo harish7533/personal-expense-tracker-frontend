@@ -1,0 +1,136 @@
+.upload-page {
+  min-height: calc(100vh - 60px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--bg, #f4f6f8);
+  padding: 20px;
+}
+
+.upload-card {
+  width: 100%;
+  max-width: 480px;
+  background: var(--card-bg, #ffffff);
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+
+.upload-card h1 {
+  font-size: 1.8rem;
+  margin-bottom: 6px;
+}
+
+.subtitle {
+  font-size: 0.95rem;
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+
+.file-input {
+  display: block;
+  border: 2px dashed var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: border 0.3s ease;
+}
+
+.file-input:hover {
+  border-color: var(--primary);
+}
+
+.file-input input {
+  display: none;
+}
+
+.file-input span {
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+
+.submit {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  border: none;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+   background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+  color: white;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.submit:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(108, 99, 255, 0.35);
+}
+
+.submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.submit.loading {
+  background: repeating-linear-gradient(
+    45deg,
+    #6c63ff,
+    #6c63ff 10px,
+    #7d75ff 10px,
+    #7d75ff 20px
+  );
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.note {
+  display: block;
+  margin-top: 14px;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.toast {
+  margin-top: 16px;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+}
+
+.toast.success {
+  background: var(--success-bg);
+  color: var(--success-text);
+}
+
+.toast.error {
+  background: var(--error-bg);
+  color: var(--error-text);
+}
+
+/* 🌙 Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .upload-page {
+    background: #0f1115;
+  }
+
+  .upload-card {
+    background: #161a22;
+    color: #f1f1f1;
+  }
+
+  .subtitle,
+  .note {
+    color: #aaa;
+  }
+
+  .file-input {
+    border-color: #444;
+  }
+
+  .file-input span {
+    color: #ddd;
+  }
+}
