@@ -1,18 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api";
 
 export default function Bills() {
   const [bills, setBills] = useState<any[]>([]);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-
-    axios
-      .get("http://localhost:4590/api/bills/admin/all", {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((res) => setBills(res.data));
+    api
+      .get("/bills/admin/all")
+      .then((res) => setBills(res.data))
+      .catch((err) => console.error("Failed to fetch bills", err));
   }, []);
 
   return (
@@ -33,7 +30,7 @@ export default function Bills() {
             <tr key={i}>
               <td>{b.storeName}</td>
               <td>{b.billNo}</td>
-              <td>{b.date}</td>
+              <td>{b.billDate}</td>
               <td>₹{b.totalAmount}</td>
             </tr>
           ))}
@@ -42,3 +39,4 @@ export default function Bills() {
     </div>
   );
 }
+

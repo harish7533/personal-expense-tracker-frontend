@@ -41,7 +41,9 @@ export default function UploadBills() {
       setLoading(true);
       setToast(null);
 
-      await api.post("/bills/upload", formData);
+      await api.post("/bills/upload", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
       setToast({ type: "success", msg: "Bill uploaded successfully" });
       setFile(null);

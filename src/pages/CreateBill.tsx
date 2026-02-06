@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import api from "../api";
 import "../styles/CreateBill.css";
 import { computeAnalytics } from "../utils/billAnalytics";
 import Navbar from "../components/Navbar";
@@ -125,11 +126,13 @@ export default function CreateBill() {
     try {
       setLoading(true);
 
-      await fetch("/api/bills/create", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      // await fetch("/api/bills/create", {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify(payload),
+      // });
+
+      await api.post("/bills", payload);
 
       setShowToast(true);
       setItems([]);
