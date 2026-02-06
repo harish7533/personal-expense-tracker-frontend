@@ -132,7 +132,7 @@ export default function CreateBill() {
       //   body: JSON.stringify(payload),
       // });
 
-      await api.post("/bills", payload);
+      await api.post("/bills/create", payload);
 
       setShowToast(true);
       setItems([]);
