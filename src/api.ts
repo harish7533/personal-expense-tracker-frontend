@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:4590/api", // backend port fixed
+  baseURL: import.meta.env.VITE_API_URL, // backend port fixed
 });
 
 /* Attach JWT token automatically */
