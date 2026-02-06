@@ -196,7 +196,7 @@ export default function CreateBill() {
                 value={customStoreName}
                 onChange={(e) => setCustomStoreName(e.target.value)}
               />
-              <button type="button" onClick={addCustomStore}>
+              <button type="button" className="submit" style={{ width: 35 }} onClick={addCustomStore}>
                 Add
               </button>
             </div>
