@@ -65,16 +65,24 @@ export default function Navbar() {
   );
 }
 
-const styles = {
-  nav: {
+const styles: Record<string, React.CSSProperties> = {
+nav: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 64,
+    padding: "0 24px",
+    background: "#020617",
+    borderBottom: "1px solid #1f2937",
     display: "flex",
-    justifyContent: "space-between",
     alignItems: "center",
-    padding: "14px 24px",
-    background: "linear-gradient(90deg, #1f2933, #111827)",
-    color: "#fff",
-    fontFamily: "'Inter', system-ui, sans-serif",
-    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+    justifyContent: "space-between",
+    zIndex: 1000,          // 🔑 CRITICAL
+  },
+  logo: {
+    color: "#e5e7eb",
+    fontWeight: 700,
   },
 
   links: {
