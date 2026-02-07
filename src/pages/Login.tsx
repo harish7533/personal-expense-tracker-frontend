@@ -50,7 +50,7 @@ export default function Login() {
   };
 
   return (
-    <div style={{ maxWidth: 400, margin: "100px auto" }}>
+    <div style={{ maxWidth: 400, margin: "200px auto" }}>
       <h2>🔐 Login</h2>
 
       <input

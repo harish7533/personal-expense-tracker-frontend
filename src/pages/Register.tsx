@@ -34,24 +34,32 @@ export default function Register() {
   };
 
   return (
-    <div className="auth-card">
+    <div style={{ maxWidth: 400, margin: "200px auto" }}>
       <h2>Create Account</h2>
 
-      {error && <p className="error">{error}</p>}
-
-      <input placeholder="Email" onChange={(e) => setEmail(e.target.value)} />
+      <input 
+        placeholder="Email" 
+        onChange={(e) => setEmail(e.target.value)} 
+      />
+      <br />
+      <br />
       <input
         type="password"
         placeholder="Password"
         onChange={(e) => setPassword(e.target.value)}
       />
+      <br />
+      <br />
       <input
         type="password"
         placeholder="Confirm Password"
         onChange={(e) => setConfirmPassword(e.target.value)}
       />
 
-      <button onClick={submit}>Register</button>
+      <button onClick={submit} className="submit">
+        Register
+      </button>
+      {error && <p className="error">{error}</p>}
     </div>
   );
 }
