@@ -17,7 +17,7 @@ export default function LandingPage() {
         </p>
 
         <div style={styles.heroActions}>
-          <Link to="/login" style={styles.primaryBtn}>Get Started</Link>
+          <Link to="/register" style={styles.primaryBtn}>Get Started</Link>
           <Link to="/login" style={styles.secondaryBtn}>Login</Link>
         </div>
       </section>

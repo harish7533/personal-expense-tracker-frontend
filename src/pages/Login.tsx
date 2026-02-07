@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState } from "react";
 import api from "../api";
 import { useNavigate } from "react-router-dom";
@@ -18,7 +17,7 @@ export default function Login() {
       const res = await api.post(
         "/auth/login",
         { email, password },
-        { headers: { "Content-Type": "application/json" } }
+        { headers: { "Content-Type": "application/json" } },
       );
 
       const { token, role, userId } = res.data;
@@ -34,9 +33,18 @@ export default function Login() {
         navigate("/dashboard", { replace: true });
       }
     } catch (err: unknown) {
-      const axiosError = err as AxiosError<{ message: string }>;
+      console.error("LOGIN ERROR:", err);
+
+      const axiosError = err as AxiosError<{
+        message?: string;
+        error?: string;
+      }>;
+
       setError(
-        axiosError.response?.data?.message || "Login failed. Try again."
+        axiosError.response?.data?.message ||
+          axiosError.response?.data?.error ||
+          axiosError.message ||
+          "Login failed. Please check your credentials.",
       );
     }
   };
@@ -67,7 +75,7 @@ export default function Login() {
         Login
       </button>
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && <p style={{ color: "red", marginTop: 10 }}>{error}</p>}
     </div>
   );
 }

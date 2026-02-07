@@ -23,20 +23,39 @@ export default function Navbar() {
       </h3>
 
       <div style={styles.links}>
-        {role === "USER" && (
+        {!token && (
           <>
-            <Link to="/upload" style={styles.link}>Upload Bill</Link>
-            <Link to="/create" style={styles.link}>Create Bill</Link>
+            <Link to="/login" style={styles.link}>
+              Login
+            </Link>
+            <Link to="/register" style={styles.link}>
+              Register
+            </Link>
           </>
         )}
 
-        {role === "ADMIN" && (
-          <Link to="/dashboard" style={styles.link}>Dashboard</Link>
+        {token && role === "USER" && (
+          <>
+            <Link to="/upload" style={styles.link}>
+              Upload Bill
+            </Link>
+            <Link to="/create" style={styles.link}>
+              Create Bill
+            </Link>
+          </>
         )}
 
-        <button onClick={logout} style={styles.logout}>
-          Logout
-        </button>
+        {token && role === "ADMIN" && (
+          <Link to="/dashboard" style={styles.link}>
+            Dashboard
+          </Link>
+        )}
+
+        {token && (
+          <button onClick={logout} style={styles.logout}>
+            Logout
+          </button>
+        )}
       </div>
 
       <button onClick={toggleTheme} style={styles.themeBtn}>
@@ -92,7 +111,6 @@ const styles = {
     fontWeight: 500,
   },
 };
-
 
 // import { Link, useNavigate } from "react-router-dom";
 // import useDarkMode  from "../hooks/useDarkMode";
