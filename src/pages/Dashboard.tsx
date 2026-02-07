@@ -11,15 +11,18 @@ import {
   Cell,
 } from "recharts";
 import Navbar from "../components/Navbar";
+import { useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
+  const navigate = useNavigate();
+
   const CHART_COLORS = [
-    "#22c55e", // green
-    "#6366f1", // indigo
-    "#f97316", // orange
-    "#06b6d4", // cyan
-    "#a855f7", // purple
-    "#ef4444", // red
+    "#22c55e",
+    "#6366f1",
+    "#f97316",
+    "#06b6d4",
+    "#a855f7",
+    "#ef4444",
   ];
 
   const [daily, setDaily] = useState<any[]>([]);
@@ -27,11 +30,24 @@ export default function Dashboard() {
   const [storeWise, setStoreWise] = useState<any[]>([]);
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
-  const role = localStorage.getItem("role");
 
+  const role = localStorage.getItem("role");
   const token = localStorage.getItem("token");
 
-  const fetchAnalytics = async () => {
+  /* =========================
+     AUTH GUARD
+  ========================= */
+  useEffect(() => {
+    if (!token || !role) {
+      navigate("/login", { replace: true });
+    }
+  }, [token, role, navigate]);
+
+  /* =========================
+     FETCH ANALYTICS
+  ========================= */
+
+  const fetchAdminAnalytics = async () => {
     const params: any = {};
     if (from) params.from = from;
     if (to) params.to = to;
@@ -51,19 +67,31 @@ export default function Dashboard() {
       }),
     ]);
 
-    return {
-      monthly: monthlyRes.data,
-      storeWise: storeRes.data,
-      daily: dailyRes.data,
-    };
+    setMonthly(monthlyRes.data);
+    setStoreWise(storeRes.data);
+    setDaily(dailyRes.data);
+  };
+
+  const fetchUserAnalytics = async () => {
+    const params: any = {};
+    if (from) params.from = from;
+    if (to) params.to = to;
+
+    const dailyRes = await api.get("/bills/user/analytics/daily", {
+      headers: { Authorization: `Bearer ${token}` },
+      params,
+    });
+
+    setDaily(dailyRes.data);
   };
 
   const loadAnalytics = async () => {
     try {
-      const data = await fetchAnalytics();
-      setMonthly(data.monthly);
-      setStoreWise(data.storeWise);
-      setDaily(data.daily);
+      if (role === "ADMIN") {
+        await fetchAdminAnalytics();
+      } else if (role === "USER") {
+        await fetchUserAnalytics();
+      }
     } catch (err) {
       console.error("Failed to load analytics", err);
     }
@@ -74,10 +102,16 @@ export default function Dashboard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  /* =========================
+     RENDER
+  ========================= */
+
   return (
     <>
       <Navbar />
-      {role === "ADMIN" ? (
+
+      {/* ================= ADMIN ================= */}
+      {role === "ADMIN" && (
         <div style={{ padding: 20 }}>
           <h2>📊 Admin Dashboard</h2>
 
@@ -115,7 +149,7 @@ export default function Dashboard() {
               <Bar dataKey="total" radius={[6, 6, 0, 0]}>
                 {monthly.map((_, index) => (
                   <Cell
-                    key={`month-${index}`}
+                    key={index}
                     fill={CHART_COLORS[index % CHART_COLORS.length]}
                   />
                 ))}
@@ -132,7 +166,7 @@ export default function Dashboard() {
               <Bar dataKey="total" radius={[6, 6, 0, 0]}>
                 {storeWise.map((_, index) => (
                   <Cell
-                    key={`store-${index}`}
+                    key={index}
                     fill={CHART_COLORS[index % CHART_COLORS.length]}
                   />
                 ))}
@@ -149,7 +183,7 @@ export default function Dashboard() {
               <Bar dataKey="total" radius={[6, 6, 0, 0]}>
                 {daily.map((_, index) => (
                   <Cell
-                    key={`daily-${index}`}
+                    key={index}
                     fill={index % 2 === 0 ? "#22c55e" : "#16a34a"}
                   />
                 ))}
@@ -157,10 +191,28 @@ export default function Dashboard() {
             </BarChart>
           </ResponsiveContainer>
         </div>
-      ) : (
-        <div style={{ padding: "24px" }}>
-          <h2>Access Denied</h2>
-          <p>You do not have permission to view this page.</p>
+      )}
+
+      {/* ================= USER ================= */}
+      {role === "USER" && (
+        <div style={{ padding: 20 }}>
+          <h2>📈 Your Daily Spend</h2>
+
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={daily}>
+              <XAxis dataKey="date" />
+              <YAxis />
+              <Tooltip />
+              <Bar dataKey="total" radius={[6, 6, 0, 0]}>
+                {daily.map((_, index) => (
+                  <Cell
+                    key={index}
+                    fill={index % 2 === 0 ? "#22c55e" : "#16a34a"}
+                  />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
         </div>
       )}
     </>

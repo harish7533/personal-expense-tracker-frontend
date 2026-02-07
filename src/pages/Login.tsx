@@ -1,33 +1,43 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState } from "react";
-import api from "../api"; // ✅ use your axios instance
+import api from "../api";
 import { useNavigate } from "react-router-dom";
+import type { AxiosError } from "axios";
 
 export default function Login() {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
   const navigate = useNavigate();
 
   const handleLogin = async () => {
+    setError("");
+
     try {
       const res = await api.post(
         "/auth/login",
-        { username, password },
-        { headers: { "Content-Type": "application/json" } },
+        { email, password },
+        { headers: { "Content-Type": "application/json" } }
       );
 
-      console.log("LOGIN RESPONSE:", res.data);
+      const { token, role, userId } = res.data;
 
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("role", res.data.role);
+      localStorage.setItem("token", token);
+      localStorage.setItem("role", role);
+      localStorage.setItem("userId", userId);
 
-      console.log("Saved token:", localStorage.getItem("token"));
-
-       navigate("/dashboard", { replace: true });
-    } catch (err) {
-      setError("Invalid credentials");
+      // Role-based navigation
+      if (role === "ADMIN") {
+        navigate("/admin/dashboard", { replace: true });
+      } else {
+        navigate("/dashboard", { replace: true });
+      }
+    } catch (err: unknown) {
+      const axiosError = err as AxiosError<{ message: string }>;
+      setError(
+        axiosError.response?.data?.message || "Login failed. Try again."
+      );
     }
   };
 
@@ -36,8 +46,10 @@ export default function Login() {
       <h2>🔐 Login</h2>
 
       <input
-        placeholder="Username"
-        onChange={(e) => setUsername(e.target.value)}
+        placeholder="Email"
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
       />
       <br />
       <br />
@@ -45,12 +57,15 @@ export default function Login() {
       <input
         type="password"
         placeholder="Password"
+        value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
       <br />
       <br />
 
-      <button onClick={handleLogin} className="submit">Login</button>
+      <button onClick={handleLogin} className="submit">
+        Login
+      </button>
 
       {error && <p style={{ color: "red" }}>{error}</p>}
     </div>
