@@ -6,7 +6,6 @@ import Bills from "./pages/Bills";
 import UploadBills from "./pages/UploadBills";
 import CreateBill from "./pages/CreateBill";
 import ProtectedRoute from "./components/ProtectedRoute";
-import AuthRedirect from "./auth/AuthRedirect";
 import LandingPage from "./components/LandingPage";
 import Settings from "./pages/Settings";
 import Activity from "./pages/Activity";
