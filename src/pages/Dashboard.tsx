@@ -12,7 +12,7 @@ import {
 } from "recharts";
 import Navbar from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
-import "../styles/dashboard.css";
+import "../styles/DashBoard.css";
 import Page from "../components/Page";
 
 export default function Dashboard() {
