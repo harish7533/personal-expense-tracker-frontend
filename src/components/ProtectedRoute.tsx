@@ -15,9 +15,7 @@ export default function ProtectedRoute({
   const { user, loading } = useAuth();
 
   // ⏳ Wait for auth hydration
-  if (loading) {
-    return <p style={{ textAlign: "center", marginTop: 40 }}>Checking session…</p>;
-  }
+  if (loading) return null;
 
   // 🔐 Not authenticated
   if (!user) {

@@ -29,33 +29,12 @@ function App() {
       />
       <Routes>
         {/* 🌍 Public Landing Page */}
-        <Route
-          path="/"
-          element={
-            <AuthRedirect>
-              <LandingPage />
-            </AuthRedirect>
-          }
-        />
+        <Route path="/" element={<LandingPage />} />
 
         {/* 🔐 Auth */}
-        <Route
-          path="/login"
-          element={
-            <AuthRedirect>
-              <Login />
-            </AuthRedirect>
-          }
-        />
+        <Route path="/login" element={<Login />} />
 
-        <Route
-          path="/register"
-          element={
-            <AuthRedirect>
-              <Register />
-            </AuthRedirect>
-          }
-        />
+        <Route path="/register" element={<Register />} />
 
         {/* 🔒 Protected */}
         <Route
