@@ -1,15 +1,19 @@
-import { type JSX } from "react";
 import { Navigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
+import type { JSX } from "react";
 
 export default function AuthRedirect({
   children,
 }: {
   children: JSX.Element;
 }) {
-  const token = localStorage.getItem("token");
-  const role = localStorage.getItem("role");
+  const { user, loading } = useAuth();
 
-  if (token && role) {
+  // ⏳ Wait for session check
+  if (loading) return null;
+
+  // 🔁 Already logged in → dashboard
+  if (user) {
     return <Navigate to="/dashboard" replace />;
   }
 
