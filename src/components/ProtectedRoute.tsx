@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../auth/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 import type { JSX } from "react";
 
 type Role = "ADMIN" | "USER";
