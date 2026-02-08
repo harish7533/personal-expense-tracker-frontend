@@ -5,14 +5,20 @@ const api = axios.create({
   withCredentials: true,
 });
 
-/* Attach JWT token automatically */
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+api.interceptors.response.use(
+  res => res,
+  async err => {
+    if (err.response?.status === 401) {
+      try {
+        await api.post("/auth/refresh");
+        return api(err.config);
+      } catch {
+        window.location.href = "/login";
+      }
+    }
+    return Promise.reject(err);
   }
-  return config;
-});
+);
 
 /* OCR Upload */
 export async function uploadImage(file: File): Promise<string> {

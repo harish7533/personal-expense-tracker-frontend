@@ -334,7 +334,7 @@ export default function CreateBill() {
                   onChange={(e) => updateItem(i, "price", e.target.value)}
                 />
                 <input type="number" value={item.amount} disabled />
-                <button type="button" onClick={() => removeItem(i)}>
+                <button type="button" onClick={() => removeItem(i)} className="remove">
                   ✕
                 </button>
               </div>

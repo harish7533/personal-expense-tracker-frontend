@@ -1,10 +1,13 @@
 import { Link, useNavigate } from "react-router-dom";
 import useDarkMode from "../hooks/useDarkMode";
 import { useEffect } from "react";
+import { useAuth } from "../hooks/useAuth";
+import api from "../api";
 
 export default function Navbar() {
   const navigate = useNavigate();
   const { theme, toggleTheme } = useDarkMode();
+  const { user, loading } = useAuth();
 
   useEffect(() => {
     const role = localStorage.getItem("role");
@@ -14,15 +17,15 @@ export default function Navbar() {
     document.documentElement.setAttribute("data-accent", accent);
   }, []);
 
-  const token = localStorage.getItem("token");
-
-  // 🔒 Do not render navbar if not logged in
-  // if (!token) return null;
-
-  const logout = () => {
-    localStorage.clear();
-    navigate("/login", { replace: true });
+  const logout = async () => {
+    try {
+      await api.post("/auth/logout", {}, { withCredentials: true });
+    } finally {
+      navigate("/login", { replace: true });
+    }
   };
+
+  if (loading || !user) return null;
 
   return (
     <nav style={styles.nav}>
@@ -34,7 +37,7 @@ export default function Navbar() {
       </h3>
 
       <div style={styles.links}>
-        {token && (
+        {user && (
           <>
             <Link to="/upload" style={styles.link}>
               Upload Bill

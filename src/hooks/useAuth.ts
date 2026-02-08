@@ -15,7 +15,7 @@ export function useAuth() {
 
   useEffect(() => {
     api
-      .get("/auth/me") // 🍪 cookie automatically sent
+      .get("/auth/me", { withCredentials: true }) // 🍪 cookie automatically sent
       .then((res) => setUser(res.data))
       .catch(() => setUser(null))
       .finally(() => setLoading(false));

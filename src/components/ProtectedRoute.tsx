@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Navigate } from "react-router-dom";
+import { useAuth } from "../auth/AuthContext";
 
 type Role = "ADMIN" | "USER";
 
@@ -12,16 +13,17 @@ export default function ProtectedRoute({
   children,
   allowedRoles,
 }: ProtectedRouteProps) {
-  const token = localStorage.getItem("token");
-  const role = localStorage.getItem("role") as Role | null;
+  const { user, loading } = useAuth();
 
   // 🔐 Not logged in
-  if (!token) {
+  if (!user) {
     return <Navigate to="/login" replace />;
   }
 
+  if (loading) return <p>Checking session...</p>;
+
   // 🚫 Role not allowed (only if roles are specified)
-  if (allowedRoles && (!role || !allowedRoles.includes(role))) {
+  if (allowedRoles && (!user.role || !allowedRoles.includes(user.role))) {
     return <Navigate to="/unauthorized" replace />;
   }
 

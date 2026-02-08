@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import toast from "react-hot-toast";
 import useActivities from "../hooks/useActivities";
 import Navbar from "../components/Navbar";
@@ -14,19 +14,26 @@ type Activity = {
 export default function Activity() {
   const { user, loading } = useAuth();
   const { activities, removeActivity } = useActivities();
+    const lastToastId = useRef<string | null>(null);
 
   /* ================= TOAST REAL-TIME ================= */
-  useEffect(() => {
-    // show toast for latest activity
-    if (activities.length > 0) {
-      const latest = activities[0];
-      toast(`${latest.message}`, {
-        icon: latest.type === "USER" ? "🧾" : "⚡",
-        id: latest.id, // prevent duplicate toasts
-      });
-    }
-  }, [activities]);
+ useEffect(() => {
+    if (!user || activities.length === 0) return;
 
+    const latest = activities[0];
+
+    // Prevent duplicate toasts
+    if (latest.id !== lastToastId.current) {
+      toast(latest.message, {
+        icon: latest.type === "USER" ? "🧾" : "⚡",
+        id: latest.id,
+      });
+
+      lastToastId.current = latest.id;
+    }
+  }, [activities, user]);
+
+  /* ================= UI STATES ================= */
   if (loading)
     return (
       <p style={{ textAlign: "center", marginTop: 40 }}>
