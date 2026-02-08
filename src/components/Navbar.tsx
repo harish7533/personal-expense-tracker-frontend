@@ -7,16 +7,14 @@ export default function Navbar() {
   const { theme, toggleTheme } = useDarkMode();
 
   useEffect(() => {
-  const role = localStorage.getItem("role");
-  const accent =
-    role === "ADMIN" ? "admin" : role === "USER" ? "user" : "default";
+    const role = localStorage.getItem("role");
+    const accent =
+      role === "ADMIN" ? "admin" : role === "USER" ? "user" : "default";
 
-  document.documentElement.setAttribute("data-accent", accent);
-}, []);
-
+    document.documentElement.setAttribute("data-accent", accent);
+  }, []);
 
   const token = localStorage.getItem("token");
-  const role = localStorage.getItem("role");
 
   // 🔒 Do not render navbar if not logged in
   // if (!token) return null;
@@ -36,7 +34,7 @@ export default function Navbar() {
       </h3>
 
       <div style={styles.links}>
-        {token && role === "USER" && (
+        {token && (
           <>
             <Link to="/upload" style={styles.link}>
               Upload Bill
@@ -44,11 +42,6 @@ export default function Navbar() {
             <Link to="/create" style={styles.link}>
               Create Bill
             </Link>
-          </>
-        )}
-
-        {token && role === "ADMIN" && (
-          <>
             <Link to="/dashboard" style={styles.link}>
               Dashboard
             </Link>
@@ -58,13 +51,10 @@ export default function Navbar() {
             <Link to="/activity" style={styles.link}>
               Activity
             </Link>
+            <button onClick={logout} style={styles.logout}>
+              Logout
+            </button>
           </>
-        )}
-
-        {token && (
-          <button onClick={logout} style={styles.logout}>
-            Logout
-          </button>
         )}
       </div>
 

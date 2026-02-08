@@ -1,9 +1,10 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import api from "../api";
 import "../styles/CreateBill.css";
 import { computeAnalytics } from "../utils/billAnalytics";
 import Navbar from "../components/Navbar";
 import toast from "react-hot-toast";
+import { getStores, addStore } from "../api/stores";
 
 interface Item {
   name: string;
@@ -18,38 +19,55 @@ export default function CreateBill() {
   const [category, setCategory] = useState("GROCERY");
   const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState(false);
-  const [showToast, setShowToast] = useState(false);
   const [billDate, setBillDate] = useState(today);
 
-  /* ================= STORE (DYNAMIC + PERSISTENT) ================= */
+  /* ================= STORE (DB BACKED) ================= */
 
-  const [storeOptions, setStoreOptions] = useState<string[]>(() => {
-    const saved = localStorage.getItem("customStores");
-    return saved
-      ? JSON.parse(saved)
-      : [
-          "Nellai Anbu Supermarket",
-          "Sri Vinayaga Supermarket",
-          "Bargain Mart",
-          "Red Berry Snacks",
-        ];
-  });
+  const DEFAULT_STORES = [
+    "Nellai Anbu Supermarket",
+    "Sri Vinayaga Supermarket",
+    "Bargain Mart",
+    "Red Berry Snacks",
+  ];
 
+  const [storeOptions, setStoreOptions] = useState<string[]>([]);
   const [storeOption, setStoreOption] = useState("");
   const [customStoreName, setCustomStoreName] = useState("");
+
+  useEffect(() => {
+    getStores()
+      .then((stores) => {
+        setStoreOptions(stores.length ? stores : DEFAULT_STORES);
+      })
+      .catch(() => {
+        setStoreOptions(DEFAULT_STORES);
+      });
+  }, []);
 
   const finalStoreName =
     storeOption === "Other" ? customStoreName.trim() : storeOption;
 
-  const addCustomStore = () => {
-    if (!customStoreName.trim()) return;
+  const addCustomStore = async () => {
+    const name = customStoreName.trim();
+    if (!name) return;
 
-    const updated = [...storeOptions, customStoreName.trim()];
-    setStoreOptions(updated);
-    localStorage.setItem("customStores", JSON.stringify(updated));
+    // prevent duplicates
+    if (storeOptions.includes(name)) {
+      setStoreOption(name);
+      setCustomStoreName("");
+      return;
+    }
 
-    setStoreOption(customStoreName.trim());
-    setCustomStoreName("");
+    try {
+      await addStore(name); // 🔥 save to DB
+      setStoreOptions((prev) => [...prev, name]);
+      setStoreOption(name);
+      setCustomStoreName("");
+      toast.success(`🏪 Store "${name}" added`);
+    } catch (err) {
+      console.error("Failed to add store", err);
+      toast.error("Failed to save store");
+    }
   };
 
   /* ================= ITEMS ================= */
@@ -63,8 +81,7 @@ export default function CreateBill() {
 
     if (field === "qty" || field === "price") {
       updated[index][field] = Number(value);
-      updated[index].amount =
-        updated[index].qty * updated[index].price;
+      updated[index].amount = updated[index].qty * updated[index].price;
     } else {
       updated[index].name = value;
     }
@@ -80,10 +97,10 @@ export default function CreateBill() {
 
   const totalAmount = useMemo(
     () => items.reduce((sum, i) => sum + (i.amount || 0), 0),
-    [items],
+    [items]
   );
 
-  /* ================= DATE + TIME ================= */
+  /* ================= DATE ================= */
 
   const buildDateTime = (dateStr: string) => {
     const selected = new Date(dateStr);
@@ -93,7 +110,7 @@ export default function CreateBill() {
       now.getHours(),
       now.getMinutes(),
       now.getSeconds(),
-      now.getMilliseconds(),
+      now.getMilliseconds()
     );
 
     return selected.toISOString();
@@ -128,31 +145,25 @@ export default function CreateBill() {
 
     try {
       setLoading(true);
-
-      // await fetch("/api/bills/create", {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify(payload),
-      // });
-
       await api.post("/bills/create", payload);
 
-      setShowToast(true);
+      toast.success(
+        `🧾 Bill created for ${finalStoreName} (₹${totalAmount.toFixed(2)})`
+      );
+
       setItems([]);
       setStoreOption("");
       setCustomStoreName("");
       setBillDate(today);
-
-      setTimeout(() => setShowToast(false), 3000);
-      toast.success(`Bill created successfully for ${finalStoreName} (₹${totalAmount})`);
     } catch (err) {
       console.error("Failed to create bill", err);
+      toast.error("Bill creation failed");
     } finally {
       setLoading(false);
     }
   };
 
-  /* ================= ANALYTICS (STABLE) ================= */
+  /* ================= ANALYTICS ================= */
 
   const analytics =
     items.length > 0
@@ -161,7 +172,7 @@ export default function CreateBill() {
             qty: i.qty,
             rate: i.price,
             amount: i.amount,
-          })),
+          }))
         )
       : null;
 
@@ -200,7 +211,12 @@ export default function CreateBill() {
                 value={customStoreName}
                 onChange={(e) => setCustomStoreName(e.target.value)}
               />
-              <button type="button" className="submit" style={{ width: 100, marginTop: 10 }} onClick={addCustomStore}>
+              <button
+                type="button"
+                className="submit"
+                style={{ width: 100, marginTop: 10 }}
+                onClick={addCustomStore}
+              >
                 Add
               </button>
             </div>
@@ -223,7 +239,10 @@ export default function CreateBill() {
           </p>
 
           {/* Category */}
-          <select value={category} onChange={(e) => setCategory(e.target.value)}>
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+          >
             <option value="GROCERY">Grocery</option>
             <option value="GENERAL">General</option>
           </select>
@@ -275,18 +294,16 @@ export default function CreateBill() {
           >
             {loading ? "Saving..." : "Save Bill"}
           </button>
-
-          {showToast && <div className="toast">✅ Bill saved</div>}
         </form>
-
       </div>
-        {analytics && (
-          <div className="analytics-preview">
-            <p>🧾 Items: {analytics.totalItems}</p>
-            <p>📦 Qty: {analytics.totalQty}</p>
-            <p>💰 Avg Rate: ₹ {analytics.avgRate}</p>
-          </div>
-        )}
+
+      {analytics && (
+        <div className="analytics-preview">
+          <p>🧾 Items: {analytics.totalItems}</p>
+          <p>📦 Qty: {analytics.totalQty}</p>
+          <p>💰 Avg Rate: ₹ {analytics.avgRate}</p>
+        </div>
+      )}
     </>
   );
 }

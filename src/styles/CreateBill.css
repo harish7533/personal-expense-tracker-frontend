@@ -246,7 +246,6 @@ button {
   }
 }
 
-
 .icon-btn {
   display: inline-flex;
   align-items: center;
@@ -271,6 +270,28 @@ button {
 
 .icon-btn.danger:hover {
   background: #fecaca;
+}
+
+.analytics-preview {
+  position: sticky;
+  top: 90px;
+  left: 500px;
+  min-height: 140px;
+  width: 260px;
+
+  padding: 16px;
+  border-radius: 12px;
+
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+
+  transition: none; /* 🚫 stop shaking */
+}
+
+.analytics-preview p {
+  margin: 6px 0;
+  font-size: 14px;
+  white-space: nowrap;
 }
 
 /* .dark {
@@ -326,24 +347,3 @@ button {
   color: #e5e7eb;
 } */
 
-.analytics-preview {
-  position: sticky;
-  top: 90px;
-  left: 300px;
-  min-height: 140px;
-  width: 260px;
-
-  padding: 16px;
-  border-radius: 12px;
-
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-
-  transition: none; /* 🚫 stop shaking */
-}
-
-.analytics-preview p {
-  margin: 6px 0;
-  font-size: 14px;
-  white-space: nowrap;
-}
