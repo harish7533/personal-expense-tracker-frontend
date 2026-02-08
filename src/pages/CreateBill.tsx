@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useMemo, useEffect } from "react";
 import api from "../api";
 import "../styles/CreateBill.css";
@@ -5,6 +6,7 @@ import { computeAnalytics } from "../utils/billAnalytics";
 import Navbar from "../components/Navbar";
 import toast from "react-hot-toast";
 import { getStores, addStore } from "../api/stores";
+import { getCategories, addCategory } from "../api/catagories";
 
 interface Item {
   name: string;
@@ -16,12 +18,11 @@ interface Item {
 export default function CreateBill() {
   const today = new Date().toISOString().split("T")[0];
 
-  const [category, setCategory] = useState("GROCERY");
   const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState(false);
   const [billDate, setBillDate] = useState(today);
 
-  /* ================= STORE (DB BACKED) ================= */
+  /* ================= STORES ================= */
 
   const DEFAULT_STORES = [
     "Nellai Anbu Supermarket",
@@ -36,12 +37,10 @@ export default function CreateBill() {
 
   useEffect(() => {
     getStores()
-      .then((stores) => {
-        setStoreOptions(stores.length ? stores : DEFAULT_STORES);
-      })
-      .catch(() => {
-        setStoreOptions(DEFAULT_STORES);
-      });
+      .then((stores) =>
+        setStoreOptions(stores.length ? stores : DEFAULT_STORES)
+      )
+      .catch(() => setStoreOptions(DEFAULT_STORES));
   }, []);
 
   const finalStoreName =
@@ -51,7 +50,6 @@ export default function CreateBill() {
     const name = customStoreName.trim();
     if (!name) return;
 
-    // prevent duplicates
     if (storeOptions.includes(name)) {
       setStoreOption(name);
       setCustomStoreName("");
@@ -59,16 +57,59 @@ export default function CreateBill() {
     }
 
     try {
-      await addStore(name); // 🔥 save to DB
+      await addStore(name);
       setStoreOptions((prev) => [...prev, name]);
       setStoreOption(name);
       setCustomStoreName("");
       toast.success(`🏪 Store "${name}" added`);
-    } catch (err) {
-      console.error("Failed to add store", err);
+    } catch {
       toast.error("Failed to save store");
     }
   };
+
+  /* ================= CATEGORIES ================= */
+
+  const DEFAULT_CATEGORIES = ["GROCERY", "GENERAL"];
+
+  const [categoryOptions, setCategoryOptions] = useState<string[]>([]);
+  const [category, setCategory] = useState("");
+  const [customCategory, setCustomCategory] = useState("");
+
+  useEffect(() => {
+    getCategories()
+      .then((cats: string[]) =>
+        setCategoryOptions(cats.length ? cats : DEFAULT_CATEGORIES)
+      )
+      .catch(() => setCategoryOptions(DEFAULT_CATEGORIES));
+  }, []);
+
+  const finalCategory =
+    category === "Other" ? customCategory.trim() : category;
+
+  const addCustomCategory = async () => {
+    const name = customCategory.trim().toUpperCase();
+    if (!name) return;
+
+    if (categoryOptions.includes(name)) {
+      setCategory(name);
+      setCustomCategory("");
+      return;
+    }
+
+    try {
+      await addCategory(name);
+      setCategoryOptions((prev) => [...prev, name]);
+      setCategory(name);
+      setCustomCategory("");
+      toast.success(`🏷️ Category "${name}" added`);
+    } catch {
+      toast.error("Failed to save category");
+    }
+  };
+
+  /* ================= DESCRIPTION ================= */
+
+  const [description, setDescription] = useState("");
 
   /* ================= ITEMS ================= */
 
@@ -119,11 +160,15 @@ export default function CreateBill() {
   /* ================= SUBMIT ================= */
 
   const submitBill = async () => {
-    if (!finalStoreName || items.length === 0) return;
+    if (!finalStoreName || !finalCategory || items.length === 0) {
+      toast.error("Fill all required fields");
+      return;
+    }
 
     const payload = {
       storeName: finalStoreName,
-      category,
+      category: finalCategory,
+      description,
       totalAmount,
       grossAmount: totalAmount,
       currency: "INR",
@@ -136,8 +181,8 @@ export default function CreateBill() {
         hsnc: null,
         verified: true,
       })),
-      discountAmount: 50,
-      taxAmount: 18,
+      discountAmount: 0,
+      taxAmount: 0,
       source: "MANUAL",
       billDate: buildDateTime(billDate),
       createdAt: buildDateTime(billDate),
@@ -148,15 +193,17 @@ export default function CreateBill() {
       await api.post("/bills/create", payload);
 
       toast.success(
-        `🧾 Bill created for ${finalStoreName} (₹${totalAmount.toFixed(2)})`
+        `🧾 Bill saved for ${finalStoreName} (₹${totalAmount.toFixed(2)})`
       );
 
       setItems([]);
       setStoreOption("");
       setCustomStoreName("");
+      setCategory("");
+      setCustomCategory("");
+      setDescription("");
       setBillDate(today);
-    } catch (err) {
-      console.error("Failed to create bill", err);
+    } catch {
       toast.error("Bill creation failed");
     } finally {
       setLoading(false);
@@ -196,9 +243,9 @@ export default function CreateBill() {
             }}
           >
             <option value="">Select Store</option>
-            {storeOptions.map((store) => (
-              <option key={store} value={store}>
-                {store}
+            {storeOptions.map((s) => (
+              <option key={s} value={s}>
+                {s}
               </option>
             ))}
             <option value="Other">Other</option>
@@ -211,12 +258,7 @@ export default function CreateBill() {
                 value={customStoreName}
                 onChange={(e) => setCustomStoreName(e.target.value)}
               />
-              <button
-                type="button"
-                className="submit"
-                style={{ width: 100, marginTop: 10 }}
-                onClick={addCustomStore}
-              >
+              <button type="button" onClick={addCustomStore}>
                 Add
               </button>
             </div>
@@ -230,22 +272,36 @@ export default function CreateBill() {
             onChange={(e) => setBillDate(e.target.value)}
           />
 
-          <p className="date-preview">
-            🕒{" "}
-            {new Date(buildDateTime(billDate)).toLocaleString("en-IN", {
-              dateStyle: "medium",
-              timeStyle: "short",
-            })}
-          </p>
-
           {/* Category */}
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-          >
-            <option value="GROCERY">Grocery</option>
-            <option value="GENERAL">General</option>
+          <select value={category} onChange={(e) => setCategory(e.target.value)}>
+            <option value="">Select Type</option>
+            {categoryOptions.map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
+            <option value="Other">Other</option>
           </select>
+
+          {category === "Other" && (
+            <div className="other-store">
+              <input
+                placeholder="Enter category"
+                value={customCategory}
+                onChange={(e) => setCustomCategory(e.target.value)}
+              />
+              <button type="button" onClick={addCustomCategory}>
+                Add
+              </button>
+            </div>
+          )}
+
+          {/* Description */}
+          <textarea
+            placeholder="Bill description (optional)"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
 
           {/* Items */}
           <div className="items">
@@ -267,18 +323,14 @@ export default function CreateBill() {
                   onChange={(e) => updateItem(i, "price", e.target.value)}
                 />
                 <input type="number" value={item.amount} disabled />
-                <button
-                  type="button"
-                  className="remove"
-                  onClick={() => removeItem(i)}
-                >
+                <button type="button" onClick={() => removeItem(i)}>
                   ✕
                 </button>
               </div>
             ))}
           </div>
 
-          <button type="button" className="add" onClick={addItem}>
+          <button type="button" onClick={addItem}>
             ➕ Add Item
           </button>
 
@@ -288,8 +340,7 @@ export default function CreateBill() {
 
           <button
             type="button"
-            className={`submit ${loading ? "loading" : ""}`}
-            disabled={!finalStoreName || items.length === 0}
+            disabled={loading}
             onClick={submitBill}
           >
             {loading ? "Saving..." : "Save Bill"}

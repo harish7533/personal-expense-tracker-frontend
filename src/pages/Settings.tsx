@@ -1,32 +1,12 @@
-/* eslint-disable react-hooks/set-state-in-effect */
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Navbar from "../components/Navbar";
-import api from "../api";// assuming you have a theme context
-
-interface User {
-  id: string;
-  email: string;
-  username?: string;
-  role?: string | null;
-}
+import { useAuth } from "../hooks/useAuth";
 
 export default function Settings() {
-  const [user, setUser] = useState<User | null>(null);
-  const [theme, setTheme] = useState<string>("light");
+  const { user, loading } = useAuth();
+    const [theme] = useState("light");
 
-  useEffect(() => {
-    // fetch current theme from localStorage
-    const savedTheme = localStorage.getItem("theme");
-    if (savedTheme) setTheme(savedTheme);
-
-    // fetch authenticated user
-    api
-      .get("/auth/me")
-      .then((res) => setUser(res.data))
-      .catch(() => setUser(null));
-  }, []);
-
-  if (!user) return <p style={{ textAlign: "center", marginTop: 40 }}>Loading...</p>;
+  if (loading) return <p style={{ textAlign: "center", marginTop: 40 }}>Loading...</p>;
 
   return (
     <>
@@ -39,14 +19,14 @@ export default function Settings() {
         <div style={styles.card}>
           <h4>Account</h4>
           <p>
-            <strong>Username:</strong> {user.username || "—"}
+            <strong>Username:</strong> {user?.username || "—"}
           </p>
           <p>
             <strong>Status:</strong>{" "}
-            {user.role ? "🟢 Active" : "⚪ Inactive"}
+            {user?.role ? "🟢 Active" : "⚪ Inactive"}
           </p>
           <p>
-            <strong>Email:</strong> {user.email}
+            <strong>Email:</strong> {user?.email}
           </p>
         </div>
 

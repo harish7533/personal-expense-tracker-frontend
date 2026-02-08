@@ -1,27 +1,28 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import api from "../api"; // your axios instance
+import { useAuth } from "./useAuth";
+
+type Activity = {
+  id: string;
+  user_id: string;
+  type: string;
+  message: string;
+  created_at: string;
+};
 
 export default function useActivities() {
-  const [activities, setActivities] = useState<any[]>([]);
+  const [activities, setActivities] = useState<Activity[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
+  const { user, token } = useAuth(); // dynamic auth instead of localStorage
 
-  const token = localStorage.getItem("token");
-  const userId = localStorage.getItem("userId");
-
-  useEffect(() => {
+  useEffect(() => {    
     const fetchActivities = async () => {
-      if (!userId || !token) {
-        setActivities([]);
-        setLoading(false);
-        return;
-      }
-
       try {
         setLoading(true);
 
-        const res = await api.get(`/activities/user/${userId}`, {
+        const res = await api.get(`/activities/user/${user?.id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -30,7 +31,7 @@ export default function useActivities() {
         setActivities(res.data || []);
       } catch (err: any) {
         console.error("FETCH ACTIVITIES ERROR:", err);
-        setError("Failed to load activities");
+        setError(`Failed to load activities: ${err.message}`);
       } finally {
         setLoading(false);
       }
@@ -41,9 +42,9 @@ export default function useActivities() {
     // Optional: poll every 30 seconds for new activities
     const interval = setInterval(fetchActivities, 30000);
     return () => clearInterval(interval);
-  }, [userId, token]);
+  }, [user, token]);
 
-   const removeActivity = (id: string) =>
+  const removeActivity = (id: string) =>
     setActivities((prev) => prev.filter((a) => a.id !== id));
 
   return { activities, loading, error, removeActivity };

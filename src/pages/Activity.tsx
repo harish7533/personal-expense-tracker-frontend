@@ -1,8 +1,8 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 import { useEffect } from "react";
 import toast from "react-hot-toast";
 import useActivities from "../hooks/useActivities";
 import Navbar from "../components/Navbar";
+import { useAuth } from "../hooks/useAuth";
 
 type Activity = {
   id: string;
@@ -12,35 +12,8 @@ type Activity = {
 };
 
 export default function Activity() {
-  // const [loading, setLoading] = useState(true);
+  const { user, loading } = useAuth();
   const { activities, removeActivity } = useActivities();
-  // const [activities, setActivities] = useState<Activity[]>([]);
-  // /* ================= FETCH ACTIVITIES ================= */
-  // const fetchActivities = async () => {
-  //   try {
-  //     const res = await api.get("/activity");
-  //     setActivities(res.data);
-  //   } catch (err) {
-  //     console.error("Failed to fetch activities", err);
-  //     toast.error("⚠️ Could not load activities");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
-  // /* ================= ON MOUNT ================= */
-  // useEffect(() => {
-  //   fetchActivities();
-
-  //   // Optional: Poll every 10s for real-time updates
-  //   const interval = setInterval(fetchActivities, 10000);
-  //   return () => clearInterval(interval);
-  // }, []);
-
-  // /* ================= REMOVE ACTIVITY ================= */
-  // const removeActivity = (id: string) => {
-  //   setActivities((prev) => prev.filter((a) => a.id !== id));
-  // };
 
   /* ================= TOAST REAL-TIME ================= */
   useEffect(() => {
@@ -49,16 +22,24 @@ export default function Activity() {
       const latest = activities[0];
       toast(`${latest.message}`, {
         icon: latest.type === "USER" ? "🧾" : "⚡",
+        id: latest.id, // prevent duplicate toasts
       });
     }
   }, [activities]);
 
-  // if (loading)
-  //   return (
-  //     <p style={{ textAlign: "center", marginTop: 40 }}>
-  //       Loading activities...
-  //     </p>
-  //   );
+  if (loading)
+    return (
+      <p style={{ textAlign: "center", marginTop: 40 }}>
+        Loading activities...
+      </p>
+    );
+
+  if (!user)
+    return (
+      <p style={{ textAlign: "center", marginTop: 40 }}>
+        Please log in to view activities.
+      </p>
+    );
 
   return (
     <>
