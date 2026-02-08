@@ -3,6 +3,7 @@ import toast from "react-hot-toast";
 import useActivities from "../hooks/useActivities";
 import Navbar from "../components/Navbar";
 import { useAuth } from "../hooks/useAuth";
+import ActivitySkeleton from "../components/skeletons/ActivitySkeleton";
 
 type Activity = {
   id: string;
@@ -14,10 +15,10 @@ type Activity = {
 export default function Activity() {
   const { user, loading } = useAuth();
   const { activities, removeActivity } = useActivities();
-    const lastToastId = useRef<string | null>(null);
+  const lastToastId = useRef<string | null>(null);
 
   /* ================= TOAST REAL-TIME ================= */
- useEffect(() => {
+  useEffect(() => {
     if (!user || activities.length === 0) return;
 
     const latest = activities[0];
@@ -34,12 +35,7 @@ export default function Activity() {
   }, [activities, user]);
 
   /* ================= UI STATES ================= */
-  if (loading)
-    return (
-      <p style={{ textAlign: "center", marginTop: 40 }}>
-        Loading activities...
-      </p>
-    );
+  if (loading) return <ActivitySkeleton />;
 
   if (!user)
     return (

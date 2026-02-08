@@ -15,22 +15,23 @@ export function useAuth() {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
   const isRole = (value: any): value is Role =>
-  value === "ADMIN" || value === "USER";
+    value === "ADMIN" || value === "USER";
 
   useEffect(() => {
     let alive = true;
+
     api
-      .get("/auth/me", { withCredentials: true }) // 🍪 cookie automatically sent
+      .get("/auth/me", { withCredentials: true })
       .then((res) => {
-        if (alive) {
-          const data = res.data;
+        if (!alive) return;
 
-          if (!isRole(data.role)) {
-            throw new Error("Invalid role from server");
-          }
+        const data = res.data;
 
-          setUser(res.data);
+        if (!isRole(data.role)) {
+          throw new Error("Invalid role from server");
         }
+
+        setUser(data);
       })
       .catch(() => {
         if (alive) setUser(null);

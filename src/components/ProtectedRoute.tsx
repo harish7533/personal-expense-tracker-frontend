@@ -1,8 +1,10 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import type { JSX } from "react";
+import AuthSkeleton from "./skeletons/AuthSkeleton";
 
 type Role = "ADMIN" | "USER";
+
 interface ProtectedRouteProps {
   children: JSX.Element;
   allowedRoles?: Role[];
@@ -14,20 +16,21 @@ export default function ProtectedRoute({
 }: ProtectedRouteProps) {
   const { user, loading } = useAuth();
 
-  // ⏳ Wait for auth hydration
-  if (loading) return null;
+  // ⏳ Still checking auth (important)
+  if (loading) {
+    return <AuthSkeleton />; 
+  }
 
-  // 🔐 Not authenticated
+  // 🔐 Not logged in → go to login
   if (!user) {
     return <Navigate to="/login" replace />;
   }
 
-  // 🚫 Role-based guard
-  if (allowedRoles && !allowedRoles.includes(user.role)) {
+  // 🚫 Role not allowed
+  if (allowedRoles && !allowedRoles.includes(user.role as Role)) {
     return <Navigate to="/unauthorized" replace />;
   }
 
-  // ✅ Authorized
+  // ✅ All good
   return children;
 }
-

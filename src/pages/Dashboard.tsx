@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import api from "../api";
@@ -11,12 +12,13 @@ import {
   Cell,
 } from "recharts";
 import Navbar from "../components/Navbar";
-import { useNavigate } from "react-router-dom";
 import "../styles/DashBoard.css";
 import Page from "../components/Page";
+import { useAuth } from "../hooks/useAuth";
+import DashboardSkeleton from "../components/skeletons/DashBoardSkeleton";
 
 export default function Dashboard() {
-  const navigate = useNavigate();
+  const { user, loading } = useAuth();
 
   const CHART_COLORS = [
     "#22c55e",
@@ -32,12 +34,23 @@ export default function Dashboard() {
   const [storeWise, setStoreWise] = useState<any[]>([]);
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
-
-  const role = localStorage.getItem("role");
-  const token = localStorage.getItem("token");
+  const [revealed, setRevealed] = useState(false);
 
   /* =========================
-     THEME DETECTION
+     LOADING STATE
+  ========================= */
+  if (loading) return <DashboardSkeleton />;
+
+  if (!user) {
+    return (
+      <p style={{ textAlign: "center", marginTop: 40 }}>
+        Please login to view dashboard
+      </p>
+    );
+  }
+
+  /* =========================
+     THEME TOOLTIP
   ========================= */
   const isDark = document.documentElement.getAttribute("data-theme") === "dark";
 
@@ -48,33 +61,29 @@ export default function Dashboard() {
   };
 
   /* =========================
-     AUTH GUARD
-  ========================= */
-  useEffect(() => {
-    if (!token || !role) {
-      navigate("/login", { replace: true });
-    }
-  }, [token, role, navigate]);
-
-  /* =========================
      FETCH ANALYTICS
   ========================= */
-  const fetchAdminAnalytics = async () => {
+  const buildParams = () => {
     const params: any = {};
     if (from) params.from = from;
     if (to) params.to = to;
+    return params;
+  };
+
+  const fetchAdminAnalytics = async () => {
+    const params = buildParams();
 
     const [monthlyRes, storeRes, dailyRes] = await Promise.all([
       api.get("/bills/admin/analytics/monthly", {
-        headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true,
         params,
       }),
       api.get("/bills/admin/analytics/store", {
-        headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true,
         params,
       }),
       api.get("/bills/admin/analytics/daily", {
-        headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true,
         params,
       }),
     ]);
@@ -85,12 +94,10 @@ export default function Dashboard() {
   };
 
   const fetchUserAnalytics = async () => {
-    const params: any = {};
-    if (from) params.from = from;
-    if (to) params.to = to;
+    const params = buildParams();
 
-    const dailyRes = await api.get("/bills/admin/analytics/daily", {
-      headers: { Authorization: `Bearer ${token}` },
+    const dailyRes = await api.get("/bills/analytics/daily", {
+      withCredentials: true,
       params,
     });
 
@@ -99,11 +106,14 @@ export default function Dashboard() {
 
   const loadAnalytics = async () => {
     try {
-      if (role === "ADMIN") {
+      if (user.role === "ADMIN") {
         await fetchAdminAnalytics();
       } else {
         await fetchUserAnalytics();
       }
+
+      // 🔥 Animate reveal
+      setTimeout(() => setRevealed(true), 50);
     } catch (err) {
       console.error("Failed to load analytics", err);
     }
@@ -121,13 +131,13 @@ export default function Dashboard() {
     <>
       <Navbar />
       <Page>
-        <div className="dashboard-page">
+        <div className={`dashboard-page fade-in ${revealed ? "show" : ""}`}>
           {/* ================= ADMIN ================= */}
-          {role === "ADMIN" && (
+          {user.role === "ADMIN" && (
             <div className="dashboard-content">
               <h2>📊 Admin Dashboard</h2>
 
-              {/* Date Filters */}
+              {/* Filters */}
               <div className="dashboard-filters">
                 <label>
                   From:
@@ -147,11 +157,7 @@ export default function Dashboard() {
                   />
                 </label>
 
-                <button
-                  className="submit"
-                  onClick={loadAnalytics}
-                  style={{ width: 100, marginTop: 20 }}
-                >
+                <button className="submit" onClick={loadAnalytics}>
                   Apply
                 </button>
               </div>
@@ -189,32 +195,14 @@ export default function Dashboard() {
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
-
-              <h3>Daily Spend</h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={daily}>
-                  <XAxis dataKey="date" stroke="var(--muted)" />
-                  <YAxis stroke="var(--muted)" />
-                  <Tooltip contentStyle={tooltipStyle} />
-                  <Bar dataKey="total" radius={[6, 6, 0, 0]}>
-                    {daily.map((_, i) => (
-                      <Cell
-                        key={i}
-                        fill={i % 2 === 0 ? "#22c55e" : "#16a34a"}
-                      />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
             </div>
           )}
 
           {/* ================= USER ================= */}
-          {role === "USER" && (
+          {user.role === "USER" && (
             <div className="dashboard-content">
               <h2>📈 Your Daily Spend</h2>
 
-              {/* Date Filters */}
               <div className="dashboard-filters">
                 <label>
                   From:
@@ -234,11 +222,7 @@ export default function Dashboard() {
                   />
                 </label>
 
-                <button
-                  className="submit"
-                  onClick={loadAnalytics}
-                  style={{ width: 100, marginTop: 20 }}
-                >
+                <button className="submit" onClick={loadAnalytics}>
                   Apply
                 </button>
               </div>

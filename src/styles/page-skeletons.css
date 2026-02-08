@@ -1,0 +1,90 @@
+/* ===== Base ===== */
+.dashboard-skeleton,
+.activity-skeleton {
+  padding: 24px;
+  max-width: 1100px;
+  margin: auto;
+}
+
+.dashboard-skeleton > div,
+.activity-skeleton > div,
+.sk-stat,
+.sk-row,
+.sk-chart,
+.sk-line {
+  background: linear-gradient(
+    100deg,
+    var(--sk-bg) 40%,
+    var(--sk-shimmer) 50%,
+    var(--sk-bg) 60%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.2s infinite;
+  border-radius: 12px;
+}
+
+/* ===== Dashboard ===== */
+.sk-title {
+  height: 28px;
+  width: 240px;
+  margin-bottom: 24px;
+}
+
+.sk-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.sk-stat {
+  height: 90px;
+}
+
+.sk-chart {
+  height: 280px;
+  margin-bottom: 32px;
+}
+
+.sk-list .sk-row {
+  height: 56px;
+  margin-bottom: 12px;
+}
+
+/* ===== Activity ===== */
+.sk-activity-card {
+  padding: 16px;
+  margin-bottom: 12px;
+  background: transparent;
+}
+
+.sk-line {
+  height: 14px;
+  margin-bottom: 8px;
+}
+
+.sk-line.short {
+  width: 40%;
+}
+
+.sk-line.long {
+  width: 80%;
+}
+
+/* ===== Theme vars ===== */
+[data-theme="light"] {
+  --sk-bg: #e5e7eb;
+  --sk-shimmer: #f3f4f6;
+}
+
+[data-theme="dark"] {
+  --sk-bg: #1f2933;
+  --sk-shimmer: #2d3748;
+}
+
+/* ===== Animation ===== */
+@keyframes shimmer {
+  to {
+    background-position-x: -200%;
+  }
+}
