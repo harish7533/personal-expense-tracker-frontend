@@ -43,5 +43,8 @@ export default function useActivities() {
     return () => clearInterval(interval);
   }, [userId, token]);
 
-  return { activities, loading, error };
+   const removeActivity = (id: string) =>
+    setActivities((prev) => prev.filter((a) => a.id !== id));
+
+  return { activities, loading, error, removeActivity };
 }

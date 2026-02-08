@@ -1,44 +1,86 @@
 /* eslint-disable react-hooks/set-state-in-effect */
-import { useEffect, useState } from "react";
-import api from "../api";
+import { useEffect } from "react";
+import toast from "react-hot-toast";
+import useActivities from "../hooks/useActivities";
 
 type Activity = {
   id: string;
+  type: string;
   message: string;
   created_at: string;
 };
 
 export default function Activity() {
-  const [activities, setActivities] = useState<Activity[]>([]);
+  // const [loading, setLoading] = useState(true);
+  const { activities, removeActivity } = useActivities();
+  // const [activities, setActivities] = useState<Activity[]>([]);
+  // /* ================= FETCH ACTIVITIES ================= */
+  // const fetchActivities = async () => {
+  //   try {
+  //     const res = await api.get("/activity");
+  //     setActivities(res.data);
+  //   } catch (err) {
+  //     console.error("Failed to fetch activities", err);
+  //     toast.error("⚠️ Could not load activities");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
-  const loadActivities = async () => {
-    const res = await api.get("/activities");
-    setActivities(res.data);
-  };
+  // /* ================= ON MOUNT ================= */
+  // useEffect(() => {
+  //   fetchActivities();
 
+  //   // Optional: Poll every 10s for real-time updates
+  //   const interval = setInterval(fetchActivities, 10000);
+  //   return () => clearInterval(interval);
+  // }, []);
+
+  // /* ================= REMOVE ACTIVITY ================= */
+  // const removeActivity = (id: string) => {
+  //   setActivities((prev) => prev.filter((a) => a.id !== id));
+  // };
+
+  /* ================= TOAST REAL-TIME ================= */
   useEffect(() => {
-    loadActivities();
-  }, []);
+    // show toast for latest activity
+    if (activities.length > 0) {
+      const latest = activities[0];
+      toast(`${latest.message}`, {
+        icon: latest.type === "USER" ? "🧾" : "⚡",
+      });
+    }
+  }, [activities]);
 
-  const removeActivity = (id: string) => {
-    setActivities((prev) => prev.filter((a) => a.id !== id));
-  };
-
-  if (!activities.length) return null;
+  // if (loading)
+  //   return (
+  //     <p style={{ textAlign: "center", marginTop: 40 }}>
+  //       Loading activities...
+  //     </p>
+  //   );
 
   return (
-    <div style={styles.wrapper}>
+    <div style={styles.container}>
       <h4>🔔 Activity</h4>
 
-      {activities.map((a) => (
-        <div key={a.id} style={styles.card}>
-          <span>{a.message}</span>
-
-          <button onClick={() => removeActivity(a.id)} style={styles.close}>
-            ✖
-          </button>
-        </div>
-      ))}
+      {activities.length === 0 ? (
+        <p style={styles.empty}>No activities yet 📝</p>
+      ) : (
+        activities.map((a) => (
+          <div key={a.id} style={styles.card}>
+            <span>{a.message}</span>
+            <small style={{ opacity: 0.6 }}>
+              {new Date(a.created_at).toLocaleString()}
+            </small>
+            <button
+              onClick={() => removeActivity(a.id)}
+              style={styles.closeBtn}
+            >
+              ✖
+            </button>
+          </div>
+        ))
+      )}
     </div>
   );
 }
@@ -47,10 +89,11 @@ export default function Activity() {
 
 const styles: { [key: string]: React.CSSProperties } = {
   container: {
-    maxWidth: 900,
-    margin: "0 auto",
-    padding: "24px",
-    color: "var(--text)",
+    padding: 24,
+    maxWidth: 800,
+    margin: "auto",
+    fontFamily: "'Inter', sans-serif",
+    color: "var(--text-primary)",
   },
 
   empty: {
@@ -61,34 +104,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     borderRadius: 12,
     boxShadow: "var(--shadow)",
     color: "var(--muted)",
-  },
-
-  list: {
-    marginTop: 20,
-    display: "flex",
-    flexDirection: "column",
-    gap: 14,
-  },
-  
-  header: {
-    display: "flex",
-    justifyContent: "space-between",
-    marginBottom: 6,
-  },
-
-  time: {
-    fontSize: 12,
-    color: "var(--muted)",
-  },
-
-  message: {
-    marginTop: 6,
-    color: "var(--text)",
-    lineHeight: 1.5,
-  },
-   wrapper: {
-    padding: 16,
-    maxWidth: 400,
+    opacity: 0.8,
   },
   card: {
     background: "var(--card-bg)",
@@ -100,10 +116,14 @@ const styles: { [key: string]: React.CSSProperties } = {
     alignItems: "center",
     animation: "fadeIn 0.4s ease",
   },
-  close: {
-    background: "transparent",
+  closeBtn: {
+    position: "absolute",
+    top: 8,
+    right: 8,
     border: "none",
+    background: "transparent",
     cursor: "pointer",
-    fontSize: 14,
+    fontSize: 16,
+    color: "var(--text-secondary)",
   },
 };

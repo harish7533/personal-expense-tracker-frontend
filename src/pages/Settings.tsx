@@ -1,34 +1,32 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
-import api from "../api";
+import api from "../api";// assuming you have a theme context
 
-type User = {
+interface User {
   id: string;
-  role?: string;
+  email: string;
   username?: string;
-};
+  role?: string | null;
+}
 
 export default function Settings() {
   const [user, setUser] = useState<User | null>(null);
-  const [theme, setTheme] = useState("Light");
+  const [theme, setTheme] = useState<string>("light");
 
   useEffect(() => {
+    // fetch current theme from localStorage
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme) setTheme(savedTheme);
+
+    // fetch authenticated user
     api
       .get("/auth/me")
       .then((res) => setUser(res.data))
       .catch(() => setUser(null));
-
-    // read theme from localStorage (or your theme context)
-    const storedTheme = localStorage.getItem("theme");
-    if (storedTheme) {
-      setTheme(storedTheme === "dark" ? "Dark 🌙" : "Light ☀️");
-    }
   }, []);
 
-  if (!user) return null;
-
-  const isActive = Boolean(user.role);
+  if (!user) return <p style={{ textAlign: "center", marginTop: 40 }}>Loading...</p>;
 
   return (
     <>
@@ -37,54 +35,51 @@ export default function Settings() {
       <div style={styles.container}>
         <h2>⚙️ Settings</h2>
 
-        {/* ACCOUNT */}
-        <div className="card" style={styles.card}>
-          <h4>👤 Account</h4>
-
+        {/* Account */}
+        <div style={styles.card}>
+          <h4>Account</h4>
           <p>
-            <strong>Username:</strong>{" "}
-            {user.username ?? "Not assigned"}
+            <strong>Username:</strong> {user.username || "—"}
           </p>
-
-          <p>
-            <strong>Role:</strong>{" "}
-            {user.role ?? "—"}
-          </p>
-
           <p>
             <strong>Status:</strong>{" "}
-            {isActive ? "🟢 Active" : "🔴 Inactive"}
+            {user.role ? "🟢 Active" : "⚪ Inactive"}
           </p>
-        </div>
-
-        {/* SECURITY */}
-        <div className="card" style={styles.card}>
-          <h4>🔐 Security</h4>
-          <p>✅ JWT verified on server</p>
-          <p>✅ Session valid</p>
-        </div>
-
-        {/* PREFERENCES */}
-        <div className="card" style={styles.card}>
-          <h4>🎨 Preferences</h4>
           <p>
-            <strong>Current Theme:</strong> {theme}
+            <strong>Email:</strong> {user.email}
           </p>
+        </div>
+
+        {/* Security */}
+        <div style={styles.card}>
+          <h4>Security</h4>
+          <p>🔑 JWT verified on server</p>
+          <p>🕒 Session valid</p>
+        </div>
+
+        {/* Preferences */}
+        <div style={styles.card}>
+          <h4>Preferences</h4>
+          <p>🎨 Theme: {theme}</p>
         </div>
       </div>
     </>
   );
 }
 
-const styles = {
+const styles: Record<string, React.CSSProperties> = {
   container: {
     padding: 24,
     maxWidth: 800,
     margin: "auto",
+    fontFamily: "'Inter', sans-serif",
+    color: "var(--text-primary)",
   },
   card: {
     padding: 20,
     marginBottom: 20,
     borderRadius: 12,
+    background: "var(--card-bg)",
+    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
   },
 };
