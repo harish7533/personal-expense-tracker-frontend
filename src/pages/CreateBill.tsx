@@ -275,6 +275,7 @@ export default function CreateBill() {
           {showToast && <div className="toast">✅ Bill saved</div>}
         </form>
 
+      </div>
         {analytics && (
           <div className="analytics-preview">
             <p>🧾 Items: {analytics.totalItems}</p>
@@ -282,7 +283,6 @@ export default function CreateBill() {
             <p>💰 Avg Rate: ₹ {analytics.avgRate}</p>
           </div>
         )}
-      </div>
     </>
   );
 }

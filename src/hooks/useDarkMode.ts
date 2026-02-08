@@ -11,9 +11,9 @@ export default function useDarkMode() {
   });
 
   // 🔹 On first load → apply theme to DOM
-  useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
-  }, [theme]);
+  // useEffect(() => {
+  //   document.documentElement.setAttribute("data-theme", theme);
+  // }, [theme]);
 
   // 🔹 Whenever theme changes
   useEffect(() => {
@@ -28,7 +28,7 @@ export default function useDarkMode() {
 
   return {
     theme,
-    setTheme,
+    // setTheme,
     toggleTheme,
     isDark: theme === "dark",
   };

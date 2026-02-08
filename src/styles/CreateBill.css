@@ -273,7 +273,7 @@ background: linear-gradient(135deg, var(--primary), var(--primary-hover));
   background: #fecaca;
 }
 
-.dark {
+/* .dark {
   background-color: #0f172a;
   color: #e5e7eb;
 }
@@ -324,7 +324,7 @@ background: linear-gradient(135deg, var(--primary), var(--primary-hover));
 .dark .theme-toggle {
   background: #020617;
   color: #e5e7eb;
-}
+} */
 
 .analytics-preview {
   position: sticky;

@@ -111,7 +111,7 @@
 }
 
 /* 🌙 Dark mode support */
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   .upload-page {
     background: #0f1115;
   }
@@ -133,4 +133,4 @@
   .file-input span {
     color: #ddd;
   }
-}
+} */

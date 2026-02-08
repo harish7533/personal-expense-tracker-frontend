@@ -56,7 +56,7 @@ export default function Register() {
         onChange={(e) => setConfirmPassword(e.target.value)}
       />
 
-      <button onClick={submit} className="submit">
+      <button onClick={submit} className="submit" style={{ marginTop: 30 }}>
         Register
       </button>
       {error && <p className="error">{error}</p>}

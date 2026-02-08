@@ -9,7 +9,7 @@ export default function Navbar() {
   const role = localStorage.getItem("role");
 
   // 🔒 Do not render navbar if not logged in
-  if (!token) return null;
+  // if (!token) return null;
 
   const logout = () => {
     localStorage.clear();
@@ -18,22 +18,14 @@ export default function Navbar() {
 
   return (
     <nav style={styles.nav}>
-      <h3 style={{ cursor: "pointer" }} onClick={() => navigate("/dashboard")}>
-        🧾 Bill Analyzer
+      <h3
+        style={{ cursor: "pointer", ...styles.logo }}
+        onClick={() => navigate("/dashboard")}
+      >
+        🧾 Expense Tracker
       </h3>
 
       <div style={styles.links}>
-        {!token && (
-          <>
-            <Link to="/login" style={styles.link}>
-              Login
-            </Link>
-            <Link to="/register" style={styles.link}>
-              Register
-            </Link>
-          </>
-        )}
-
         {token && role === "USER" && (
           <>
             <Link to="/upload" style={styles.link}>
@@ -66,59 +58,65 @@ export default function Navbar() {
 }
 
 const styles: Record<string, React.CSSProperties> = {
-nav: {
+  nav: {
     position: "fixed",
     top: 0,
     left: 0,
     right: 0,
     height: 64,
     padding: "0 24px",
-    background: "#020617",
-    borderBottom: "1px solid #1f2937",
+
+    background: "var(--card-bg)",
+    borderBottom: "1px solid var(--border)",
+
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
-    zIndex: 1000,          // 🔑 CRITICAL
+
+    zIndex: 1000,
   },
+
   logo: {
-    color: "#e5e7eb",
+    color: "var(--text)",
     fontWeight: 700,
   },
 
   links: {
     display: "flex",
-    gap: "18px",
+    gap: 18,
     alignItems: "center",
   },
 
   link: {
-    color: "#e5e7eb",
+    color: "var(--text)",
     textDecoration: "none",
-    fontSize: "14px",
+    fontSize: 14,
     fontWeight: 500,
     padding: "6px 10px",
-    borderRadius: "8px",
+    borderRadius: 8,
   },
 
   logout: {
-    background: "#ef4444",
+    background: "var(--error-text)",
     border: "none",
     color: "#fff",
     padding: "6px 12px",
-    borderRadius: "8px",
+    borderRadius: 8,
     cursor: "pointer",
     fontWeight: 500,
   },
 
   themeBtn: {
-    background: "#e5e7eb",
-    border: "none",
+    background: "var(--input-bg)",
+    border: "1px solid var(--border)",
+    color: "var(--text)",
     padding: "6px 12px",
-    borderRadius: "8px",
+    borderRadius: 8,
     cursor: "pointer",
     fontWeight: 500,
   },
 };
+
 
 // import { Link, useNavigate } from "react-router-dom";
 // import useDarkMode  from "../hooks/useDarkMode";
