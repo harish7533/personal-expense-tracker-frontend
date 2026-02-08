@@ -2,11 +2,12 @@ import { useState } from "react";
 import Navbar from "../components/Navbar";
 import api from "../api";
 import "../styles/UploadBills.css";
+import toast from "react-hot-toast";
 
 export default function UploadBills() {
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
-  const [toast, setToast] = useState<{
+  const [showToast, setShowToast] = useState<{
     type: "success" | "error";
     msg: string;
   } | null>(null);
@@ -29,7 +30,8 @@ export default function UploadBills() {
 
   const uploadBill = async () => {
     if (!file) {
-      setToast({ type: "error", msg: "Please select a bill image" });
+      setShowToast({ type: "error", msg: "Please select a bill image" });
+      toast.error("Please select a bill image");
       return;
     }
 
@@ -39,16 +41,17 @@ export default function UploadBills() {
 
     try {
       setLoading(true);
-      setToast(null);
+      setShowToast(null);
 
       await api.post("/bills/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      setToast({ type: "success", msg: "Bill uploaded successfully" });
+      setShowToast({ type: "success", msg: "Bill uploaded successfully" });
+      toast.success("Bill uploaded successfully");
       setFile(null);
     } catch (err) {
-      setToast({
+      setShowToast({
         type: "error",
         msg: "Upload failed. " + ((err as Error)?.message || String(err)),
       });
@@ -107,9 +110,9 @@ export default function UploadBills() {
             instantly.
           </small>
 
-          {toast && (
-            <div className={`toast ${toast.type}`}>
-              {toast.type === "success" ? "✅" : "❌"} {toast.msg}
+          {showToast && (
+            <div className={`showToast ${showToast.type}`}>
+              {showToast.type === "success" ? "✅" : "❌"} {showToast.msg}
             </div>
           )}
         </div>

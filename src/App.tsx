@@ -10,10 +10,23 @@ import AuthRedirect from "./auth/AuthRedirect";
 import LandingPage from "./components/LandingPage";
 import Settings from "./pages/Settings";
 import Activity from "./pages/Activity";
+import { Toaster } from "react-hot-toast";
 
 function App() {
   return (
     <BrowserRouter>
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 3000,
+          style: {
+            background: "var(--card-bg)",
+            color: "var(--text)",
+            borderRadius: "12px",
+            border: "1px solid var(--border)",
+          },
+        }}
+      />
       <Routes>
         {/* 🌍 Public Landing Page */}
         <Route

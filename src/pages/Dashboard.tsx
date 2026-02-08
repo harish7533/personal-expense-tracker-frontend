@@ -148,7 +148,7 @@ export default function Dashboard() {
                 />
               </label>
 
-              <button className="submit" onClick={loadAnalytics}>
+              <button className="submit" onClick={loadAnalytics} style={{ width: 100, marginTop: 20 }}>
                 Apply
               </button>
             </div>

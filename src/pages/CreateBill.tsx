@@ -3,6 +3,7 @@ import api from "../api";
 import "../styles/CreateBill.css";
 import { computeAnalytics } from "../utils/billAnalytics";
 import Navbar from "../components/Navbar";
+import toast from "react-hot-toast";
 
 interface Item {
   name: string;
@@ -141,6 +142,7 @@ export default function CreateBill() {
       setBillDate(today);
 
       setTimeout(() => setShowToast(false), 3000);
+      toast.success("Bill created successfully");
     } catch (err) {
       console.error("Failed to create bill", err);
     } finally {

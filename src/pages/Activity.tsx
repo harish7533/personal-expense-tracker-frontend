@@ -1,46 +1,51 @@
-import Navbar from "../components/Navbar";
-import useNotifications from "../hooks/useNotifications";
+/* eslint-disable react-hooks/set-state-in-effect */
+import { useEffect, useState } from "react";
+import api from "../api";
+
+type Activity = {
+  id: string;
+  message: string;
+  created_at: string;
+};
 
 export default function Activity() {
-  const userId = localStorage.getItem("userId");
-  const notifications = useNotifications(userId);
+  const [activities, setActivities] = useState<Activity[]>([]);
+
+  const loadActivities = async () => {
+    const res = await api.get("/activities");
+    setActivities(res.data);
+  };
+
+  useEffect(() => {
+    loadActivities();
+  }, []);
+
+  const removeActivity = (id: string) => {
+    setActivities((prev) => prev.filter((a) => a.id !== id));
+  };
+
+  if (!activities.length) return null;
 
   return (
-    <>
-      <Navbar />
+    <div style={styles.wrapper}>
+      <h4>🔔 Activity</h4>
 
-      <div style={styles.container}>
-        <h2>🔔 Activity</h2>
+      {activities.map((a) => (
+        <div key={a.id} style={styles.card}>
+          <span>{a.message}</span>
 
-        {notifications.length === 0 ? (
-          <div style={styles.empty}>
-            <p>No activity yet</p>
-            <span>Your notifications will appear here.</span>
-          </div>
-        ) : (
-          <div style={styles.list}>
-            {notifications.map((n) => (
-              <div key={n.id} style={styles.card}>
-                <div style={styles.header}>
-                  <strong>{n.title}</strong>
-                  <span style={styles.time}>
-                    {new Date(n.created_at).toLocaleString()}
-                  </span>
-                </div>
-
-                <p style={styles.message}>{n.message}</p>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    </>
+          <button onClick={() => removeActivity(a.id)} style={styles.close}>
+            ✖
+          </button>
+        </div>
+      ))}
+    </div>
   );
 }
 
 /* ===================== STYLES ===================== */
 
-const styles : { [key: string]: React.CSSProperties } = {
+const styles: { [key: string]: React.CSSProperties } = {
   container: {
     maxWidth: 900,
     margin: "0 auto",
@@ -64,15 +69,7 @@ const styles : { [key: string]: React.CSSProperties } = {
     flexDirection: "column",
     gap: 14,
   },
-
-  card: {
-    background: "var(--card-bg)",
-    padding: 18,
-    borderRadius: 12,
-    boxShadow: "var(--shadow)",
-    border: "1px solid var(--border)",
-  },
-
+  
   header: {
     display: "flex",
     justifyContent: "space-between",
@@ -88,5 +85,25 @@ const styles : { [key: string]: React.CSSProperties } = {
     marginTop: 6,
     color: "var(--text)",
     lineHeight: 1.5,
+  },
+   wrapper: {
+    padding: 16,
+    maxWidth: 400,
+  },
+  card: {
+    background: "var(--card-bg)",
+    padding: 12,
+    borderRadius: 10,
+    marginBottom: 10,
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    animation: "fadeIn 0.4s ease",
+  },
+  close: {
+    background: "transparent",
+    border: "none",
+    cursor: "pointer",
+    fontSize: 14,
   },
 };
