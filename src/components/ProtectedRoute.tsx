@@ -16,9 +16,9 @@ export default function ProtectedRoute({
   const { user, loading } = useAuth();
 
   // 🔐 Not logged in
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
+  // if (!user) {
+  //   return <Navigate to="/login" replace />;
+  // }
 
   if (loading) return <p>Checking session...</p>;
 
