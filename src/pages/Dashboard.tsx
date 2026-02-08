@@ -12,6 +12,8 @@ import {
 } from "recharts";
 import Navbar from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
+import "../styles/dashboard.css";
+import Page from "../components/Page";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -35,6 +37,18 @@ export default function Dashboard() {
   const token = localStorage.getItem("token");
 
   /* =========================
+     THEME DETECTION
+  ========================= */
+  const isDark =
+    document.documentElement.getAttribute("data-theme") === "dark";
+
+  const tooltipStyle = {
+    backgroundColor: isDark ? "#020617" : "#ffffff",
+    border: `1px solid ${isDark ? "#1f2937" : "#e5e7eb"}`,
+    color: isDark ? "#e5e7eb" : "#111827",
+  };
+
+  /* =========================
      AUTH GUARD
   ========================= */
   useEffect(() => {
@@ -46,7 +60,6 @@ export default function Dashboard() {
   /* =========================
      FETCH ANALYTICS
   ========================= */
-
   const fetchAdminAnalytics = async () => {
     const params: any = {};
     if (from) params.from = from;
@@ -89,7 +102,7 @@ export default function Dashboard() {
     try {
       if (role === "ADMIN") {
         await fetchAdminAnalytics();
-      } else if (role === "USER") {
+      } else {
         await fetchUserAnalytics();
       }
     } catch (err) {
@@ -105,116 +118,118 @@ export default function Dashboard() {
   /* =========================
      RENDER
   ========================= */
-
   return (
     <>
       <Navbar />
+      <Page>
+              <div className="dashboard-page">
+        {/* ================= ADMIN ================= */}
+        {role === "ADMIN" && (
+          <div className="dashboard-content">
+            <h2>📊 Admin Dashboard</h2>
 
-      {/* ================= ADMIN ================= */}
-      {role === "ADMIN" && (
-        <div style={{ padding: 20 }}>
-          <h2>📊 Admin Dashboard</h2>
+            {/* Date Filters */}
+            <div className="dashboard-filters">
+              <label>
+                From:
+                <input
+                  type="date"
+                  value={from}
+                  onChange={(e) => setFrom(e.target.value)}
+                />
+              </label>
 
-          {/* Date Filter */}
-          <div style={{ marginBottom: 20 }}>
-            <label>From: </label>
-            <input
-              type="date"
-              value={from}
-              onChange={(e) => setFrom(e.target.value)}
-            />
+              <label>
+                To:
+                <input
+                  type="date"
+                  value={to}
+                  onChange={(e) => setTo(e.target.value)}
+                />
+              </label>
 
-            <label style={{ marginLeft: 10 }}>To: </label>
-            <input
-              type="date"
-              value={to}
-              onChange={(e) => setTo(e.target.value)}
-            />
+              <button className="submit" onClick={loadAnalytics}>
+                Apply
+              </button>
+            </div>
 
-            <button
-              style={{ marginTop: 20, width: 100 }}
-              onClick={loadAnalytics}
-              className="submit"
-            >
-              Apply
-            </button>
+            <h3>Monthly Spend</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={monthly}>
+                <XAxis dataKey="month" stroke="var(--muted)" />
+                <YAxis stroke="var(--muted)" />
+                <Tooltip contentStyle={tooltipStyle} />
+                <Bar dataKey="total" radius={[6, 6, 0, 0]}>
+                  {monthly.map((_, i) => (
+                    <Cell
+                      key={i}
+                      fill={CHART_COLORS[i % CHART_COLORS.length]}
+                    />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+
+            <h3>Store-wise Spend</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={storeWise}>
+                <XAxis dataKey="store" stroke="var(--muted)" />
+                <YAxis stroke="var(--muted)" />
+                <Tooltip contentStyle={tooltipStyle} />
+                <Bar dataKey="total" radius={[6, 6, 0, 0]}>
+                  {storeWise.map((_, i) => (
+                    <Cell
+                      key={i}
+                      fill={CHART_COLORS[i % CHART_COLORS.length]}
+                    />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+
+            <h3>Daily Spend</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={daily}>
+                <XAxis dataKey="date" stroke="var(--muted)" />
+                <YAxis stroke="var(--muted)" />
+                <Tooltip contentStyle={tooltipStyle} />
+                <Bar dataKey="total" radius={[6, 6, 0, 0]}>
+                  {daily.map((_, i) => (
+                    <Cell
+                      key={i}
+                      fill={i % 2 === 0 ? "#22c55e" : "#16a34a"}
+                    />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
           </div>
+        )}
 
-          <h3>Monthly Spend</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={monthly}>
-              <XAxis dataKey="month" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="total" radius={[6, 6, 0, 0]}>
-                {monthly.map((_, index) => (
-                  <Cell
-                    key={index}
-                    fill={CHART_COLORS[index % CHART_COLORS.length]}
-                  />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
+        {/* ================= USER ================= */}
+        {role === "USER" && (
+          <div className="dashboard-content">
+            <h2>📈 Your Daily Spend</h2>
 
-          <h3>Store-wise Spend</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={storeWise}>
-              <XAxis dataKey="store" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="total" radius={[6, 6, 0, 0]}>
-                {storeWise.map((_, index) => (
-                  <Cell
-                    key={index}
-                    fill={CHART_COLORS[index % CHART_COLORS.length]}
-                  />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-
-          <h3>Daily Spend</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={daily}>
-              <XAxis dataKey="date" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="total" radius={[6, 6, 0, 0]}>
-                {daily.map((_, index) => (
-                  <Cell
-                    key={index}
-                    fill={index % 2 === 0 ? "#22c55e" : "#16a34a"}
-                  />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      )}
-
-      {/* ================= USER ================= */}
-      {role === "USER" && (
-        <div style={{ padding: 20 }}>
-          <h2>📈 Your Daily Spend</h2>
-
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={daily}>
-              <XAxis dataKey="date" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="total" radius={[6, 6, 0, 0]}>
-                {daily.map((_, index) => (
-                  <Cell
-                    key={index}
-                    fill={index % 2 === 0 ? "#22c55e" : "#16a34a"}
-                  />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      )}
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={daily}>
+                <XAxis dataKey="date" stroke="var(--muted)" />
+                <YAxis stroke="var(--muted)" />
+                <Tooltip contentStyle={tooltipStyle} />
+                <Bar dataKey="total" radius={[6, 6, 0, 0]}>
+                  {daily.map((_, i) => (
+                    <Cell
+                      key={i}
+                      fill={i % 2 === 0 ? "#22c55e" : "#16a34a"}
+                    />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        )}
+      </div>
+      </Page>
     </>
   );
 }

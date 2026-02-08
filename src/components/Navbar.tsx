@@ -1,9 +1,19 @@
 import { Link, useNavigate } from "react-router-dom";
 import useDarkMode from "../hooks/useDarkMode";
+import { useEffect } from "react";
 
 export default function Navbar() {
   const navigate = useNavigate();
   const { theme, toggleTheme } = useDarkMode();
+
+  useEffect(() => {
+  const role = localStorage.getItem("role");
+  const accent =
+    role === "ADMIN" ? "admin" : role === "USER" ? "user" : "default";
+
+  document.documentElement.setAttribute("data-accent", accent);
+}, []);
+
 
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
@@ -38,9 +48,17 @@ export default function Navbar() {
         )}
 
         {token && role === "ADMIN" && (
-          <Link to="/dashboard" style={styles.link}>
-            Dashboard
-          </Link>
+          <>
+            <Link to="/dashboard" style={styles.link}>
+              Dashboard
+            </Link>
+            <Link to="/settings" style={styles.link}>
+              Settings
+            </Link>
+            <Link to="/activity" style={styles.link}>
+              Activity
+            </Link>
+          </>
         )}
 
         {token && (
@@ -65,15 +83,13 @@ const styles: Record<string, React.CSSProperties> = {
     right: 0,
     height: 64,
     padding: "0 24px",
-
     background: "var(--card-bg)",
     borderBottom: "1px solid var(--border)",
-
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
-
     zIndex: 1000,
+    transition: "var(--theme-transition)",
   },
 
   logo: {
@@ -116,7 +132,6 @@ const styles: Record<string, React.CSSProperties> = {
     fontWeight: 500,
   },
 };
-
 
 // import { Link, useNavigate } from "react-router-dom";
 // import useDarkMode  from "../hooks/useDarkMode";

@@ -121,13 +121,13 @@ button {
 }
 
 .total span {
-  color: var(--primary);
+  color: var(--accent);
 }
 
 .submit {
   width: 100%;
   padding: 14px 18px;
-background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+  background: linear-gradient(135deg, var(--accent), var(--primary-hover));
   color: #fff;
   font-size: 16px;
   font-weight: 600;

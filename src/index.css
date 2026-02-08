@@ -31,6 +31,48 @@ button {
   cursor: pointer;
 }
 
+/* ================= THEME TRANSITIONS ================= */
+
+html,
+body,
+#root {
+  background-color: var(--bg);
+  color: var(--text);
+  transition: var(--theme-transition);
+}
+
+/* Cards, panels, sections */
+.card,
+.upload-card,
+.bill-card,
+.dashboard-content,
+.analytics-preview,
+nav {
+  background-color: var(--card-bg);
+  color: var(--text);
+  border-color: var(--border);
+  box-shadow: var(--shadow);
+  transition: var(--theme-transition);
+}
+
+/* Inputs & buttons */
+input,
+select,
+textarea,
+button {
+  background-color: var(--input-bg);
+  color: var(--text);
+  border-color: var(--border);
+  transition: var(--theme-transition);
+}
+
+/* Links */
+a {
+  color: var(--text);
+  transition: color 0.25s ease;
+}
+
+
 
 /* :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;

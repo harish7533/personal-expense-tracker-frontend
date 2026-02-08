@@ -1,0 +1,28 @@
+.dashboard-page {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  padding-top: 64px; /* navbar height */
+}
+
+.dashboard-content {
+  padding: 24px;
+}
+
+.dashboard-page h2,
+.dashboard-page h3 {
+  color: var(--text);
+}
+
+.dashboard-page label {
+  color: var(--muted);
+}
+
+.dashboard-page input {
+  background: var(--input-bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin-left: 6px;
+}
