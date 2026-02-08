@@ -39,8 +39,7 @@ export default function Dashboard() {
   /* =========================
      THEME DETECTION
   ========================= */
-  const isDark =
-    document.documentElement.getAttribute("data-theme") === "dark";
+  const isDark = document.documentElement.getAttribute("data-theme") === "dark";
 
   const tooltipStyle = {
     backgroundColor: isDark ? "#020617" : "#ffffff",
@@ -90,7 +89,7 @@ export default function Dashboard() {
     if (from) params.from = from;
     if (to) params.to = to;
 
-    const dailyRes = await api.get("/bills/user/analytics/daily", {
+    const dailyRes = await api.get("/bills/admin/analytics/daily", {
       headers: { Authorization: `Bearer ${token}` },
       params,
     });
@@ -122,113 +121,146 @@ export default function Dashboard() {
     <>
       <Navbar />
       <Page>
-              <div className="dashboard-page">
-        {/* ================= ADMIN ================= */}
-        {role === "ADMIN" && (
-          <div className="dashboard-content">
-            <h2>📊 Admin Dashboard</h2>
+        <div className="dashboard-page">
+          {/* ================= ADMIN ================= */}
+          {role === "ADMIN" && (
+            <div className="dashboard-content">
+              <h2>📊 Admin Dashboard</h2>
 
-            {/* Date Filters */}
-            <div className="dashboard-filters">
-              <label>
-                From:
-                <input
-                  type="date"
-                  value={from}
-                  onChange={(e) => setFrom(e.target.value)}
-                />
-              </label>
+              {/* Date Filters */}
+              <div className="dashboard-filters">
+                <label>
+                  From:
+                  <input
+                    type="date"
+                    value={from}
+                    onChange={(e) => setFrom(e.target.value)}
+                  />
+                </label>
 
-              <label>
-                To:
-                <input
-                  type="date"
-                  value={to}
-                  onChange={(e) => setTo(e.target.value)}
-                />
-              </label>
+                <label>
+                  To:
+                  <input
+                    type="date"
+                    value={to}
+                    onChange={(e) => setTo(e.target.value)}
+                  />
+                </label>
 
-              <button className="submit" onClick={loadAnalytics} style={{ width: 100, marginTop: 20 }}>
-                Apply
-              </button>
+                <button
+                  className="submit"
+                  onClick={loadAnalytics}
+                  style={{ width: 100, marginTop: 20 }}
+                >
+                  Apply
+                </button>
+              </div>
+
+              <h3>Monthly Spend</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={monthly}>
+                  <XAxis dataKey="month" stroke="var(--muted)" />
+                  <YAxis stroke="var(--muted)" />
+                  <Tooltip contentStyle={tooltipStyle} />
+                  <Bar dataKey="total" radius={[6, 6, 0, 0]}>
+                    {monthly.map((_, i) => (
+                      <Cell
+                        key={i}
+                        fill={CHART_COLORS[i % CHART_COLORS.length]}
+                      />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+
+              <h3>Store-wise Spend</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={storeWise}>
+                  <XAxis dataKey="store" stroke="var(--muted)" />
+                  <YAxis stroke="var(--muted)" />
+                  <Tooltip contentStyle={tooltipStyle} />
+                  <Bar dataKey="total" radius={[6, 6, 0, 0]}>
+                    {storeWise.map((_, i) => (
+                      <Cell
+                        key={i}
+                        fill={CHART_COLORS[i % CHART_COLORS.length]}
+                      />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+
+              <h3>Daily Spend</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={daily}>
+                  <XAxis dataKey="date" stroke="var(--muted)" />
+                  <YAxis stroke="var(--muted)" />
+                  <Tooltip contentStyle={tooltipStyle} />
+                  <Bar dataKey="total" radius={[6, 6, 0, 0]}>
+                    {daily.map((_, i) => (
+                      <Cell
+                        key={i}
+                        fill={i % 2 === 0 ? "#22c55e" : "#16a34a"}
+                      />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
             </div>
+          )}
 
-            <h3>Monthly Spend</h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={monthly}>
-                <XAxis dataKey="month" stroke="var(--muted)" />
-                <YAxis stroke="var(--muted)" />
-                <Tooltip contentStyle={tooltipStyle} />
-                <Bar dataKey="total" radius={[6, 6, 0, 0]}>
-                  {monthly.map((_, i) => (
-                    <Cell
-                      key={i}
-                      fill={CHART_COLORS[i % CHART_COLORS.length]}
-                    />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
+          {/* ================= USER ================= */}
+          {role === "USER" && (
+            <div className="dashboard-content">
+              <h2>📈 Your Daily Spend</h2>
 
-            <h3>Store-wise Spend</h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={storeWise}>
-                <XAxis dataKey="store" stroke="var(--muted)" />
-                <YAxis stroke="var(--muted)" />
-                <Tooltip contentStyle={tooltipStyle} />
-                <Bar dataKey="total" radius={[6, 6, 0, 0]}>
-                  {storeWise.map((_, i) => (
-                    <Cell
-                      key={i}
-                      fill={CHART_COLORS[i % CHART_COLORS.length]}
-                    />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
+              {/* Date Filters */}
+              <div className="dashboard-filters">
+                <label>
+                  From:
+                  <input
+                    type="date"
+                    value={from}
+                    onChange={(e) => setFrom(e.target.value)}
+                  />
+                </label>
 
-            <h3>Daily Spend</h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={daily}>
-                <XAxis dataKey="date" stroke="var(--muted)" />
-                <YAxis stroke="var(--muted)" />
-                <Tooltip contentStyle={tooltipStyle} />
-                <Bar dataKey="total" radius={[6, 6, 0, 0]}>
-                  {daily.map((_, i) => (
-                    <Cell
-                      key={i}
-                      fill={i % 2 === 0 ? "#22c55e" : "#16a34a"}
-                    />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        )}
+                <label>
+                  To:
+                  <input
+                    type="date"
+                    value={to}
+                    onChange={(e) => setTo(e.target.value)}
+                  />
+                </label>
 
-        {/* ================= USER ================= */}
-        {role === "USER" && (
-          <div className="dashboard-content">
-            <h2>📈 Your Daily Spend</h2>
+                <button
+                  className="submit"
+                  onClick={loadAnalytics}
+                  style={{ width: 100, marginTop: 20 }}
+                >
+                  Apply
+                </button>
+              </div>
 
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={daily}>
-                <XAxis dataKey="date" stroke="var(--muted)" />
-                <YAxis stroke="var(--muted)" />
-                <Tooltip contentStyle={tooltipStyle} />
-                <Bar dataKey="total" radius={[6, 6, 0, 0]}>
-                  {daily.map((_, i) => (
-                    <Cell
-                      key={i}
-                      fill={i % 2 === 0 ? "#22c55e" : "#16a34a"}
-                    />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        )}
-      </div>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={daily}>
+                  <XAxis dataKey="date" stroke="var(--muted)" />
+                  <YAxis stroke="var(--muted)" />
+                  <Tooltip contentStyle={tooltipStyle} />
+                  <Bar dataKey="total" radius={[6, 6, 0, 0]}>
+                    {daily.map((_, i) => (
+                      <Cell
+                        key={i}
+                        fill={i % 2 === 0 ? "#22c55e" : "#16a34a"}
+                      />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          )}
+        </div>
       </Page>
     </>
   );

@@ -2,6 +2,7 @@
 import { useEffect } from "react";
 import toast from "react-hot-toast";
 import useActivities from "../hooks/useActivities";
+import Navbar from "../components/Navbar";
 
 type Activity = {
   id: string;
@@ -60,28 +61,31 @@ export default function Activity() {
   //   );
 
   return (
-    <div style={styles.container}>
-      <h4>🔔 Activity</h4>
+    <>
+      <Navbar />
+      <div style={styles.container}>
+        <h4>🔔 Activity</h4>
 
-      {activities.length === 0 ? (
-        <p style={styles.empty}>No activities yet 📝</p>
-      ) : (
-        activities.map((a) => (
-          <div key={a.id} style={styles.card}>
-            <span>{a.message}</span>
-            <small style={{ opacity: 0.6 }}>
-              {new Date(a.created_at).toLocaleString()}
-            </small>
-            <button
-              onClick={() => removeActivity(a.id)}
-              style={styles.closeBtn}
-            >
-              ✖
-            </button>
-          </div>
-        ))
-      )}
-    </div>
+        {activities.length === 0 ? (
+          <p style={styles.empty}>No activities yet 📝</p>
+        ) : (
+          activities.map((a) => (
+            <div key={a.id} style={styles.card}>
+              <span>{a.message}</span>
+              <small style={{ opacity: 0.6 }}>
+                {new Date(a.created_at).toLocaleString()}
+              </small>
+              <button
+                onClick={() => removeActivity(a.id)}
+                style={styles.closeBtn}
+              >
+                ✖
+              </button>
+            </div>
+          ))
+        )}
+      </div>
+    </>
   );
 }
 
