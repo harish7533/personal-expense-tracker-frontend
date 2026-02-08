@@ -15,7 +15,7 @@ import Navbar from "../components/Navbar";
 import "../styles/DashBoard.css";
 import Page from "../components/Page";
 import { useAuth } from "../hooks/useAuth";
-import DashboardSkeleton from "../components/skeletons/DashBoardSkeleton";
+import DashboardSkeleton from "../components/skeletons/DashboardSkeleton";
 
 export default function Dashboard() {
   const { user, loading } = useAuth();
