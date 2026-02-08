@@ -92,14 +92,7 @@ function App() {
         />
 
         {/* Fallback */}
-        <Route
-          path="*"
-          element={
-            <AuthRedirect>
-              <LandingPage />
-            </AuthRedirect>
-          }
-        />
+        <Route path="*" element={<LandingPage />} />
       </Routes>
     </BrowserRouter>
   );
