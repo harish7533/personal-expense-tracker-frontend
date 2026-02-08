@@ -38,7 +38,7 @@ export default function CreateBill() {
   useEffect(() => {
     getStores()
       .then((stores) =>
-        setStoreOptions(stores.length ? stores : DEFAULT_STORES)
+        setStoreOptions(stores.length ? stores : DEFAULT_STORES),
       )
       .catch(() => setStoreOptions(DEFAULT_STORES));
   }, []);
@@ -78,13 +78,12 @@ export default function CreateBill() {
   useEffect(() => {
     getCategories()
       .then((cats: string[]) =>
-        setCategoryOptions(cats.length ? cats : DEFAULT_CATEGORIES)
+        setCategoryOptions(cats.length ? cats : DEFAULT_CATEGORIES),
       )
       .catch(() => setCategoryOptions(DEFAULT_CATEGORIES));
   }, []);
 
-  const finalCategory =
-    category === "Other" ? customCategory.trim() : category;
+  const finalCategory = category === "Other" ? customCategory.trim() : category;
 
   const addCustomCategory = async () => {
     const name = customCategory.trim().toUpperCase();
@@ -138,7 +137,7 @@ export default function CreateBill() {
 
   const totalAmount = useMemo(
     () => items.reduce((sum, i) => sum + (i.amount || 0), 0),
-    [items]
+    [items],
   );
 
   /* ================= DATE ================= */
@@ -151,7 +150,7 @@ export default function CreateBill() {
       now.getHours(),
       now.getMinutes(),
       now.getSeconds(),
-      now.getMilliseconds()
+      now.getMilliseconds(),
     );
 
     return selected.toISOString();
@@ -193,7 +192,7 @@ export default function CreateBill() {
       await api.post("/bills/create", payload);
 
       toast.success(
-        `🧾 Bill saved for ${finalStoreName} (₹${totalAmount.toFixed(2)})`
+        `🧾 Bill saved for ${finalStoreName} (₹${totalAmount.toFixed(2)})`,
       );
 
       setItems([]);
@@ -219,7 +218,7 @@ export default function CreateBill() {
             qty: i.qty,
             rate: i.price,
             amount: i.amount,
-          }))
+          })),
         )
       : null;
 
@@ -272,8 +271,20 @@ export default function CreateBill() {
             onChange={(e) => setBillDate(e.target.value)}
           />
 
+          <p className="date-preview">
+            {" "}
+            🕒{" "}
+            {new Date(buildDateTime(billDate)).toLocaleString("en-IN", {
+              dateStyle: "medium",
+              timeStyle: "short",
+            })}{" "}
+          </p>
+
           {/* Category */}
-          <select value={category} onChange={(e) => setCategory(e.target.value)}>
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+          >
             <option value="">Select Type</option>
             {categoryOptions.map((c) => (
               <option key={c} value={c}>
@@ -330,7 +341,7 @@ export default function CreateBill() {
             ))}
           </div>
 
-          <button type="button" onClick={addItem}>
+          <button type="button" onClick={addItem} className="add">
             ➕ Add Item
           </button>
 
@@ -340,9 +351,11 @@ export default function CreateBill() {
 
           <button
             type="button"
-            disabled={loading}
+            className={`submit ${loading ? "loading" : ""}`}
+            disabled={!finalStoreName || items.length === 0 && !loading}
             onClick={submitBill}
           >
+            {" "}
             {loading ? "Saving..." : "Save Bill"}
           </button>
         </form>
