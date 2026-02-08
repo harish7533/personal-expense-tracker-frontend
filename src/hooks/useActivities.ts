@@ -15,18 +15,14 @@ export default function useActivities() {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
-  const { user, token } = useAuth(); // dynamic auth instead of localStorage
+  const { user } = useAuth(); // dynamic auth instead of localStorage
 
   useEffect(() => {    
     const fetchActivities = async () => {
       try {
         setLoading(true);
 
-        const res = await api.get(`/activities/user/${user?.id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const res = await api.get(`/activities/user/${user?.id}`);
 
         setActivities(res.data || []);
       } catch (err: any) {
@@ -42,7 +38,7 @@ export default function useActivities() {
     // Optional: poll every 30 seconds for new activities
     const interval = setInterval(fetchActivities, 30000);
     return () => clearInterval(interval);
-  }, [user, token]);
+  }, [user?.id]); // refetch if user changes
 
   const removeActivity = (id: string) =>
     setActivities((prev) => prev.filter((a) => a.id !== id));
