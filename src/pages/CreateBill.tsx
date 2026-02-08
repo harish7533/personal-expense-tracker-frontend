@@ -119,6 +119,8 @@ export default function CreateBill() {
         hsnc: null,
         verified: true,
       })),
+      discountAmount: 50,
+      taxAmount: 18,
       source: "MANUAL",
       billDate: buildDateTime(billDate),
       createdAt: buildDateTime(billDate),
@@ -142,7 +144,7 @@ export default function CreateBill() {
       setBillDate(today);
 
       setTimeout(() => setShowToast(false), 3000);
-      toast.success("Bill created successfully");
+      toast.success(`Bill created successfully for ${finalStoreName} (₹${totalAmount})`);
     } catch (err) {
       console.error("Failed to create bill", err);
     } finally {

@@ -329,6 +329,7 @@ button {
 .analytics-preview {
   position: sticky;
   top: 90px;
+  left: 300px;
   min-height: 140px;
   width: 260px;
 
