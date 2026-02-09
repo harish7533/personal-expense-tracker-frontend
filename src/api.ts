@@ -20,6 +20,7 @@ api.interceptors.response.use(
           message: "⚠️ Session expired. Please log in again.",
           type: "error",
           autoDismiss: false,
+          duration: 5000,
         });
       }
     }

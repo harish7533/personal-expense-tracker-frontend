@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import api from "../api";
-import { useLocation, useNavigate } from "react-router-dom";
 import type { AxiosError } from "axios";
 import { toast } from "react-hot-toast/headless";
 import { useBanner } from "../hooks/useBanner";
@@ -13,12 +12,7 @@ export default function Login() {
   const [error, setError] = useState("");
 
   const { setUser } = useAuth();
-
-  const navigate = useNavigate();
-  const location = useLocation();
   const { clear } = useBanner();
-
-  const from = location.state?.from || "/dashboard";
 
   const handleLogin = async () => {
     setError("");
@@ -34,7 +28,10 @@ export default function Login() {
 
       clear(); // ✅ Reset session expired state on successful login
       toast.success("Welcome back 👋");
-      navigate(from, { replace: true });
+      // Navigate to last attempted page or dashboard
+      const locationState = window.history.state?.usr?.from;
+      const redirectTo = locationState || "/dashboard";
+      window.location.href = redirectTo;
     } catch (err: any) {
       console.error("LOGIN ERROR:", err);
 

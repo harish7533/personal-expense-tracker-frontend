@@ -1,9 +1,7 @@
 import { Navigate, useLocation } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth, type Role } from "../hooks/useAuth";
 import type { JSX } from "react";
 import AuthSkeleton from "./skeletons/AuthSkeleton";
-
-type Role = "ADMIN" | "USER";
 
 interface ProtectedRouteProps {
   children: JSX.Element;
@@ -15,13 +13,10 @@ export default function ProtectedRoute({
   allowedRoles,
 }: ProtectedRouteProps) {
   const { user, loading } = useAuth();
-
   const location = useLocation();
 
   // ⏳ Still checking auth (important)
-  if (loading) {
-    return <AuthSkeleton />;
-  }
+  if (loading) return <AuthSkeleton />;
 
   // 🔐 Not logged in → go to login
   if (!user) {
@@ -29,7 +24,7 @@ export default function ProtectedRoute({
   }
 
   // 🚫 Role not allowed
-  if (allowedRoles && !allowedRoles.includes(user.role as Role)) {
+  if (allowedRoles && !allowedRoles.includes(user?.role as Role)) {
     return <Navigate to="/unauthorized" replace />;
   }
 

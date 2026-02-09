@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { AxiosError } from "axios";
 import api from "../api";
 import toast from "react-hot-toast";
@@ -10,7 +9,6 @@ export default function Register() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
-  const navigate = useNavigate();
 
   const { user, setUser } = useAuth();
 
@@ -25,7 +23,7 @@ export default function Register() {
       // Immediately fetch current user
       const meRes = await api.get("/auth/me", { withCredentials: true });
       setUser(meRes.data); // set in useAuth
-      navigate("/dashboard");
+      window.location.href = "/dashboard";
     } catch (err: unknown) {
       const axiosError = err as AxiosError<{ message: string }>;
       setError(
