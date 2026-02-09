@@ -64,7 +64,11 @@ export default function Navbar() {
             Logout
           </button>
         ) : (
-          <Link to="/login">Login</Link>
+          <div style={styles.links}>
+            <Link to="/login" style={styles.link}>
+              Login
+            </Link>
+          </div>
         )}
       </div>
 

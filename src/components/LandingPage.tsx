@@ -81,7 +81,7 @@ export default function LandingPage() {
 
         {/* FOOTER */}
         <footer style={styles.footer}>
-          <p>© {new Date().getFullYear()} Bill Analyzer</p>
+          <p>© {new Date().getFullYear()} Expense Tracker</p>
           <p>Built with ❤️ using React + Node.js</p>
         </footer>
       </div>

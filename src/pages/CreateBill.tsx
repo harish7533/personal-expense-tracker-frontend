@@ -240,6 +240,7 @@ export default function CreateBill() {
               setStoreOption(e.target.value);
               if (e.target.value !== "Other") setCustomStoreName("");
             }}
+            style={{ marginTop: 10 }}
           >
             <option value="">Select Store</option>
             {storeOptions.map((s) => (
@@ -257,7 +258,7 @@ export default function CreateBill() {
                 value={customStoreName}
                 onChange={(e) => setCustomStoreName(e.target.value)}
               />
-              <button type="button" onClick={addCustomStore}>
+              <button type="submit" onClick={addCustomStore} style={{ width: 100, marginTop: 10}}>
                 Add
               </button>
             </div>
@@ -280,6 +281,7 @@ export default function CreateBill() {
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
+            style={{ marginTop: 10 }}
           >
             <option value="">Select Type</option>
             {categoryOptions.map((c) => (
@@ -316,7 +318,7 @@ export default function CreateBill() {
             }}
           /> */}
 
-          <div style={{ marginBottom: 20 }}>
+          <div style={{ marginBottom: 20, marginTop: 10 }}>
             <label
               style={{ fontWeight: 600, marginBottom: 6, display: "block" }}
             >

@@ -7,8 +7,6 @@ import PageWrapper from "../components/layouts/PageWrapper";
 export default function Settings() {
   const { user, loading } = useAuth();
   const [theme] = useState("light");
-  console.log("user from Settings:", user);
-  console.log("username from Settings:", user?.username);
 
   return (
     <PageWrapper>
@@ -61,7 +59,7 @@ const styles: Record<string, React.CSSProperties> = {
     maxWidth: 800,
     margin: "auto",
     fontFamily: "'Inter', sans-serif",
-    color: "var(--text-primary)",
+    color: `var(--text)`,
   },
   card: {
     padding: 20,
@@ -69,5 +67,6 @@ const styles: Record<string, React.CSSProperties> = {
     borderRadius: 12,
     background: "var(--card-bg)",
     boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+    color: `var(--text)`,
   },
 };
