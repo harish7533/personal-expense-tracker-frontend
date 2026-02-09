@@ -16,6 +16,7 @@ import "../styles/DashBoard.css";
 import Page from "../components/Page";
 import { useAuth } from "../auth/AuthContext";
 import DashboardSkeleton from "../components/skeletons/DashboardSkeleton";
+import PageWrapper from "../components/layouts/PageWrapper";
 
 export default function Dashboard() {
   const { user, loading } = useAuth();
@@ -35,11 +36,6 @@ export default function Dashboard() {
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
   const [revealed, setRevealed] = useState(false);
-
-  /* =========================
-     LOADING STATE
-  ========================= */
-  if (loading) return <DashboardSkeleton />;
 
   if (!user) {
     return (
@@ -128,124 +124,130 @@ export default function Dashboard() {
      RENDER
   ========================= */
   return (
-    <>
-      <Navbar />
-      <Page>
-        <div className={`dashboard-page fade-in ${revealed ? "show" : ""}`}>
-          {/* ================= ADMIN ================= */}
-          {user.role === "ADMIN" && (
-            <div className="dashboard-content">
-              <h2>📊 Admin Dashboard</h2>
+    <PageWrapper>
+      {loading ? (
+        <DashboardSkeleton />
+      ) : (
+        <>
+          <Navbar />
+          <Page>
+            <div className={`dashboard-page fade-in ${revealed ? "show" : ""}`}>
+              {/* ================= ADMIN ================= */}
+              {user.role === "ADMIN" && (
+                <div className="dashboard-content">
+                  <h2>📊 Admin Dashboard</h2>
 
-              {/* Filters */}
-              <div className="dashboard-filters">
-                <label>
-                  From:
-                  <input
-                    type="date"
-                    value={from}
-                    onChange={(e) => setFrom(e.target.value)}
-                  />
-                </label>
-
-                <label>
-                  To:
-                  <input
-                    type="date"
-                    value={to}
-                    onChange={(e) => setTo(e.target.value)}
-                  />
-                </label>
-
-                <button className="submit" onClick={loadAnalytics}>
-                  Apply
-                </button>
-              </div>
-
-              <h3>Monthly Spend</h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={monthly}>
-                  <XAxis dataKey="month" stroke="var(--muted)" />
-                  <YAxis stroke="var(--muted)" />
-                  <Tooltip contentStyle={tooltipStyle} />
-                  <Bar dataKey="total" radius={[6, 6, 0, 0]}>
-                    {monthly.map((_, i) => (
-                      <Cell
-                        key={i}
-                        fill={CHART_COLORS[i % CHART_COLORS.length]}
+                  {/* Filters */}
+                  <div className="dashboard-filters">
+                    <label>
+                      From:
+                      <input
+                        type="date"
+                        value={from}
+                        onChange={(e) => setFrom(e.target.value)}
                       />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
+                    </label>
 
-              <h3>Store-wise Spend</h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={storeWise}>
-                  <XAxis dataKey="store" stroke="var(--muted)" />
-                  <YAxis stroke="var(--muted)" />
-                  <Tooltip contentStyle={tooltipStyle} />
-                  <Bar dataKey="total" radius={[6, 6, 0, 0]}>
-                    {storeWise.map((_, i) => (
-                      <Cell
-                        key={i}
-                        fill={CHART_COLORS[i % CHART_COLORS.length]}
+                    <label>
+                      To:
+                      <input
+                        type="date"
+                        value={to}
+                        onChange={(e) => setTo(e.target.value)}
                       />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
+                    </label>
+
+                    <button className="submit" onClick={loadAnalytics}>
+                      Apply
+                    </button>
+                  </div>
+
+                  <h3>Monthly Spend</h3>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <BarChart data={monthly}>
+                      <XAxis dataKey="month" stroke="var(--muted)" />
+                      <YAxis stroke="var(--muted)" />
+                      <Tooltip contentStyle={tooltipStyle} />
+                      <Bar dataKey="total" radius={[6, 6, 0, 0]}>
+                        {monthly.map((_, i) => (
+                          <Cell
+                            key={i}
+                            fill={CHART_COLORS[i % CHART_COLORS.length]}
+                          />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+
+                  <h3>Store-wise Spend</h3>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <BarChart data={storeWise}>
+                      <XAxis dataKey="store" stroke="var(--muted)" />
+                      <YAxis stroke="var(--muted)" />
+                      <Tooltip contentStyle={tooltipStyle} />
+                      <Bar dataKey="total" radius={[6, 6, 0, 0]}>
+                        {storeWise.map((_, i) => (
+                          <Cell
+                            key={i}
+                            fill={CHART_COLORS[i % CHART_COLORS.length]}
+                          />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              )}
+
+              {/* ================= USER ================= */}
+              {user.role === "USER" && (
+                <div className="dashboard-content">
+                  <h2>📈 Your Daily Spend</h2>
+
+                  <div className="dashboard-filters">
+                    <label>
+                      From:
+                      <input
+                        type="date"
+                        value={from}
+                        onChange={(e) => setFrom(e.target.value)}
+                      />
+                    </label>
+
+                    <label>
+                      To:
+                      <input
+                        type="date"
+                        value={to}
+                        onChange={(e) => setTo(e.target.value)}
+                      />
+                    </label>
+
+                    <button className="submit" onClick={loadAnalytics}>
+                      Apply
+                    </button>
+                  </div>
+
+                  <ResponsiveContainer width="100%" height={300}>
+                    <BarChart data={daily}>
+                      <XAxis dataKey="date" stroke="var(--muted)" />
+                      <YAxis stroke="var(--muted)" />
+                      <Tooltip contentStyle={tooltipStyle} />
+                      <Bar dataKey="total" radius={[6, 6, 0, 0]}>
+                        {daily.map((_, i) => (
+                          <Cell
+                            key={i}
+                            fill={i % 2 === 0 ? "#22c55e" : "#16a34a"}
+                          />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              )}
             </div>
-          )}
-
-          {/* ================= USER ================= */}
-          {user.role === "USER" && (
-            <div className="dashboard-content">
-              <h2>📈 Your Daily Spend</h2>
-
-              <div className="dashboard-filters">
-                <label>
-                  From:
-                  <input
-                    type="date"
-                    value={from}
-                    onChange={(e) => setFrom(e.target.value)}
-                  />
-                </label>
-
-                <label>
-                  To:
-                  <input
-                    type="date"
-                    value={to}
-                    onChange={(e) => setTo(e.target.value)}
-                  />
-                </label>
-
-                <button className="submit" onClick={loadAnalytics}>
-                  Apply
-                </button>
-              </div>
-
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={daily}>
-                  <XAxis dataKey="date" stroke="var(--muted)" />
-                  <YAxis stroke="var(--muted)" />
-                  <Tooltip contentStyle={tooltipStyle} />
-                  <Bar dataKey="total" radius={[6, 6, 0, 0]}>
-                    {daily.map((_, i) => (
-                      <Cell
-                        key={i}
-                        fill={i % 2 === 0 ? "#22c55e" : "#16a34a"}
-                      />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          )}
-        </div>
-      </Page>
-    </>
+          </Page>
+        </>
+      )}
+    </PageWrapper>
   );
 }

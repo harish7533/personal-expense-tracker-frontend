@@ -4,6 +4,7 @@ import useActivities from "../hooks/useActivities";
 import Navbar from "../components/Navbar";
 import { useAuth } from "../auth/AuthContext";
 import ActivitySkeleton from "../components/skeletons/ActivitySkeleton";
+import PageWrapper from "../components/layouts/PageWrapper";
 
 type Activity = {
   id: string;
@@ -34,9 +35,6 @@ export default function Activity() {
     }
   }, [activities, user]);
 
-  /* ================= UI STATES ================= */
-  if (loading) return <ActivitySkeleton />;
-
   if (!user)
     return (
       <p style={{ textAlign: "center", marginTop: 40 }}>
@@ -45,31 +43,37 @@ export default function Activity() {
     );
 
   return (
-    <>
-      <Navbar />
-      <div style={styles.container}>
-        <h4>🔔 Activity</h4>
+    <PageWrapper>
+      {loading ? (
+        <ActivitySkeleton />
+      ) : (
+        <>
+          <Navbar />
+          <div style={styles.container}>
+            <h4>🔔 Activity</h4>
 
-        {activities.length === 0 ? (
-          <p style={styles.empty}>No activities yet 📝</p>
-        ) : (
-          activities.map((a) => (
-            <div key={a.id} style={styles.card}>
-              <span>{a.message}</span>
-              <small style={{ opacity: 0.6 }}>
-                {new Date(a.created_at).toLocaleString()}
-              </small>
-              <button
-                onClick={() => removeActivity(a.id)}
-                style={styles.closeBtn}
-              >
-                ✖
-              </button>
-            </div>
-          ))
-        )}
-      </div>
-    </>
+            {activities.length === 0 ? (
+              <p style={styles.empty}>No activities yet 📝</p>
+            ) : (
+              activities.map((a) => (
+                <div key={a.id} style={styles.card}>
+                  <span>{a.message}</span>
+                  <small style={{ opacity: 0.6 }}>
+                    {new Date(a.created_at).toLocaleString()}
+                  </small>
+                  <button
+                    onClick={() => removeActivity(a.id)}
+                    style={styles.closeBtn}
+                  >
+                    ✖
+                  </button>
+                </div>
+              ))
+            )}
+          </div>
+        </>
+      )}
+    </PageWrapper>
   );
 }
 

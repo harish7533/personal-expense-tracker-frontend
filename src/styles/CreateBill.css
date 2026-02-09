@@ -294,6 +294,18 @@ button {
   white-space: nowrap;
 }
 
+textarea,
+input {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+textarea:focus,
+input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 25%, transparent);
+}
+
+
 /* .dark {
   background-color: #0f172a;
   color: #e5e7eb;

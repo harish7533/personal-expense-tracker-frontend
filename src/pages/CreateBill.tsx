@@ -273,11 +273,7 @@ export default function CreateBill() {
 
           <p className="date-preview">
             {" "}
-            🕒{" "}
-            {new Date(buildDateTime(billDate)).toLocaleString("en-IN", {
-              dateStyle: "medium",
-              timeStyle: "short",
-            })}{" "}
+            🕒 {new Date(buildDateTime(billDate)).toLocaleString("en-IN")}{" "}
           </p>
 
           {/* Category */}
@@ -308,11 +304,41 @@ export default function CreateBill() {
           )}
 
           {/* Description */}
-          <textarea
+          {/* <textarea
             placeholder="Bill description (optional)"
             value={description}
+            rows={6}
             onChange={(e) => setDescription(e.target.value)}
-          />
+            style={{
+              ...textAreaInputStyle,
+              resize: "vertical",
+              lineHeight: 1.5
+            }}
+          /> */}
+
+          <div style={{ marginBottom: 20 }}>
+            <label
+              style={{ fontWeight: 600, marginBottom: 6, display: "block" }}
+            >
+              Bill Text
+            </label>
+
+            <textarea
+              rows={6}
+              placeholder="Paste bill content here…"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              style={{
+                ...textAreaInputStyle,
+                resize: "vertical",
+                lineHeight: 1.5,
+              }}
+            />
+
+            <p style={{ fontSize: 12, opacity: 0.7, marginTop: 6 }}>
+              You can paste OCR output or manually typed bill data.
+            </p>
+          </div>
 
           {/* Items */}
           <div className="items">
@@ -334,7 +360,11 @@ export default function CreateBill() {
                   onChange={(e) => updateItem(i, "price", e.target.value)}
                 />
                 <input type="number" value={item.amount} disabled />
-                <button type="button" onClick={() => removeItem(i)} className="remove">
+                <button
+                  type="button"
+                  onClick={() => removeItem(i)}
+                  className="remove"
+                >
                   ✕
                 </button>
               </div>
@@ -352,7 +382,7 @@ export default function CreateBill() {
           <button
             type="button"
             className={`submit ${loading ? "loading" : ""}`}
-            disabled={!finalStoreName || items.length === 0 && !loading}
+            disabled={!finalStoreName || (items.length === 0 && !loading)}
             onClick={submitBill}
           >
             {" "}
@@ -371,3 +401,14 @@ export default function CreateBill() {
     </>
   );
 }
+
+const textAreaInputStyle: React.CSSProperties = {
+  width: "100%",
+  padding: "12px 14px",
+  borderRadius: 10,
+  border: "1px solid var(--border)",
+  background: "var(--card-bg)",
+  color: "var(--text)",
+  fontSize: 14,
+  outline: "none",
+};
