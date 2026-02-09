@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable react-hooks/set-state-in-effect */
+/* hooks/useAuth.ts */
 import { useEffect, useState } from "react";
 import api from "../api";
-import { useBanner } from "./useBanner";
 
 type Role = "ADMIN" | "USER";
-
 export interface AuthUser {
   id: string;
   email: string;
@@ -14,26 +15,32 @@ export interface AuthUser {
 export function useAuth() {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
-  const { show, clear } = useBanner();
+  const [lastChecked, setLastChecked] = useState<number | null>(null);
+
+  const isRole = (value: any): value is Role => value === "ADMIN" || value === "USER";
 
   useEffect(() => {
     let alive = true;
+
+    // Only fetch if user has a cookie/session
+    const tokenExists = document.cookie.includes("sb-access-token");
+    if (!tokenExists) {
+      setUser(null);
+      setLoading(false);
+      return;
+    }
 
     api
       .get("/auth/me", { withCredentials: true })
       .then((res) => {
         if (!alive) return;
-        setUser(res.data);
-        clear(); // Clear any existing banners on successful auth check
+        const data = res.data;
+        if (!isRole(data.role)) throw new Error("Invalid role from server");
+        setUser(data);
+        setLastChecked(Date.now());
       })
-      .catch((err) => {
-        if (!alive) return;
-
-        setUser(null);
-
-        if (err.response?.status === 401) {
-          show("session-expired")
-        }
+      .catch(() => {
+        if (alive) setUser(null);
       })
       .finally(() => {
         if (alive) setLoading(false);
@@ -42,7 +49,7 @@ export function useAuth() {
     return () => {
       alive = false;
     };
-  }, [show, clear]);
+  }, []);
 
-  return { user, loading };
+  return { user, loading, lastChecked, setUser };
 }
