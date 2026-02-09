@@ -21,6 +21,7 @@ export function useAuth() {
 
   useEffect(() => {
     let alive = true;
+    setLoading(true);
 
     // Only fetch if user has a cookie/session
     const tokenExists = document.cookie.includes("sb-access-token");

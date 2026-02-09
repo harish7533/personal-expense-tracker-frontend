@@ -18,7 +18,7 @@ export default function Login() {
   const location = useLocation();
   const { clear } = useBanner();
 
-  const from = (location.state as any)?.from || "/dashboard";
+  const from = location.state?.from || "/dashboard";
 
   const handleLogin = async () => {
     setError("");
@@ -31,7 +31,6 @@ export default function Login() {
       );
 
       setUser(res?.data); // <-- set user in useAuth
-      navigate(from); // restore last page
 
       clear(); // ✅ Reset session expired state on successful login
       toast.success("Welcome back 👋");
