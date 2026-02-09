@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AxiosError } from "axios";
 import api from "../api";
+import toast from "react-hot-toast";
+import { useAuth } from "../hooks/useAuth";
 
 export default function Register() {
   const [email, setEmail] = useState("");
@@ -10,26 +12,34 @@ export default function Register() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  const { user, setUser } = useAuth();
+
   const submit = async () => {
     try {
-      const res = await api.post("/auth/register", {
-        email,
-        password,
-        confirmPassword,
-      });
+      const res = await api.post(
+        "/auth/register",
+        { email, password, confirmPassword },
+        { withCredentials: true },
+      );
 
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("role", res.data.role);
       localStorage.setItem("userId", res.data.userId);
 
-      if (res.data.role === "ADMIN") {
-        navigate("/admin/dashboard");
-      } else {
-        navigate("/dashboard");
-      }
+      // Immediately fetch current user
+      const meRes = await api.get("/auth/me", { withCredentials: true });
+      setUser(meRes.data); // set in useAuth
+      navigate("/dashboard");
     } catch (err: unknown) {
       const axiosError = err as AxiosError<{ message: string }>;
-      setError(axiosError.response?.data?.message || "Registration failed");
+      setError(
+        axiosError.response?.data?.message ||
+          `Registration failed: For user ${user}`,
+      );
+      toast.error(
+        axiosError.response?.data?.message ||
+          `Registration failed: For user ${user}`,
+      );
     }
   };
 
@@ -37,10 +47,7 @@ export default function Register() {
     <div style={{ maxWidth: 400, margin: "200px auto" }}>
       <h2>Create Account</h2>
 
-      <input 
-        placeholder="Email" 
-        onChange={(e) => setEmail(e.target.value)} 
-      />
+      <input placeholder="Email" onChange={(e) => setEmail(e.target.value)} />
       <br />
       <br />
       <input

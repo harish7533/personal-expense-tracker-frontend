@@ -5,11 +5,14 @@ import { useLocation, useNavigate } from "react-router-dom";
 import type { AxiosError } from "axios";
 import { toast } from "react-hot-toast/headless";
 import { useBanner } from "../hooks/useBanner";
+import { useAuth } from "../hooks/useAuth";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+
+  const { setUser } = useAuth();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -24,7 +27,7 @@ export default function Login() {
       const res = await api.post(
         "/auth/login",
         { email, password },
-        { headers: { "Content-Type": "application/json" } },
+        { withCredentials: true },
       );
 
       const { token, role, userId } = res.data;
@@ -32,6 +35,9 @@ export default function Login() {
       localStorage.setItem("token", token);
       localStorage.setItem("role", role);
       localStorage.setItem("userId", userId);
+
+      setUser(res?.data); // <-- set user in useAuth
+      navigate(from); // restore last page
 
       clear(); // ✅ Reset session expired state on successful login
       toast.success("Welcome back 👋");

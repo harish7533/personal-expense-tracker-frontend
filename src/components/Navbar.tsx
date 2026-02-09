@@ -28,7 +28,7 @@ export default function Navbar() {
     }
   };
 
-  if (loading || !user) return null;
+  if (loading) return null;
 
   return (
     <nav style={styles.nav}>
