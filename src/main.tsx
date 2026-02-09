@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
 import "./styles/theme.css";
-import "./styles/skeleton.css";
+import "./styles/Skeleton.css";
 import "./styles/page-skeletons.css";
 
 
