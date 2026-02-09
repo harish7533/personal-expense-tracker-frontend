@@ -3,27 +3,27 @@ import { AxiosError } from "axios";
 import api from "../api";
 import toast from "react-hot-toast";
 import { useAuth } from "../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
-  const { user, setUser } = useAuth();
+  const { user, login } = useAuth();
 
   const submit = async () => {
     try {
-      await api.post(
+      const res = await api.post(
         "/auth/register",
         { email, password, confirmPassword },
         { withCredentials: true },
       );
 
-      // Immediately fetch current user
-      const meRes = await api.get("/auth/me", { withCredentials: true });
-      setUser(meRes.data); // set in useAuth
-      window.location.href = "/dashboard";
+      login(res.data.user, res.data.token);
+      navigate("/dashboard", { replace: true });
     } catch (err: unknown) {
       const axiosError = err as AxiosError<{ message: string }>;
       setError(

@@ -2,14 +2,14 @@ import { Link, useNavigate } from "react-router-dom";
 import useDarkMode from "../hooks/useDarkMode";
 import { useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
-import api from "../api";
-import { useBanner } from "../hooks/useBanner";
+// import api from "../api";
+// import { useBanner } from "../hooks/useBanner";
 
 export default function Navbar() {
   const navigate = useNavigate();
   const { theme, toggleTheme } = useDarkMode();
-  const { user, loading } = useAuth();
-  const { show } = useBanner();
+  const { user, logout } = useAuth();
+  // const { show } = useBanner();
 
   useEffect(() => {
     const role = localStorage.getItem("role");
@@ -19,16 +19,16 @@ export default function Navbar() {
     document.documentElement.setAttribute("data-accent", accent);
   }, []);
 
-  const logout = async () => {
-    try {
-      await api.post("/auth/logout", {}, { withCredentials: true });
-      show("logged-out");
-    } finally {
-      navigate("/login", { replace: true });
-    }
-  };
+  // const logout = async () => {
+  //   try {
+  //     await api.post("/auth/logout", {}, { withCredentials: true });
+  //     show("logged-out");
+  //   } finally {
+  //     navigate("/login", { replace: true });
+  //   }
+  // };
 
-  if (loading) return null;
+  // if (loading) return null;
 
   return (
     <nav style={styles.nav}>
@@ -57,10 +57,14 @@ export default function Navbar() {
             <Link to="/activity" style={styles.link}>
               Activity
             </Link>
-            <button onClick={logout} style={styles.logout}>
-              Logout
-            </button>
           </>
+        )}
+        {user ? (
+          <button onClick={logout} style={styles.logout}>
+            Logout
+          </button>
+        ) : (
+          <Link to="/login">Login</Link>
         )}
       </div>
 

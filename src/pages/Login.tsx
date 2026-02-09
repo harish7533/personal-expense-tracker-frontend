@@ -5,13 +5,15 @@ import type { AxiosError } from "axios";
 import { toast } from "react-hot-toast/headless";
 // import { useBanner } from "../hooks/useBanner";
 import { useAuth } from "../hooks/useAuth";
+import { useNavigate } from "react-router";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const { setUser } = useAuth();
+  const { user, login } = useAuth();
+  const navigate = useNavigate();
   // const { clear } = useBanner();
 
   const handleLogin = async () => {
@@ -24,14 +26,10 @@ export default function Login() {
         { withCredentials: true },
       );
 
-      setUser(res?.data); // <-- set user in useAuth
-
       // clear(); // ✅ Reset session expired state on successful login
-      toast.success("Welcome back 👋");
-      // Navigate to last attempted page or dashboard
-      const locationState = window.history.state?.usr?.from;
-      const redirectTo = locationState || "/dashboard";
-      window.location.href = redirectTo;
+      toast.success(`Welcome back 👋 ${user}`);
+      login(res.data.user, res.data.token);
+      navigate("/dashboard", { replace: true});
     } catch (err: any) {
       console.error("LOGIN ERROR:", err);
 
