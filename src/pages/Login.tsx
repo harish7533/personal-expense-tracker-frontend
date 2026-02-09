@@ -3,7 +3,7 @@ import { useState } from "react";
 import api from "../api";
 import type { AxiosError } from "axios";
 import { toast } from "react-hot-toast/headless";
-import { useBanner } from "../hooks/useBanner";
+// import { useBanner } from "../hooks/useBanner";
 import { useAuth } from "../hooks/useAuth";
 
 export default function Login() {
@@ -12,7 +12,7 @@ export default function Login() {
   const [error, setError] = useState("");
 
   const { setUser } = useAuth();
-  const { clear } = useBanner();
+  // const { clear } = useBanner();
 
   const handleLogin = async () => {
     setError("");
@@ -26,7 +26,7 @@ export default function Login() {
 
       setUser(res?.data); // <-- set user in useAuth
 
-      clear(); // ✅ Reset session expired state on successful login
+      // clear(); // ✅ Reset session expired state on successful login
       toast.success("Welcome back 👋");
       // Navigate to last attempted page or dashboard
       const locationState = window.history.state?.usr?.from;
