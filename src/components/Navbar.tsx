@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import useDarkMode from "../hooks/useDarkMode";
 import { useEffect } from "react";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../auth/AuthContext";
 // import api from "../api";
 // import { useBanner } from "../hooks/useBanner";
 

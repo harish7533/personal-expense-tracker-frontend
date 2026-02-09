@@ -2,7 +2,7 @@ import { useState } from "react";
 import { AxiosError } from "axios";
 import api from "../api";
 import toast from "react-hot-toast";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../auth/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 export default function Register() {

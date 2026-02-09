@@ -4,7 +4,7 @@ import api from "../api";
 import type { AxiosError } from "axios";
 import { toast } from "react-hot-toast/headless";
 // import { useBanner } from "../hooks/useBanner";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../auth/AuthContext";
 import { useNavigate } from "react-router";
 
 export default function Login() {

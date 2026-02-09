@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import toast from "react-hot-toast";
 import useActivities from "../hooks/useActivities";
 import Navbar from "../components/Navbar";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../auth/AuthContext";
 import ActivitySkeleton from "../components/skeletons/ActivitySkeleton";
 
 type Activity = {
