@@ -30,12 +30,6 @@ export default function Login() {
         { withCredentials: true },
       );
 
-      const { token, role, userId } = res.data;
-
-      localStorage.setItem("token", token);
-      localStorage.setItem("role", role);
-      localStorage.setItem("userId", userId);
-
       setUser(res?.data); // <-- set user in useAuth
       navigate(from); // restore last page
 

@@ -16,15 +16,11 @@ export default function Register() {
 
   const submit = async () => {
     try {
-      const res = await api.post(
+      await api.post(
         "/auth/register",
         { email, password, confirmPassword },
         { withCredentials: true },
       );
-
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("role", res.data.role);
-      localStorage.setItem("userId", res.data.userId);
 
       // Immediately fetch current user
       const meRes = await api.get("/auth/me", { withCredentials: true });
