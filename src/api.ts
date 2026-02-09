@@ -7,14 +7,9 @@ const api = axios.create({
 
 api.interceptors.response.use(
   res => res,
-  async err => {
+  err => {
     if (err.response?.status === 401) {
-      try {
-        await api.post("/auth/refresh");
-        return api(err.config);
-      } catch {
-        window.location.href = "/login";
-      }
+      console.warn("Session expired or unauthenticated");
     }
     return Promise.reject(err);
   }

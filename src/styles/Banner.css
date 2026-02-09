@@ -1,0 +1,103 @@
+.app-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  z-index: 3000;
+  animation: slideDown 0.35s ease forwards;
+  border-bottom: 1px solid var(--border);
+}
+
+.app-banner.session-expired {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.app-banner.logged-out {
+  background: #ecfeff;
+  color: #155e75;
+}
+
+.app-banner .actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.app-banner .link {
+  text-decoration: none;
+  font-weight: 600;
+  color: inherit;
+}
+
+.app-banner .close {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 14px 20px;
+  font-weight: 500;
+  z-index: 9999;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  animation: slideDown 0.35s ease forwards;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+}
+
+/* Fade + slide up on exit */
+.banner.exit {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.banner.info {
+  background: linear-gradient(90deg, #16a34a, #22c55e);
+  color: white;
+}
+
+.banner.error {
+  background: linear-gradient(90deg, #dc2626, #ef4444);
+  color: white;
+}
+
+.banner .close {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}

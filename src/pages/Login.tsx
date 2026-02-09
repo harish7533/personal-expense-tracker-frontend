@@ -1,7 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import api from "../api";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import type { AxiosError } from "axios";
+import { toast } from "react-hot-toast/headless";
+import { useBanner } from "../hooks/useBanner";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -9,6 +12,10 @@ export default function Login() {
   const [error, setError] = useState("");
 
   const navigate = useNavigate();
+  const location = useLocation();
+  const { clear } = useBanner();
+
+  const from = (location.state as any)?.from || "/dashboard";
 
   const handleLogin = async () => {
     setError("");
@@ -26,14 +33,13 @@ export default function Login() {
       localStorage.setItem("role", role);
       localStorage.setItem("userId", userId);
 
-      // Role-based navigation
-      if (role === "ADMIN") {
-        navigate("/admin/dashboard", { replace: true });
-      } else {
-        navigate("/dashboard", { replace: true });
-      }
-    } catch (err: unknown) {
+      clear(); // ✅ Reset session expired state on successful login
+      toast.success("Welcome back 👋");
+      navigate(from, { replace: true });
+    } catch (err: any) {
       console.error("LOGIN ERROR:", err);
+
+      toast.error(err.response?.data?.message || "Login failed");
 
       const axiosError = err as AxiosError<{
         message?: string;

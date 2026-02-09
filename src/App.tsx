@@ -10,6 +10,7 @@ import LandingPage from "./components/LandingPage";
 import Settings from "./pages/Settings";
 import Activity from "./pages/Activity";
 import { Toaster } from "react-hot-toast";
+import Banner from "./components/Banner";
 
 function App() {
   return (
@@ -26,6 +27,9 @@ function App() {
           },
         }}
       />
+
+      <Banner />
+
       <Routes>
         {/* 🌍 Public Landing Page */}
         <Route path="/" element={<LandingPage />} />

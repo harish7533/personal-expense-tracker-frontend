@@ -3,11 +3,13 @@ import useDarkMode from "../hooks/useDarkMode";
 import { useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
 import api from "../api";
+import { useBanner } from "../hooks/useBanner";
 
 export default function Navbar() {
   const navigate = useNavigate();
   const { theme, toggleTheme } = useDarkMode();
   const { user, loading } = useAuth();
+  const { show } = useBanner();
 
   useEffect(() => {
     const role = localStorage.getItem("role");
@@ -20,6 +22,7 @@ export default function Navbar() {
   const logout = async () => {
     try {
       await api.post("/auth/logout", {}, { withCredentials: true });
+      show("logged-out");
     } finally {
       navigate("/login", { replace: true });
     }

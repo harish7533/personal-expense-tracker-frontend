@@ -1,9 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-// hooks/useAuth.ts
 import { useEffect, useState } from "react";
 import api from "../api";
+import { useBanner } from "./useBanner";
 
 type Role = "ADMIN" | "USER";
+
 export interface AuthUser {
   id: string;
   email: string;
@@ -14,8 +14,7 @@ export interface AuthUser {
 export function useAuth() {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
-  const isRole = (value: any): value is Role =>
-    value === "ADMIN" || value === "USER";
+  const { show, clear } = useBanner();
 
   useEffect(() => {
     let alive = true;
@@ -24,17 +23,17 @@ export function useAuth() {
       .get("/auth/me", { withCredentials: true })
       .then((res) => {
         if (!alive) return;
-
-        const data = res.data;
-
-        if (!isRole(data.role)) {
-          throw new Error("Invalid role from server");
-        }
-
-        setUser(data);
+        setUser(res.data);
+        clear(); // Clear any existing banners on successful auth check
       })
-      .catch(() => {
-        if (alive) setUser(null);
+      .catch((err) => {
+        if (!alive) return;
+
+        setUser(null);
+
+        if (err.response?.status === 401) {
+          show("session-expired")
+        }
       })
       .finally(() => {
         if (alive) setLoading(false);
@@ -43,7 +42,7 @@ export function useAuth() {
     return () => {
       alive = false;
     };
-  }, []);
+  }, [show, clear]);
 
   return { user, loading };
 }
