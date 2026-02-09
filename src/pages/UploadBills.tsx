@@ -3,6 +3,7 @@ import Navbar from "../components/Navbar";
 import api from "../api";
 import "../styles/UploadBills.css";
 import toast from "react-hot-toast";
+import PageWrapper from "../components/layouts/PageWrapper";
 
 export default function UploadBills() {
   const [file, setFile] = useState<File | null>(null);
@@ -61,62 +62,64 @@ export default function UploadBills() {
   };
 
   return (
-    <>
-      <Navbar />
+    <PageWrapper>
+      <>
+        <Navbar />
 
-      <div className="upload-page">
-        <div className="upload-card">
-          <h1>Upload Bill</h1>
+        <div className="upload-page">
+          <div className="upload-card">
+            <h1>Upload Bill</h1>
 
-          <p className="subtitle">
-            Upload a bill image to auto-extract items & analytics 📸
-          </p>
+            <p className="subtitle">
+              Upload a bill image to auto-extract items & analytics 📸
+            </p>
 
-          <label className="file-input">
+            <label className="file-input">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => setFile(e.target.files?.[0] || null)}
+              />
+              <span>{file ? file.name : "Choose bill image"}</span>
+            </label>
+
             <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => setFile(e.target.files?.[0] || null)}
+              type="date"
+              value={billDate}
+              style={{ marginBottom: 20 }}
+              onChange={(e) => setBillDate(e.target.value)}
             />
-            <span>{file ? file.name : "Choose bill image"}</span>
-          </label>
 
-          <input
-            type="date"
-            value={billDate}
-            style={{ marginBottom: 20 }}
-            onChange={(e) => setBillDate(e.target.value)}
-          />
+            <p className="date-preview">
+              🕒{" "}
+              {new Date(buildDateTime(billDate)).toLocaleString("en-IN", {
+                dateStyle: "medium",
+                timeStyle: "short",
+              })}
+            </p>
 
-          <p className="date-preview">
-            🕒{" "}
-            {new Date(buildDateTime(billDate)).toLocaleString("en-IN", {
-              dateStyle: "medium",
-              timeStyle: "short",
-            })}
-          </p>
+            <button
+              type="button"
+              className={`submit ${loading ? "loading" : ""}`}
+              disabled={!file || loading}
+              onClick={uploadBill}
+            >
+              {loading ? "Uploading..." : "Upload Bill"}
+            </button>
 
-          <button
-            type="button"
-            className={`submit ${loading ? "loading" : ""}`}
-            disabled={!file || loading}
-            onClick={uploadBill}
-          >
-            {loading ? "Uploading..." : "Upload Bill"}
-          </button>
+            <small className="note">
+              Uploaded bills are securely stored and appear in analytics
+              instantly.
+            </small>
 
-          <small className="note">
-            Uploaded bills are securely stored and appear in analytics
-            instantly.
-          </small>
-
-          {showToast && (
-            <div className={`showToast ${showToast.type}`}>
-              {showToast.type === "success" ? "✅" : "❌"} {showToast.msg}
-            </div>
-          )}
+            {showToast && (
+              <div className={`showToast ${showToast.type}`}>
+                {showToast.type === "success" ? "✅" : "❌"} {showToast.msg}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-    </>
+      </>
+    </PageWrapper>
   );
 }

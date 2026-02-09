@@ -14,12 +14,14 @@ interface AuthContextType {
   loading: boolean;
   login: (user: AuthUser, token: string) => void;
   logout: () => void;
+  token: string | null;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
+  const [authorizedToken, setAuthorizedToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   // 🔁 Hydrate once on app load
@@ -30,6 +32,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (storedUser && token) {
         setUser(JSON.parse(storedUser));
+        setAuthorizedToken(token);
       } else {
         setUser(null);
       }
@@ -54,7 +57,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, token: authorizedToken }}>
       {children}
     </AuthContext.Provider>
   );

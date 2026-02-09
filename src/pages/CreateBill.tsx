@@ -7,6 +7,7 @@ import Navbar from "../components/Navbar";
 import toast from "react-hot-toast";
 import { getStores, addStore } from "../api/stores";
 import { getCategories, addCategory } from "../api/catagories";
+import PageWrapper from "../components/layouts/PageWrapper";
 
 interface Item {
   name: string;
@@ -225,88 +226,94 @@ export default function CreateBill() {
   /* ================= UI ================= */
 
   return (
-    <>
-      <Navbar />
+    <PageWrapper>
+      <>
+        <Navbar />
 
-      <div className="bill-page">
-        <form className="bill-card" onSubmit={(e) => e.preventDefault()}>
-          <h1>Create Bill</h1>
-          <p className="subtitle">Manually add your bill details</p>
+        <div className="bill-page">
+          <form className="bill-card" onSubmit={(e) => e.preventDefault()}>
+            <h1>Create Bill</h1>
+            <p className="subtitle">Manually add your bill details</p>
 
-          {/* Store */}
-          <select
-            value={storeOption}
-            onChange={(e) => {
-              setStoreOption(e.target.value);
-              if (e.target.value !== "Other") setCustomStoreName("");
-            }}
-            style={{ marginTop: 10 }}
-          >
-            <option value="">Select Store</option>
-            {storeOptions.map((s) => (
-              <option key={s} value={s}>
-                {s}
-              </option>
-            ))}
-            <option value="Other">Other</option>
-          </select>
+            {/* Store */}
+            <select
+              value={storeOption}
+              onChange={(e) => {
+                setStoreOption(e.target.value);
+                if (e.target.value !== "Other") setCustomStoreName("");
+              }}
+              style={{ marginTop: 10 }}
+            >
+              <option value="">Select Store</option>
+              {storeOptions.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+              <option value="Other">Other</option>
+            </select>
 
-          {storeOption === "Other" && (
-            <div className="other-store">
-              <input
-                placeholder="Enter store name"
-                value={customStoreName}
-                onChange={(e) => setCustomStoreName(e.target.value)}
-              />
-              <button type="submit" onClick={addCustomStore} style={{ width: 100, marginTop: 10}}>
-                Add
-              </button>
-            </div>
-          )}
+            {storeOption === "Other" && (
+              <div className="other-store">
+                <input
+                  placeholder="Enter store name"
+                  value={customStoreName}
+                  onChange={(e) => setCustomStoreName(e.target.value)}
+                />
+                <button
+                  type="submit"
+                  onClick={addCustomStore}
+                  style={{ width: 100, marginTop: 10 }}
+                >
+                  Add
+                </button>
+              </div>
+            )}
 
-          {/* Date */}
-          <input
-            type="date"
-            max={today}
-            value={billDate}
-            onChange={(e) => setBillDate(e.target.value)}
-          />
+            {/* Date */}
+            <input
+              type="date"
+              max={today}
+              value={billDate}
+              onChange={(e) => setBillDate(e.target.value)}
+            />
 
-          <p className="date-preview">
-            {" "}
-            🕒 {new Date(buildDateTime(billDate)).toLocaleString("en-IN")}{" "}
-          </p>
+            <p className="date-preview">
+              {" "}
+              🕒{" "}
+              {new Date(buildDateTime(billDate)).toLocaleString("en-IN")}{" "}
+            </p>
 
-          {/* Category */}
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            style={{ marginTop: 10 }}
-          >
-            <option value="">Select Type</option>
-            {categoryOptions.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-            <option value="Other">Other</option>
-          </select>
+            {/* Category */}
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              style={{ marginTop: 10 }}
+            >
+              <option value="">Select Type</option>
+              {categoryOptions.map((c) => (
+                <option key={c} value={c}>
+                  {c}
+                </option>
+              ))}
+              <option value="Other">Other</option>
+            </select>
 
-          {category === "Other" && (
-            <div className="other-store">
-              <input
-                placeholder="Enter category"
-                value={customCategory}
-                onChange={(e) => setCustomCategory(e.target.value)}
-              />
-              <button type="button" onClick={addCustomCategory}>
-                Add
-              </button>
-            </div>
-          )}
+            {category === "Other" && (
+              <div className="other-store">
+                <input
+                  placeholder="Enter category"
+                  value={customCategory}
+                  onChange={(e) => setCustomCategory(e.target.value)}
+                />
+                <button type="button" onClick={addCustomCategory}>
+                  Add
+                </button>
+              </div>
+            )}
 
-          {/* Description */}
-          {/* <textarea
+            {/* Description */}
+            {/* <textarea
             placeholder="Bill description (optional)"
             value={description}
             rows={6}
@@ -318,89 +325,90 @@ export default function CreateBill() {
             }}
           /> */}
 
-          <div style={{ marginBottom: 20, marginTop: 10 }}>
-            <label
-              style={{ fontWeight: 600, marginBottom: 6, display: "block" }}
+            <div style={{ marginBottom: 20, marginTop: 10 }}>
+              <label
+                style={{ fontWeight: 600, marginBottom: 6, display: "block" }}
+              >
+                Bill Text
+              </label>
+
+              <textarea
+                rows={6}
+                placeholder="Paste bill content here…"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                style={{
+                  ...textAreaInputStyle,
+                  resize: "vertical",
+                  lineHeight: 1.5,
+                }}
+              />
+
+              <p style={{ fontSize: 12, opacity: 0.7, marginTop: 6 }}>
+                You can paste OCR output or manually typed bill data.
+              </p>
+            </div>
+
+            {/* Items */}
+            <div className="items">
+              {items.map((item, i) => (
+                <div className="item-row" key={i}>
+                  <input
+                    placeholder="Item"
+                    value={item.name}
+                    onChange={(e) => updateItem(i, "name", e.target.value)}
+                  />
+                  <input
+                    type="number"
+                    value={item.qty}
+                    onChange={(e) => updateItem(i, "qty", e.target.value)}
+                  />
+                  <input
+                    type="number"
+                    value={item.price}
+                    onChange={(e) => updateItem(i, "price", e.target.value)}
+                  />
+                  <input type="number" value={item.amount} disabled />
+                  <button
+                    type="button"
+                    onClick={() => removeItem(i)}
+                    className="remove"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            <button type="button" onClick={addItem} className="add">
+              ➕ Add Item
+            </button>
+
+            <div className="total">
+              Total: <span>₹ {totalAmount.toFixed(2)}</span>
+            </div>
+
+            <button
+              type="button"
+              className={`submit ${loading ? "loading" : ""}`}
+              disabled={!finalStoreName || (items.length === 0 && !loading)}
+              onClick={submitBill}
             >
-              Bill Text
-            </label>
-
-            <textarea
-              rows={6}
-              placeholder="Paste bill content here…"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              style={{
-                ...textAreaInputStyle,
-                resize: "vertical",
-                lineHeight: 1.5,
-              }}
-            />
-
-            <p style={{ fontSize: 12, opacity: 0.7, marginTop: 6 }}>
-              You can paste OCR output or manually typed bill data.
-            </p>
-          </div>
-
-          {/* Items */}
-          <div className="items">
-            {items.map((item, i) => (
-              <div className="item-row" key={i}>
-                <input
-                  placeholder="Item"
-                  value={item.name}
-                  onChange={(e) => updateItem(i, "name", e.target.value)}
-                />
-                <input
-                  type="number"
-                  value={item.qty}
-                  onChange={(e) => updateItem(i, "qty", e.target.value)}
-                />
-                <input
-                  type="number"
-                  value={item.price}
-                  onChange={(e) => updateItem(i, "price", e.target.value)}
-                />
-                <input type="number" value={item.amount} disabled />
-                <button
-                  type="button"
-                  onClick={() => removeItem(i)}
-                  className="remove"
-                >
-                  ✕
-                </button>
-              </div>
-            ))}
-          </div>
-
-          <button type="button" onClick={addItem} className="add">
-            ➕ Add Item
-          </button>
-
-          <div className="total">
-            Total: <span>₹ {totalAmount.toFixed(2)}</span>
-          </div>
-
-          <button
-            type="button"
-            className={`submit ${loading ? "loading" : ""}`}
-            disabled={!finalStoreName || (items.length === 0 && !loading)}
-            onClick={submitBill}
-          >
-            {" "}
-            {loading ? "Saving..." : "Save Bill"}
-          </button>
-        </form>
-      </div>
-
-      {analytics && (
-        <div className="analytics-preview">
-          <p>🧾 Items: {analytics.totalItems}</p>
-          <p>📦 Qty: {analytics.totalQty}</p>
-          <p>💰 Avg Rate: ₹ {analytics.avgRate}</p>
+              {" "}
+              {loading ? "Saving..." : "Save Bill"}
+            </button>
+          </form>
         </div>
-      )}
-    </>
+
+        {analytics && (
+          <div className="analytics-preview">
+            <p>🧾 Items: {analytics.totalItems}</p>
+            <p>📦 Qty: {analytics.totalQty}</p>
+            <p>💰 Avg Rate: ₹ {analytics.avgRate}</p>
+          </div>
+        )}
+      </>
+    </PageWrapper>
   );
 }
 

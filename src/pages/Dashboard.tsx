@@ -19,7 +19,7 @@ import DashboardSkeleton from "../components/skeletons/DashboardSkeleton";
 import PageWrapper from "../components/layouts/PageWrapper";
 
 export default function Dashboard() {
-  const { user, loading } = useAuth();
+  const { user, loading, token } = useAuth();
 
   const CHART_COLORS = [
     "#22c55e",
@@ -71,15 +71,15 @@ export default function Dashboard() {
 
     const [monthlyRes, storeRes, dailyRes] = await Promise.all([
       api.get("/bills/admin/analytics/monthly", {
-        withCredentials: true,
+        headers: { Authorization: `Bearer ${token}` },
         params,
       }),
       api.get("/bills/admin/analytics/store", {
-        withCredentials: true,
+        headers: { Authorization: `Bearer ${token}` },
         params,
       }),
       api.get("/bills/admin/analytics/daily", {
-        withCredentials: true,
+        headers: { Authorization: `Bearer ${token}` },
         params,
       }),
     ]);
@@ -93,7 +93,7 @@ export default function Dashboard() {
     const params = buildParams();
 
     const dailyRes = await api.get("/bills/analytics/daily", {
-      withCredentials: true,
+      headers: { Authorization: `Bearer ${token}` },
       params,
     });
 
