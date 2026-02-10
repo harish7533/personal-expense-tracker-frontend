@@ -2,7 +2,11 @@ import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 import type { JSX } from "react/jsx-dev-runtime";
 
-export default function ProtectedRoute({ children }: { children: JSX.Element }) {
+export default function ProtectedRoute({
+  children,
+}: {
+  children: JSX.Element;
+}) {
   const { user, loading } = useAuth();
   const location = useLocation();
 
@@ -10,16 +14,14 @@ export default function ProtectedRoute({ children }: { children: JSX.Element }) 
   if (loading) return null; // or skeleton
 
   // 🔐 Not logged in
-  if (!user) {
+  if (!user)
     return <Navigate to="/" replace state={{ from: location.pathname }} />;
-  }
+
+  if (user.balance === null || user.balance === 0)
+    return <Navigate to="/set-balance" replace />;
 
   return children;
 }
-
-
-
-
 
 // import { Navigate } from "react-router-dom";
 // import { useAuth, type Role } from "../hooks/useAuth";

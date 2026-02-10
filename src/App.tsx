@@ -11,6 +11,7 @@ import Settings from "./pages/Settings";
 import Activity from "./pages/Activity";
 import { Toaster } from "react-hot-toast";
 import Banner from "./components/Banner";
+import SetBalance from "./pages/SetBalance";
 
 function App() {
   return (
@@ -38,6 +39,8 @@ function App() {
         <Route path="/login" element={<Login />} />
 
         <Route path="/register" element={<Register />} />
+
+        <Route path="/set-balance" element={<SetBalance />} />
 
         {/* 🔒 Protected */}
         <Route

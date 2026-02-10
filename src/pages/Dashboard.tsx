@@ -35,7 +35,9 @@ export default function Dashboard() {
   const [storeWise, setStoreWise] = useState<any[]>([]);
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
+  const [error, setError] = useState<string>("");
   const [revealed, setRevealed] = useState(false);
+  const [hasBills, setHasBills] = useState(true);
 
   if (!user) {
     return (
@@ -89,29 +91,45 @@ export default function Dashboard() {
     setDaily(dailyRes.data);
   };
 
-  const fetchUserAnalytics = async () => {
-    const params = buildParams();
+  // const fetchUserAnalytics = async () => {
+  //   const params = buildParams();
 
-    const dailyRes = await api.get("/bills/analytics/daily", {
-      headers: { Authorization: `Bearer ${token}` },
-      params,
-    });
+  //   const dailyRes = await api.get("/bills/analytics/daily", {
+  //     headers: { Authorization: `Bearer ${token}` },
+  //     params,
+  //   });
 
-    setDaily(dailyRes.data);
-  };
+  //   setDaily(dailyRes.data);
+  // };
 
   const loadAnalytics = async () => {
     try {
+      setError("");
+
       if (user.role === "ADMIN") {
         await fetchAdminAnalytics();
       } else {
-        await fetchUserAnalytics();
+        const res = await api.get("/bills/admin/analytics/daily", {
+          headers: { Authorization: `Bearer ${token}` },
+          params: buildParams(),
+        });
+
+        if (!res.data || res.data.length === 0) {
+          setHasBills(false);
+        } else {
+          setDaily(res.data);
+        }
       }
 
-      // 🔥 Animate reveal
       setTimeout(() => setRevealed(true), 50);
-    } catch (err) {
+    } catch (err: any) {
       console.error("Failed to load analytics", err);
+
+      if (err?.response?.status === 404) {
+        setHasBills(false); // 🔥 EXPECTED for new users
+      } else {
+        setError("Something went wrong while loading dashboard");
+      }
     }
   };
 
@@ -127,6 +145,21 @@ export default function Dashboard() {
     <PageWrapper>
       {loading ? (
         <DashboardSkeleton />
+      ) : error ? (
+        <>
+          <div style={{ textAlign: "center", padding: 80 }}>
+            <h1>⚠️ Something went wrong</h1>
+            <p>Please try again later</p>
+          </div>
+        </>
+      ) : !hasBills ? (
+        <>
+          <Navbar />
+          <div style={{ textAlign: "center", padding: 60 }}>
+            <h2>No bills yet 🧾</h2>
+            <p>Add your first bill to see analytics</p>
+          </div>
+        </>
       ) : (
         <>
           <Navbar />

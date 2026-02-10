@@ -7,6 +7,7 @@ export interface AuthUser {
   email: string;
   role: Role;
   username: string;
+  balance: number | null;
 }
 
 interface AuthContextType {
