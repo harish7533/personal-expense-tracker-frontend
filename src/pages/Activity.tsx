@@ -1,10 +1,10 @@
 import { useEffect, useRef } from "react";
 import toast from "react-hot-toast";
-import useActivities from "../hooks/useActivities";
 import Navbar from "../components/Navbar";
 import { useAuth } from "../auth/AuthContext";
 import ActivitySkeleton from "../components/skeletons/ActivitySkeleton";
 import PageWrapper from "../components/layouts/PageWrapper";
+import { useActivities } from "../auth/ActivitiesContext";
 
 type Activity = {
   id: string;
@@ -28,6 +28,11 @@ export default function Activity() {
     if (latest.id !== lastToastId.current) {
       toast(latest.message, {
         icon: latest.type === "USER" ? "🧾" : "⚡",
+        id: latest.id,
+      });
+
+      toast(latest.message, {
+        icon: latest.type === "DEBIT" ? "💸" : "💰",
         id: latest.id,
       });
 

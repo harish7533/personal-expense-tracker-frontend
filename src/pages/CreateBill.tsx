@@ -242,7 +242,7 @@ export default function CreateBill() {
                 setStoreOption(e.target.value);
                 if (e.target.value !== "Other") setCustomStoreName("");
               }}
-              style={{ marginTop: 10 }}
+              style={{ marginBottom: 20 }}
             >
               <option value="">Select Store</option>
               {storeOptions.map((s) => (
@@ -263,9 +263,9 @@ export default function CreateBill() {
                 <button
                   type="submit"
                   onClick={addCustomStore}
-                  style={{ width: 100, marginTop: 10 }}
+                  className="button"
                 >
-                  Add
+                ➕ Add
                 </button>
               </div>
             )}
@@ -288,7 +288,7 @@ export default function CreateBill() {
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              style={{ marginTop: 10 }}
+              style={{ marginBottom: 20 }}
             >
               <option value="">Select Type</option>
               {categoryOptions.map((c) => (
@@ -306,8 +306,8 @@ export default function CreateBill() {
                   value={customCategory}
                   onChange={(e) => setCustomCategory(e.target.value)}
                 />
-                <button type="button" onClick={addCustomCategory}>
-                  Add
+                <button type="button" onClick={addCustomCategory} className="button">
+                  ➕ Add
                 </button>
               </div>
             )}
@@ -325,7 +325,7 @@ export default function CreateBill() {
             }}
           /> */}
 
-            <div style={{ marginBottom: 20, marginTop: 10 }}>
+            <div style={{ marginBottom: 20, marginTop: 20 }}>
               <label
                 style={{ fontWeight: 600, marginBottom: 6, display: "block" }}
               >
@@ -374,7 +374,7 @@ export default function CreateBill() {
                     onClick={() => removeItem(i)}
                     className="remove"
                   >
-                    ✕
+                  ✕ Remove
                   </button>
                 </div>
               ))}

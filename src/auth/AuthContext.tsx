@@ -1,7 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useEffect, useState } from "react";
-import type { Role } from "../hooks/useAuth";
 
+export type Role = "ADMIN" | "USER";
 export interface AuthUser {
   id: string;
   email: string;
@@ -46,14 +46,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = (user: AuthUser, token: string) => {
     localStorage.setItem("user", JSON.stringify(user));
     localStorage.setItem("token", token);
-    setUser(user);        // 🔥 instantly updates UI
-    setLoading(false);    // 🔥 prevents stuck loading
+    setUser(user);                          // 🔥 instantly updates UI
+    setAuthorizedToken(authorizedToken);    // 🔥 instantly updates UI
+    setLoading(false);                      // 🔥 prevents stuck loading
   };
 
   const logout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
     setUser(null);
+    setAuthorizedToken(null);
   };
 
   return (

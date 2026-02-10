@@ -1,64 +1,65 @@
-// /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
-import api from "../api";
-
-export type Activity = {
-  id: string;
-  type: string;
-  message: string;
-  created_at: string;
-};
+import { useActivities as useActivitiesContext } from "../auth/ActivitiesContext";
 
 export default function useActivities() {
-  const [activities, setActivities] = useState<Activity[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  /* ================= FETCH ================= */
-  const fetchActivities = async () => {
-    try {
-      const res = await api.get("/activities/me", {
-        withCredentials: true,
-      });
-
-      setActivities(res.data);
-    } catch (err) {
-      console.error("Failed to fetch activities", err);
-      toast.error("Failed to load activities");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchActivities();
-  }, []);
-
-  /* ================= DELETE (OPTIMISTIC) ================= */
-  const removeActivity = async (id: string) => {
-    const previous = activities;
-
-    // ⚡ Optimistic UI
-    setActivities((prev) => prev.filter((a) => a.id !== id));
-
-    try {
-      await api.delete(`/activities/${id}`, {
-        withCredentials: true,
-      });
-    } catch (err) {
-      // ❌ Rollback
-      setActivities(previous);
-      toast.error("Failed to delete activity: " + err);
-    }
-  };
-
-  return {
-    activities,
-    loading,
-    refetch: fetchActivities,
-    removeActivity,
-  };
+  return useActivitiesContext();
 }
+
+
+// import { useEffect, useState } from "react";
+// import toast from "react-hot-toast";
+// import { deleteActivity, fetchMyActivities } from "../api/activity";
+
+// export type Activity = {
+//   id: string;
+//   type: string;
+//   message: string;
+//   created_at: string;
+// };
+
+// export default function useActivities() {
+//   const [activities, setActivities] = useState<Activity[]>([]);
+//   const [loading, setLoading] = useState(true);
+
+//   /* ================= FETCH ================= */
+//   const fetchActivities = async () => {
+//     try {
+//       const res = await fetchMyActivities();
+//       setActivities(res.data);
+//     } catch (err) {
+//       console.error("Failed to fetch activities", err);
+//       toast.error("Failed to load activities");
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   useEffect(() => {
+//     fetchActivities();
+//   }, []);
+
+//   /* ================= DELETE (OPTIMISTIC) ================= */
+//   const removeActivity = async (id: string) => {
+//     const previous = activities;
+
+//     // ⚡ Optimistic UI
+//     setActivities((prev) => prev.filter((a) => a.id !== id));
+
+//     try {
+//       await deleteActivity(id);
+//     } catch (err) {
+//       // ❌ Rollback
+//       setActivities(previous);
+//       toast.error("Failed to delete activity: " + err);
+//     }
+//   };
+
+//   return {
+//     activities,
+//     loading,
+//     refetch: fetchActivities,
+//     removeActivity,
+//   };
+// }
 
 
 // import { useEffect, useState } from "react";

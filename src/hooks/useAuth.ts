@@ -1,55 +1,58 @@
-import { useEffect, useState } from "react";
+export { useAuth } from "../auth/AuthContext";
 
-export type Role = "ADMIN" | "USER";
 
-export interface AuthUser {
-  id: string;
-  email: string;
-  role: Role;
-  username: string;
-}
+// import { useEffect, useState } from "react";
 
-export function useAuth() {
-  const [user, setUser] = useState<AuthUser | null>(null);
-  const [loading, setLoading] = useState(true);
+// export type Role = "ADMIN" | "USER";
 
-  // 🔁 Hydrate auth from localStorage once
-  useEffect(() => {
-    try {
-      const storedUser = localStorage.getItem("user");
-      const token = localStorage.getItem("token");
+// export interface AuthUser {
+//   id: string;
+//   email: string;
+//   role: Role;
+//   username: string;
+// }
 
-      if (storedUser && token) {
-        setUser(JSON.parse(storedUser));
-      } else {
-        setUser(null);
-      }
-    } finally {
-      // ✅ Always end loading
-      setLoading(false);
-    }
-  }, []);
+// export function useAuth() {
+//   const [user, setUser] = useState<AuthUser | null>(null);
+//   const [loading, setLoading] = useState(true);
 
-  const login = (user: AuthUser, token: string) => {
-    localStorage.setItem("token", token);
-    localStorage.setItem("user", JSON.stringify(user));
-    setUser(user);
-  };
+//   // 🔁 Hydrate auth from localStorage once
+//   useEffect(() => {
+//     try {
+//       const storedUser = localStorage.getItem("user");
+//       const token = localStorage.getItem("token");
 
-  const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    setUser(null);
-  };
+//       if (storedUser && token) {
+//         setUser(JSON.parse(storedUser));
+//       } else {
+//         setUser(null);
+//       }
+//     } finally {
+//       // ✅ Always end loading
+//       setLoading(false);
+//     }
+//   }, []);
 
-  return {
-    user,
-    loading,
-    login,
-    logout,
-    isAuthenticated: !!user,
-  };
-}
+//   const login = (user: AuthUser, token: string) => {
+//     localStorage.setItem("token", token);
+//     localStorage.setItem("user", JSON.stringify(user));
+//     setUser(user);
+//   };
+
+//   const logout = () => {
+//     localStorage.removeItem("token");
+//     localStorage.removeItem("user");
+//     setUser(null);
+//   };
+
+//   return {
+//     user,
+//     loading,
+//     login,
+//     logout,
+//     isAuthenticated: !!user,
+//   };
+// }
 
 
 
