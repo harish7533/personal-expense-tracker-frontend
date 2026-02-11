@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import api from "../api";
@@ -39,14 +38,6 @@ export default function Dashboard() {
   const [error, setError] = useState<string>("");
   const [revealed, setRevealed] = useState(false);
   const [hasBills, setHasBills] = useState(true);
-
-  if (!user) {
-    return (
-      <p style={{ textAlign: "center", marginTop: 40 }}>
-        Please login to view dashboard
-      </p>
-    );
-  }
 
   /* =========================
      THEME TOOLTIP
@@ -107,7 +98,7 @@ export default function Dashboard() {
     try {
       setError("");
 
-      if (user.role === "ADMIN") {
+      if (user?.role === "ADMIN") {
         await fetchAdminAnalytics();
       } else {
         const res = await api.get("/analytics/daily", {
@@ -148,8 +139,8 @@ export default function Dashboard() {
         <DashboardSkeleton />
       ) : error ? (
         <>
-        <Navbar />
-          <div style={{ textAlign: "center", padding: 80 }}>
+          <Navbar />
+          <div style={{ textAlign: "center", padding: 80, color: "var(--text)" }}>
             <h1>⚠️ Something went wrong</h1>
             <p>Please try again later</p>
           </div>
@@ -157,10 +148,17 @@ export default function Dashboard() {
       ) : !hasBills ? (
         <>
           <Navbar />
-          <div style={{ textAlign: "center", padding: 60 }}>
+          <div style={{ textAlign: "center", padding: 60, color: "var(--text)" }}>
             <h2>No bills yet 🧾</h2>
             <p>Add your first bill to see analytics</p>
           </div>
+        </>
+      ) : !user ? (
+        <>
+          <Navbar />
+          <p style={{ textAlign: "center", marginTop: 40, color: "var(--text)" }}>
+            Please login to view dashboard
+          </p>
         </>
       ) : (
         <>
@@ -236,51 +234,51 @@ export default function Dashboard() {
               {/* ================= USER ================= */}
               {user.role === "USER" && (
                 <>
-                <BalanceCard/>
-                <div className="dashboard-content">
-                  <h2>📊 User Dashboard</h2>
-                  <h3>📈 Your Daily Spend</h3>
+                  <BalanceCard />
+                  <div className="dashboard-content">
+                    <h2>📊 User Dashboard</h2>
+                    <h3>📈 Your Daily Spend</h3>
 
-                  <div className="dashboard-filters">
-                    <label>
-                      From:
-                      <input
-                        type="date"
-                        value={from}
-                        onChange={(e) => setFrom(e.target.value)}
-                      />
-                    </label>
+                    <div className="dashboard-filters">
+                      <label>
+                        From:
+                        <input
+                          type="date"
+                          value={from}
+                          onChange={(e) => setFrom(e.target.value)}
+                        />
+                      </label>
 
-                    <label>
-                      To:
-                      <input
-                        type="date"
-                        value={to}
-                        onChange={(e) => setTo(e.target.value)}
-                      />
-                    </label>
+                      <label>
+                        To:
+                        <input
+                          type="date"
+                          value={to}
+                          onChange={(e) => setTo(e.target.value)}
+                        />
+                      </label>
 
-                    <button className="submit" onClick={loadAnalytics}>
-                      Apply
-                    </button>
+                      <button className="submit" onClick={loadAnalytics}>
+                        Apply
+                      </button>
+                    </div>
+
+                    <ResponsiveContainer width="100%" height={300}>
+                      <BarChart data={daily}>
+                        <XAxis dataKey="date" stroke="var(--muted)" />
+                        <YAxis stroke="var(--muted)" />
+                        <Tooltip contentStyle={tooltipStyle} />
+                        <Bar dataKey="total" radius={[6, 6, 0, 0]}>
+                          {daily.map((_, i) => (
+                            <Cell
+                              key={i}
+                              fill={i % 2 === 0 ? "#22c55e" : "#16a34a"}
+                            />
+                          ))}
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
                   </div>
-
-                  <ResponsiveContainer width="100%" height={300}>
-                    <BarChart data={daily}>
-                      <XAxis dataKey="date" stroke="var(--muted)" />
-                      <YAxis stroke="var(--muted)" />
-                      <Tooltip contentStyle={tooltipStyle} />
-                      <Bar dataKey="total" radius={[6, 6, 0, 0]}>
-                        {daily.map((_, i) => (
-                          <Cell
-                            key={i}
-                            fill={i % 2 === 0 ? "#22c55e" : "#16a34a"}
-                          />
-                        ))}
-                      </Bar>
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
                 </>
               )}
             </div>
