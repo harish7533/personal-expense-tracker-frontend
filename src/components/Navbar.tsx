@@ -1,32 +1,43 @@
-/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react-hooks/rules-of-hooks */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Link, useNavigate } from "react-router-dom";
-import useDarkMode from "../hooks/useDarkMode";
 import { useEffect, useRef, useState } from "react";
+import { useTheme } from "../auth/ThemeContext";
 import { markAllAsRead } from "../api/activity";
 import { useAuth } from "../auth/AuthContext";
 import { useActivities } from "../auth/ActivitiesContext";
 
-export default function Navbar() {
-  const { activities, refreshActivities } = useActivities();
-  const unreadCount = activities?.length || 0;
+import { FiSettings, FiBell, FiLogOut, FiMoon, FiSun } from "react-icons/fi";
 
+export default function Navbar() {
   const navigate = useNavigate();
-  const { theme, toggleTheme } = useDarkMode();
-  const { user, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
+  const { user, logout, loading } = useAuth();
+  const { activities, refreshActivities } = useActivities();
 
   const [open, setOpen] = useState(false);
-  const [animatedCount, setAnimatedCount] = useState(unreadCount);
-
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  /* ================= ACCENT ================= */
-  useEffect(() => {
-    const role = localStorage.getItem("role");
-    const accent =
-      role === "ADMIN" ? "admin" : role === "USER" ? "user" : "default";
+  /* ================= SAFE UNREAD COUNT ================= */
+  const unreadCount = activities?.filter((a: any) => !a?.read)?.length ?? 0;
 
-    document.documentElement.setAttribute("data-accent", accent);
-  }, []);
+  /* ================= SAFE INITIALS ================= */
+  function getInitials(name?: string | null) {
+    if (!name || typeof name !== "string") return "U";
+
+    return name
+      .trim()
+      .split(" ")
+      .filter(Boolean)
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase();
+  }
+
+  /* ================= WAIT FOR AUTH LOAD ================= */
+  if (loading) {
+    return null; // or return a small loader
+  }
 
   /* ================= CLOSE ON OUTSIDE CLICK ================= */
   useEffect(() => {
@@ -43,73 +54,38 @@ export default function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  function getInitials(name: string) {
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase();
-  }
-
+  /* ================= AUTO MARK AS READ ================= */
   useEffect(() => {
     if (open && unreadCount > 0) {
       markAllAsRead()
-        .then(() => {
-          refreshActivities(); // from useActivities
-        })
+        .then(() => refreshActivities())
         .catch(() => {});
     }
-  }, [open]);
-
-  useEffect(() => {
-    if (animatedCount !== unreadCount) {
-      const interval = setInterval(() => {
-        setAnimatedCount((prev) => {
-          if (prev < unreadCount) return prev + 1;
-          if (prev > unreadCount) return prev - 1;
-          clearInterval(interval);
-          return prev;
-        });
-      }, 40);
-
-      return () => clearInterval(interval);
-    }
-  }, [unreadCount]);
+  }, [open, unreadCount, refreshActivities]);
 
   return (
     <nav style={styles.nav}>
-      <h3
-        style={{ cursor: "pointer", ...styles.logo }}
-        onClick={() => navigate("/dashboard")}
-      >
+      <h3 style={{ cursor: "pointer" }} onClick={() => navigate("/dashboard")}>
         🧾 Expense Tracker
       </h3>
 
       <div style={styles.links}>
-        {user && (
-          <>
-            <Link to="/upload" style={styles.link}>
-              Upload Bill
-            </Link>
-            <Link to="/create" style={styles.link}>
-              Create Bill
-            </Link>
-          </>
-        )}
-
-        {/* ================= PROFILE DROPDOWN ================= */}
+        {/* ================= PROFILE ================= */}
         <div style={{ position: "relative" }} ref={dropdownRef}>
           <button
             onClick={() => setOpen((prev) => !prev)}
             style={styles.profileBtn}
           >
-            {user ? getInitials(user.username) : theme === "dark" ? "🌞" : "🌙"}
+            {user
+              ? getInitials(user?.username)
+              : theme === "dark"
+                ? "🌞"
+                : "🌙"}
 
-            {/* Notification Dot */}
+            {/* Badge */}
             {user && unreadCount > 0 && (
-              <span style={styles.notificationBadge}>
-                {/* {unreadCount > 9 ? "9+" : unreadCount} */}
-                {animatedCount > 9 ? "9+" : animatedCount}
+              <span style={styles.badge}>
+                {unreadCount > 9 ? "9+" : unreadCount}
               </span>
             )}
           </button>
@@ -119,8 +95,8 @@ export default function Navbar() {
               {user ? (
                 <>
                   <div style={styles.dropdownHeader}>
-                    <strong>{user.username}</strong>
-                    <small style={{ opacity: 0.6 }}>{user.email}</small>
+                    <strong>{user?.username || "User"}</strong>
+                    <small>{user?.email}</small>
                   </div>
 
                   <button
@@ -130,7 +106,8 @@ export default function Navbar() {
                       setOpen(false);
                     }}
                   >
-                    ⚙ Settings
+                    <FiSettings size={16} style={{ marginRight: 8 }} />
+                    Settings
                   </button>
 
                   <button
@@ -140,8 +117,17 @@ export default function Navbar() {
                       setOpen(false);
                     }}
                   >
-                    🔔 Notifications
+                    <FiBell size={16} style={{ marginRight: 8 }} />
+                    Notifications
                   </button>
+                  <>
+                    <Link to="/upload" style={styles.link}>
+                      Upload Bill
+                    </Link>
+                    <Link to="/create" style={styles.link}>
+                      Create Bill
+                    </Link>
+                  </>
 
                   <button
                     style={styles.dropdownItem}
@@ -150,37 +136,48 @@ export default function Navbar() {
                       setOpen(false);
                     }}
                   >
-                    {theme === "dark"
-                      ? "🌞 Switch to Light"
-                      : "🌙 Switch to Dark"}
+                    {theme === "dark" ? (
+                      <>
+                        <FiSun size={16} style={{ marginRight: 8 }} />
+                        Light Mode
+                      </>
+                    ) : (
+                      <>
+                        <FiMoon size={16} style={{ marginRight: 8 }} />
+                        Dark Mode
+                      </>
+                    )}
                   </button>
 
-                  <hr style={{ borderColor: "var(--border)" }} />
+                  <hr />
 
                   <button
                     style={{
                       ...styles.dropdownItem,
-                      color: "var(--error-text)",
+                      color: "crimson",
                     }}
                     onClick={() => {
                       logout();
                       navigate("/login");
                     }}
                   >
-                    🚪 Logout
+                    <FiLogOut size={16} style={{ marginRight: 8 }} />
+                    Logout
                   </button>
                 </>
               ) : (
-                <button
-                  style={styles.dropdownItem}
-                  onClick={() => {
-                    toggleTheme();
-                    setOpen(false);
-                  }}
-                >
-                  {theme === "dark"
-                    ? "🌞 Switch to Light"
-                    : "🌙 Switch to Dark"}
+                <button style={styles.dropdownItem} onClick={toggleTheme}>
+                  {theme === "dark" ? (
+                    <>
+                      <FiSun size={16} style={{ marginRight: 8 }} />
+                      Light Mode
+                    </>
+                  ) : (
+                    <>
+                      <FiMoon size={16} style={{ marginRight: 8 }} />
+                      Dark Mode
+                    </>
+                  )}
                 </button>
               )}
             </div>
@@ -289,6 +286,7 @@ const styles: Record<string, React.CSSProperties> = {
     display: "flex",
     flexDirection: "column",
     marginBottom: 8,
+    color: "var(--text)",
   },
 
   dropdownItem: {

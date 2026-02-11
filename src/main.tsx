@@ -7,13 +7,16 @@ import "./styles/page-skeletons.css";
 import { AuthProvider } from "./auth/AuthContext";
 import { ActivitiesProvider } from "./auth/ActivitiesContext";
 import { BalanceProvider } from "./auth/BalanceContext";
+import { ThemeProvider } from "./auth/ThemeContext";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <AuthProvider>
       <ActivitiesProvider>
         <BalanceProvider>
-          <App />
+          <ThemeProvider>
+            <App />
+          </ThemeProvider>
         </BalanceProvider>
       </ActivitiesProvider>
     </AuthProvider>
