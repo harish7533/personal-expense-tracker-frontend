@@ -20,19 +20,22 @@ type BalanceContextType = {
 const BalanceContext = createContext<BalanceContextType | undefined>(undefined);
 
 export function BalanceProvider({ children }: { children: ReactNode }) {
+  const { user, loading: authLoading } = useAuth();
+
   const [balance, setBalance] = useState<number>(0);
-  const [, setLoading] = useState<boolean>(true);
-  const { user, loading } = useAuth();
+  const [balanceLoading, setBalanceLoading] = useState<boolean>(true);
 
   /* ================= FETCH BALANCE ================= */
   const refreshBalance = async () => {
     try {
+      setBalanceLoading(true);
+
       const res = await api.get("/balance/me");
-      setBalance(Number(res.data.balance || 0));
+      setBalance(Number(res.data?.balance ?? 0));
     } catch (err) {
       console.error("Failed to fetch balance", err);
     } finally {
-      setLoading(false);
+      setBalanceLoading(false);
     }
   };
 
@@ -46,25 +49,28 @@ export function BalanceProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  /* ================= UPDATE (RUNTIME) ================= */
+  /* ================= UPDATE (RUNTIME ONLY) ================= */
   const updateBalance = (updater: (prev: number) => number) => {
     setBalance((prev) => updater(prev));
   };
 
+  /* ================= LOAD WHEN AUTH READY ================= */
   useEffect(() => {
-    // 🔥 WAIT FOR AUTH TO FINISH
-    if (loading) return;
+    if (authLoading) return;
+    if (!user) {
+      setBalance(0);
+      setBalanceLoading(false);
+      return;
+    }
 
-    // 🔥 ONLY FETCH IF USER EXISTS
-    if (!user) return;
     refreshBalance();
-  }, [user, loading]);
+  }, [user, authLoading]);
 
   return (
     <BalanceContext.Provider
       value={{
         balance,
-        loading,
+        loading: balanceLoading,
         refreshBalance,
         setInitialBalance,
         updateBalance,
