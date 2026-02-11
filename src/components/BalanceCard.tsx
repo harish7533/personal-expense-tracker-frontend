@@ -8,19 +8,23 @@ export default function BalanceCard() {
 
   /* ===== Smooth Animation ===== */
   useEffect(() => {
-    if (animatedBalance === safeBalance) return;
+    let interval: number;
 
-    const interval = setInterval(() => {
-      setAnimatedBalance((prev) => {
-        if (prev < safeBalance) return prev + Math.ceil((safeBalance - prev) / 10);
-        if (prev > safeBalance) return prev - Math.ceil((prev - safeBalance) / 10);
-        clearInterval(interval);
-        return safeBalance;
-      });
-    }, 30);
+    if (animatedBalance !== safeBalance) {
+      interval = setInterval(() => {
+        setAnimatedBalance((prev) => {
+          if (prev < safeBalance)
+            return prev + Math.ceil((safeBalance - prev) / 10);
+          if (prev > safeBalance)
+            return prev - Math.ceil((prev - safeBalance) / 10);
+          return safeBalance;
+        });
+      }, 30);
+    }
 
     return () => clearInterval(interval);
-  }, [safeBalance, animatedBalance]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [safeBalance]);
 
   const isLow = safeBalance < 1000;
 
