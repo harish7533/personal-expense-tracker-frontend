@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
@@ -34,12 +33,9 @@ export default function Navbar() {
       .toUpperCase();
   }
 
-  /* ================= WAIT FOR AUTH LOAD ================= */
-  if (loading) {
-    return null; // or return a small loader
-  }
+  const initials = getInitials(user?.username);
 
-  /* ================= CLOSE ON OUTSIDE CLICK ================= */
+    /* ================= CLOSE ON OUTSIDE CLICK ================= */
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -63,9 +59,16 @@ export default function Navbar() {
     }
   }, [open, unreadCount, refreshActivities]);
 
+  /* ================= WAIT FOR AUTH LOAD ================= */
+  if (loading) {
+    return null; // or return a small loader
+  }
+
+
+
   return (
     <nav style={styles.nav}>
-      <h3 style={{ cursor: "pointer" }} onClick={() => navigate("/dashboard")}>
+      <h3 style={{ cursor: "pointer", color: "var(--text)" }} onClick={() => navigate("/dashboard")}>
         🧾 Expense Tracker
       </h3>
 
@@ -77,7 +80,7 @@ export default function Navbar() {
             style={styles.profileBtn}
           >
             {user
-              ? getInitials(user?.username)
+              ? initials
               : theme === "dark"
                 ? "🌞"
                 : "🌙"}
