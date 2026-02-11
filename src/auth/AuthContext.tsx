@@ -1,5 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useEffect, useState } from "react";
+import { useBanner } from "../hooks/useBanner";
 
 export type Role = "ADMIN" | "USER";
 export interface AuthUser {
@@ -24,6 +25,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [authorizedToken, setAuthorizedToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const { show } = useBanner();
 
   // 🔁 Hydrate once on app load
   useEffect(() => {
@@ -57,6 +59,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem("token");
     setUser(null);
     setAuthorizedToken(null);
+    show("logged-out");
   };
 
   return (

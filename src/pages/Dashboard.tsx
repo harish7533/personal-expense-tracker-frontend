@@ -147,6 +147,7 @@ export default function Dashboard() {
         <DashboardSkeleton />
       ) : error ? (
         <>
+        <Navbar />
           <div style={{ textAlign: "center", padding: 80 }}>
             <h1>⚠️ Something went wrong</h1>
             <p>Please try again later</p>
@@ -234,7 +235,8 @@ export default function Dashboard() {
               {/* ================= USER ================= */}
               {user.role === "USER" && (
                 <div className="dashboard-content">
-                  <h2>📈 Your Daily Spend</h2>
+                  <h2>📊 User Dashboard</h2>
+                  <h3>📈 Your Daily Spend</h3>
 
                   <div className="dashboard-filters">
                     <label>

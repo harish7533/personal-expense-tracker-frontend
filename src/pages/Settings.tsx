@@ -1,12 +1,12 @@
-import { useState } from "react";
 import Navbar from "../components/Navbar";
 import { useAuth } from "../auth/AuthContext";
 import SettingsSkeleton from "../components/skeletons/SettingsSkeleton";
 import PageWrapper from "../components/layouts/PageWrapper";
+import useDarkMode from "../hooks/useDarkMode";
 
 export default function Settings() {
   const { user, loading } = useAuth();
-  const [theme] = useState("light");
+  const { theme } = useDarkMode();
 
   return (
     <PageWrapper>
