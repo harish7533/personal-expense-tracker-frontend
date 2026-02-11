@@ -28,7 +28,7 @@ export default function Activity() {
     if (latest.id !== lastToastId.current) {
       // toast(latest.message, {
       //   icon: latest.type === "USER" ? "🧾" : "⚡",
-      //   id: latest.id,
+      //   id: latest.id, 
       // });
 
       toast(latest.message, {

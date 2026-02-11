@@ -23,6 +23,7 @@ export default function CreateBill() {
   const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState(false);
   const [billDate, setBillDate] = useState(today);
+  const { updateBalance, refreshBalance } = useBalance();
 
   /* ================= STORES ================= */
 
@@ -36,7 +37,6 @@ export default function CreateBill() {
   const [storeOptions, setStoreOptions] = useState<string[]>([]);
   const [storeOption, setStoreOption] = useState("");
   const [customStoreName, setCustomStoreName] = useState("");
-  const { updateBalance, refreshBalance } = useBalance();
 
   useEffect(() => {
     getStores()
@@ -44,7 +44,7 @@ export default function CreateBill() {
         setStoreOptions(stores.length ? stores : DEFAULT_STORES),
       )
       .catch(() => setStoreOptions(DEFAULT_STORES));
-  }, []);
+  }, [DEFAULT_STORES]);
 
   const finalStoreName =
     storeOption === "Other" ? customStoreName.trim() : storeOption;
@@ -84,7 +84,7 @@ export default function CreateBill() {
         setCategoryOptions(cats.length ? cats : DEFAULT_CATEGORIES),
       )
       .catch(() => setCategoryOptions(DEFAULT_CATEGORIES));
-  }, []);
+  }, [DEFAULT_CATEGORIES]);
 
   const finalCategory = category === "Other" ? customCategory.trim() : category;
 

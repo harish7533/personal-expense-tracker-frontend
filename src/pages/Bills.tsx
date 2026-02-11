@@ -21,7 +21,7 @@ export default function Bills() {
 
   const { updateBalance } = useBalance();
 
-  /* ================= FETCH ================= */
+  /* ================= FETCH FUNCTION ================= */
   const fetchBills = async () => {
     setLoading(true);
     try {
@@ -34,9 +34,10 @@ export default function Bills() {
     }
   };
 
+  /* ================= FETCH ON FILTER CHANGE ================= */
   useEffect(() => {
     fetchBills();
-  }, []);
+  }, [filters]);
 
   /* ================= DELETE ================= */
   const handleDelete = async (id: string, amount: number) => {
@@ -76,9 +77,7 @@ export default function Bills() {
         <input
           placeholder="Category"
           value={filters.category}
-          onChange={(e) =>
-            setFilters({ ...filters, category: e.target.value })
-          }
+          onChange={(e) => setFilters({ ...filters, category: e.target.value })}
         />
         <input
           placeholder="Store"

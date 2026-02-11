@@ -1,5 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-refresh/only-export-components */
 import { createRoot } from "react-dom/client";
 import { useState, useEffect } from "react";
@@ -12,7 +10,12 @@ interface BannerProps {
   duration?: number;
 }
 
-export function showBanner({ message, type = "info", autoDismiss = true, duration = 3000 }: BannerProps) {
+export function showBanner({
+  message,
+  type = "info",
+  autoDismiss = true,
+  duration = 3000,
+}: BannerProps) {
   const container = document.createElement("div");
   document.body.appendChild(container);
 
@@ -23,26 +26,39 @@ export function showBanner({ message, type = "info", autoDismiss = true, duratio
   };
 
   root.render(
-    <Banner message={message} type={type} autoDismiss={autoDismiss} duration={duration} onDismiss={dismiss} />
+    <Banner
+      message={message}
+      type={type}
+      autoDismiss={autoDismiss}
+      duration={duration}
+      onDismiss={dismiss}
+    />
   );
 }
 
-function Banner({ message, type, autoDismiss, duration, onDismiss }: BannerProps & { onDismiss: () => void }) {
+function Banner({
+  message,
+  type,
+  autoDismiss,
+  duration = 3000,
+  onDismiss,
+}: BannerProps & { onDismiss: () => void }) {
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
-    let timeout1: any;
-    let timeout2: any;
-    if(!duration) duration = 0; // minimum to allow fade out
+    let timeout1: ReturnType<typeof setTimeout>;
+    let timeout2: ReturnType<typeof setTimeout>;
+
     if (autoDismiss) {
       timeout1 = setTimeout(() => setVisible(false), duration);
       timeout2 = setTimeout(onDismiss, duration + 300); // allow fade out
     }
+
     return () => {
       clearTimeout(timeout1);
       clearTimeout(timeout2);
     };
-  }, []);
+  }, [autoDismiss, duration, onDismiss]);
 
   return (
     <div className={`banner ${type} ${visible ? "slide-in" : "fade-out"}`}>
