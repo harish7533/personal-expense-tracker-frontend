@@ -4,7 +4,7 @@ import { useBalance } from "../auth/BalanceContext";
 export default function BalanceCard() {
   const { balance } = useBalance();
   const safeBalance = balance ?? 0;
-  const [animatedBalance, setAnimatedBalance] = useState(balance);
+  const [animatedBalance, setAnimatedBalance] = useState(safeBalance);
 
   /* ===== Smooth Animation ===== */
   useEffect(() => {
@@ -17,6 +17,7 @@ export default function BalanceCard() {
             return prev + Math.ceil((safeBalance - prev) / 10);
           if (prev > safeBalance)
             return prev - Math.ceil((prev - safeBalance) / 10);
+          clearInterval(interval);
           return safeBalance;
         });
       }, 30);

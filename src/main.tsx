@@ -11,14 +11,14 @@ import { ThemeProvider } from "./auth/ThemeContext";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <AuthProvider>
-      <ActivitiesProvider>
+    <ThemeProvider>
+      <AuthProvider>
         <BalanceProvider>
-          <ThemeProvider>
+          <ActivitiesProvider>
             <App />
-          </ThemeProvider>
+          </ActivitiesProvider>
         </BalanceProvider>
-      </ActivitiesProvider>
-    </AuthProvider>
+      </AuthProvider>
+    </ThemeProvider>
   </React.StrictMode>,
 );
