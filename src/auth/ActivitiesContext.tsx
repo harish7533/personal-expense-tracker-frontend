@@ -14,6 +14,9 @@ export type Activity = {
   type: "DEBIT" | "CREDIT" | "USER";
   message: string;
   created_at: string;
+  amount: number;
+  balance_before: number;
+  balance_after: number;
 };
 
 type ActivitiesContextType = {

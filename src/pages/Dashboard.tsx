@@ -17,6 +17,7 @@ import Page from "../components/Page";
 import { useAuth } from "../auth/AuthContext";
 import DashboardSkeleton from "../components/skeletons/DashboardSkeleton";
 import PageWrapper from "../components/layouts/PageWrapper";
+import BalanceCard from "../components/BalanceCard";
 
 export default function Dashboard() {
   const { user, loading, token } = useAuth();
@@ -72,15 +73,15 @@ export default function Dashboard() {
     const params = buildParams();
 
     const [monthlyRes, storeRes, dailyRes] = await Promise.all([
-      api.get("/bills/admin/analytics/monthly", {
+      api.get("/analytics/monthly", {
         headers: { Authorization: `Bearer ${token}` },
         params,
       }),
-      api.get("/bills/admin/analytics/store", {
+      api.get("/analytics/store", {
         headers: { Authorization: `Bearer ${token}` },
         params,
       }),
-      api.get("/bills/admin/analytics/daily", {
+      api.get("/analytics/daily", {
         headers: { Authorization: `Bearer ${token}` },
         params,
       }),
@@ -109,7 +110,7 @@ export default function Dashboard() {
       if (user.role === "ADMIN") {
         await fetchAdminAnalytics();
       } else {
-        const res = await api.get("/bills/admin/analytics/daily", {
+        const res = await api.get("/analytics/daily", {
           headers: { Authorization: `Bearer ${token}` },
           params: buildParams(),
         });
@@ -234,6 +235,8 @@ export default function Dashboard() {
 
               {/* ================= USER ================= */}
               {user.role === "USER" && (
+                <>
+                <BalanceCard/>
                 <div className="dashboard-content">
                   <h2>📊 User Dashboard</h2>
                   <h3>📈 Your Daily Spend</h3>
@@ -278,6 +281,7 @@ export default function Dashboard() {
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
+                </>
               )}
             </div>
           </Page>

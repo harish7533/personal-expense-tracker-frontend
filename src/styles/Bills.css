@@ -1,0 +1,107 @@
+.bills-container {
+  padding: 30px;
+  animation: fadeIn 0.5s ease-in;
+}
+
+.bills-title {
+  font-size: 26px;
+  margin-bottom: 20px;
+}
+
+.filter-card {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.05);
+  --webkit-backdrop-filter: blur(10px);
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.filter-card input {
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.filter-btn {
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.filter-btn:hover {
+  transform: scale(1.05);
+}
+
+.bill-grid {
+  display: grid;
+  gap: 15px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.bill-card {
+  padding: 15px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.06);
+  --webkit-backdrop-filter: blur(8px);
+  transition: 0.3s;
+  animation: slideUp 0.4s ease;
+}
+
+.bill-card:hover {
+  transform: translateY(-5px);
+}
+
+.bill-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.amount {
+  font-weight: bold;
+  color: var(--accent);
+}
+
+.delete-btn {
+  margin-top: 10px;
+  padding: 6px 10px;
+  border: none;
+  background: #ff4d4f;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.delete-btn:hover {
+  opacity: 0.8;
+}
+
+.loading,
+.empty {
+  text-align: center;
+  margin-top: 20px;
+  opacity: 0.6;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

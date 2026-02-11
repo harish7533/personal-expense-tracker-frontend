@@ -26,10 +26,10 @@ export default function Activity() {
 
     // Prevent duplicate toasts
     if (latest.id !== lastToastId.current) {
-      toast(latest.message, {
-        icon: latest.type === "USER" ? "🧾" : "⚡",
-        id: latest.id,
-      });
+      // toast(latest.message, {
+      //   icon: latest.type === "USER" ? "🧾" : "⚡",
+      //   id: latest.id,
+      // });
 
       toast(latest.message, {
         icon: latest.type === "DEBIT" ? "💸" : "💰",
@@ -61,8 +61,14 @@ export default function Activity() {
               <p style={styles.empty}>No activities yet 📝</p>
             ) : (
               activities.map((a) => (
-                <div key={a.id} style={styles.card}>
+                <div
+                  key={a.id}
+                  className={`card ${a.type === "CREDIT" ? "credit" : "debit"}`}
+                >
                   <span>{a.message}</span>
+                  <small>
+                    {a.balance_before} → {a.balance_after}
+                  </small>
                   <small style={{ opacity: 0.6 }}>
                     {new Date(a.created_at).toLocaleString()}
                   </small>
@@ -81,6 +87,47 @@ export default function Activity() {
     </PageWrapper>
   );
 }
+
+// type Props = {
+//   value: number;
+// };
+
+// export default function AnimatedBalance({ value }: Props) {
+//   const [display, setDisplay] = useState(value);
+//   const prev = useRef(value);
+
+//   useEffect(() => {
+//     const start = prev.current;
+//     const end = value;
+//     const diff = end - start;
+//     const duration = 500;
+//     const startTime = performance.now();
+
+//     const animate = (now: number) => {
+//       const progress = Math.min((now - startTime) / duration, 1);
+//       setDisplay(Math.round(start + diff * progress));
+
+//       if (progress < 1) requestAnimationFrame(animate);
+//       else prev.current = value;
+//     };
+
+//     requestAnimationFrame(animate);
+//   }, [value]);
+
+//   const isIncrease = value > prev.current;
+
+//   return (
+//     <span
+//       style={{
+//         fontWeight: 600,
+//         color: isIncrease ? "#22c55e" : "#ef4444",
+//         transition: "color 0.3s",
+//       }}
+//     >
+//       ₹{display.toLocaleString()}
+//     </span>
+//   );
+// }
 
 /* ===================== STYLES ===================== */
 
@@ -103,6 +150,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     color: `var(--muted)`,
     opacity: 0.8,
   },
+  
   card: {
     background: `var(--card-bg)`,
     padding: 12,
@@ -113,6 +161,17 @@ const styles: { [key: string]: React.CSSProperties } = {
     alignItems: "center",
     animation: "fadeIn 0.4s ease",
   },
+
+  credit: {
+    background: "#e6fffa",
+    color: "#047857",
+  },
+
+  debit: {
+    background: "#fee2e2",
+    color: "#b91c1c",
+  },
+
   closeBtn: {
     position: "absolute",
     top: 8,

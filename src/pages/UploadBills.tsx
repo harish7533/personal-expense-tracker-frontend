@@ -4,6 +4,7 @@ import api from "../api";
 import "../styles/UploadBills.css";
 import toast from "react-hot-toast";
 import PageWrapper from "../components/layouts/PageWrapper";
+import { useBalance } from "../auth/BalanceContext";
 
 export default function UploadBills() {
   const [file, setFile] = useState<File | null>(null);
@@ -14,6 +15,7 @@ export default function UploadBills() {
   } | null>(null);
   const today = new Date().toISOString().split("T")[0];
   const [billDate, setBillDate] = useState(today);
+  const { updateBalance, refreshBalance } = useBalance();
 
   const buildDateTime = (dateStr: string) => {
     const selected = new Date(dateStr);
@@ -44,9 +46,14 @@ export default function UploadBills() {
       setLoading(true);
       setShowToast(null);
 
-      await api.post("/bills/upload", formData, {
+      const res = await api.post("/bills/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
+
+      if (res.status === 200) {
+        updateBalance((prev) => prev - Number(res.data.totalAmount));
+        await refreshBalance();
+      }
 
       setShowToast({ type: "success", msg: "Bill uploaded successfully" });
       toast.success("Bill uploaded successfully");

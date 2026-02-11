@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 import { getStores, addStore } from "../api/stores";
 import { getCategories, addCategory } from "../api/catagories";
 import PageWrapper from "../components/layouts/PageWrapper";
+import { useBalance } from "../auth/BalanceContext";
 
 interface Item {
   name: string;
@@ -35,6 +36,7 @@ export default function CreateBill() {
   const [storeOptions, setStoreOptions] = useState<string[]>([]);
   const [storeOption, setStoreOption] = useState("");
   const [customStoreName, setCustomStoreName] = useState("");
+  const { updateBalance, refreshBalance } = useBalance();
 
   useEffect(() => {
     getStores()
@@ -190,8 +192,13 @@ export default function CreateBill() {
 
     try {
       setLoading(true);
-      await api.post("/bills/create", payload);
+      const res = await api.post("/bills/create", payload);
 
+      if (res.status === 200) {
+        updateBalance((prev: number) => prev - Number(payload.totalAmount));
+        await refreshBalance();
+      }
+      
       toast.success(
         `🧾 Bill saved for ${finalStoreName} (₹${totalAmount.toFixed(2)})`,
       );
@@ -265,7 +272,7 @@ export default function CreateBill() {
                   onClick={addCustomStore}
                   className="button"
                 >
-                ➕ Add
+                  ➕ Add
                 </button>
               </div>
             )}
@@ -306,7 +313,11 @@ export default function CreateBill() {
                   value={customCategory}
                   onChange={(e) => setCustomCategory(e.target.value)}
                 />
-                <button type="button" onClick={addCustomCategory} className="button">
+                <button
+                  type="button"
+                  onClick={addCustomCategory}
+                  className="button"
+                >
                   ➕ Add
                 </button>
               </div>
@@ -374,7 +385,7 @@ export default function CreateBill() {
                     onClick={() => removeItem(i)}
                     className="remove"
                   >
-                  ✕ Remove
+                    ✕ Remove
                   </button>
                 </div>
               ))}

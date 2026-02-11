@@ -6,12 +6,15 @@ import "./styles/Skeleton.css";
 import "./styles/page-skeletons.css";
 import { AuthProvider } from "./auth/AuthContext";
 import { ActivitiesProvider } from "./auth/ActivitiesContext";
+import { BalanceProvider } from "./auth/BalanceContext";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <AuthProvider>
       <ActivitiesProvider>
-        <App />
+        <BalanceProvider>
+          <App />
+        </BalanceProvider>
       </ActivitiesProvider>
     </AuthProvider>
   </React.StrictMode>,
