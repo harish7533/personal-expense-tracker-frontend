@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-refresh/only-export-components */
 import {
   createContext,
@@ -7,6 +8,7 @@ import {
   type ReactNode,
 } from "react";
 import api from "../api";
+import { useAuth } from "./AuthContext";
 
 type BalanceContextType = {
   balance: number;
@@ -16,13 +18,12 @@ type BalanceContextType = {
   updateBalance: (updater: (prev: number) => number) => void;
 };
 
-const BalanceContext = createContext<BalanceContextType | undefined>(
-  undefined
-);
+const BalanceContext = createContext<BalanceContextType | undefined>(undefined);
 
 export function BalanceProvider({ children }: { children: ReactNode }) {
   const [balance, setBalance] = useState<number>(0);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [, setLoading] = useState<boolean>(true);
+  const { user, loading } = useAuth();
 
   /* ================= FETCH BALANCE ================= */
   const refreshBalance = async () => {
@@ -39,7 +40,7 @@ export function BalanceProvider({ children }: { children: ReactNode }) {
   /* ================= SET INITIAL BALANCE ================= */
   const setInitialBalance = async (amount: number) => {
     try {
-      await api.post("/balance/set", { amount });
+      await api.post("/balance/setBalance", { amount });
       setBalance(amount);
     } catch (err) {
       console.error("Failed to set balance", err);
@@ -52,6 +53,11 @@ export function BalanceProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
+    // 🔥 WAIT FOR AUTH TO FINISH
+    if (loading) return;
+
+    // 🔥 ONLY FETCH IF USER EXISTS
+    if (!user) return;
     refreshBalance();
   }, []);
 

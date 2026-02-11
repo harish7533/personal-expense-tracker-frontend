@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-refresh/only-export-components */
 import {
   createContext,
@@ -8,6 +9,7 @@ import {
 } from "react";
 import toast from "react-hot-toast";
 import api from "../api";
+import { useAuth } from "./AuthContext";
 
 export type Activity = {
   id: string;
@@ -29,8 +31,9 @@ type ActivitiesContextType = {
 const ActivitiesContext = createContext<ActivitiesContextType | null>(null);
 
 export const ActivitiesProvider = ({ children }: { children: ReactNode }) => {
+  const { user, loading } = useAuth();
   const [activities, setActivities] = useState<Activity[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
 
   /* ================= FETCH ================= */
   const refreshActivities = async () => {
@@ -47,6 +50,11 @@ export const ActivitiesProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
+    // 🔥 WAIT FOR AUTH TO FINISH
+    if (loading) return;
+
+    // 🔥 ONLY FETCH IF USER EXISTS
+    if (!user) return;
     refreshActivities();
   }, []);
 
