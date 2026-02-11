@@ -1,246 +1,66 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-// import { useEffect, useRef, useState } from "react";
-// import { Link } from "react-router-dom";
-// import Navbar from "./Navbar";
-// import "../styles/LandingPage.css";
-
-// export default function LandingPage() {
-//   const sectionsRef = useRef<Array<HTMLDivElement | null>>([]);
-
-//   // Scroll animation observer
-//   useEffect(() => {
-//     const observer = new IntersectionObserver(
-//       (entries) => {
-//         entries.forEach((entry) => {
-//           if (entry.isIntersecting) entry.target.classList.add("fade-slide-in");
-//         });
-//       },
-//       { threshold: 0.15 },
-//     );
-
-//     sectionsRef.current.forEach((el) => {
-//       if (el) observer.observe(el);
-//     });
-
-//     return () => observer.disconnect();
-//   }, []);
-
-//   const setSectionRef = (index: number) => (el: HTMLDivElement | null) => {
-//     sectionsRef.current[index] = el;
-//   };
-
-//   return (
-//     <>
-//       <Navbar />
-//       <div className="wrapper">
-//         {/* ================= HERO SECTION ================= */}
-//         <section
-//           ref={setSectionRef(0)}
-//           className="hero-section fade-slide-out gradient-bg"
-//         >
-//           <div className="hero-content">
-//             <div className="hero-text">
-//               <h1>
-//                 Smart Bill Analysis.
-//                 <br />
-//                 Simple. Fast. Secure.
-//               </h1>
-//               <p>
-//                 Upload, analyze, and track your expenses using OCR-powered bill
-//                 processing with role-based insights.
-//               </p>
-//               <div className="hero-actions">
-//                 <Link to="/register" className="primary-btn">
-//                   Get Started
-//                 </Link>
-//                 <Link to="/login" className="secondary-btn">
-//                   Login
-//                 </Link>
-//               </div>
-//             </div>
-//             <div className="hero-image">
-//               <img
-//                 src="/assets/hero-dashboard.png"
-//                 alt="Dashboard preview"
-//                 loading="lazy"
-//               />
-//             </div>
-//           </div>
-//         </section>
-
-//         {/* ================= FEATURES ================= */}
-//         <section
-//           ref={setSectionRef(1)}
-//           className="feature-section fade-slide-out"
-//         >
-//           <div className="feature-content">
-//             <div className="feature-image">
-//               <img
-//                 src="/assets/feature-analytics.png"
-//                 alt="Analytics"
-//                 loading="lazy"
-//               />
-//             </div>
-//             <div className="feature-text">
-//               <h2>🚀 What You Can Do</h2>
-//               <div className="grid">
-//                 <Feature
-//                   title="📸 OCR Bill Upload"
-//                   desc="Upload bills from mobile or desktop and extract data automatically."
-//                 />
-//                 <Feature
-//                   title="📊 Analytics Dashboard"
-//                   desc="Visualize expenses daily, monthly, and store-wise (Admin only)."
-//                 />
-//                 <Feature
-//                   title="🔐 Role-Based Access"
-//                   desc="Separate USER and ADMIN flows with protected routes."
-//                 />
-//                 <Feature
-//                   title="⚡ Fast & Secure"
-//                   desc="JWT authentication, secure APIs, and scalable architecture."
-//                 />
-//               </div>
-//             </div>
-//           </div>
-//         </section>
-
-//         {/* ================= HOW IT WORKS ================= */}
-//         <section
-//           ref={setSectionRef(2)}
-//           className="how-section fade-slide-out gradient-bg-alt"
-//         >
-//           <h2>🛠 How It Works</h2>
-
-//           {/* Floating shapes */}
-//           <div className="floating-shapes">
-//             <div className="circle"></div>
-//             <div className="triangle"></div>
-//             <div className="square"></div>
-//           </div>
-
-//           {/* Steps with SVG connector */}
-//           <div className="steps">
-//             <Step
-//               num="1"
-//               title="Register & Login"
-//               icon="/assets/icons/login.svg"
-//             />
-//             <Step
-//               num="2"
-//               title="Upload / Create Bills"
-//               icon="/assets/icons/upload.svg"
-//             />
-//             <Step
-//               num="3"
-//               title="Analyze Spending"
-//               icon="/assets/icons/analytics.svg"
-//             />
-//             <Step
-//               num="4"
-//               title="Make Better Decisions"
-//               icon="/assets/icons/decision.svg"
-//             />
-//           </div>
-
-//           {/* Accordion FAQ */}
-//           <div className="faq">
-//             <Accordion
-//               question="Can I upload bills from my phone?"
-//               answer="Yes, both mobile and desktop uploads are supported with OCR processing."
-//             />
-//             <Accordion
-//               question="How secure is my data?"
-//               answer="All data is stored securely using JWT authentication and encrypted storage."
-//             />
-//             <Accordion
-//               question="Can admins view analytics?"
-//               answer="Yes, admins have access to detailed dashboards for store-wise and date-wise insights."
-//             />
-//           </div>
-//         </section>
-
-//         {/* ================= DEVELOPER ================= */}
-//         <section ref={setSectionRef(3)} className="dev-section fade-slide-out">
-//           <div className="dev-content">
-//             <div className="dev-image">
-//               <img src="/assets/developer.png" alt="Developer" loading="lazy" />
-//             </div>
-//             <div className="dev-text">
-//               <h2>👨‍💻 Developer</h2>
-//               <h3>Harish B.</h3>
-//               <p>Full Stack Developer</p>
-//               <p>Angular • React • Java • Node.js • MongoDB • OCR • JWT</p>
-//               <p style={{ marginTop: 10, opacity: 0.8 }}>
-//                 This project demonstrates real-world authentication, role-based
-//                 routing, analytics, OCR integration, and interactive UI design.
-//               </p>
-//             </div>
-//           </div>
-//         </section>
-
-//         {/* ================= FOOTER ================= */}
-//         <footer className="footer">
-//           <p>© {new Date().getFullYear()} Expense Tracker</p>
-//           <p>Built with ❤️ using React + Node.js</p>
-//         </footer>
-//       </div>
-//     </>
-//   );
-// }
-
-// // ================= FEATURE =================
-// function Feature({ title, desc }: { title: string; desc: string }) {
-//   return (
-//     <div className="card">
-//       <h3>{title}</h3>
-//       <p>{desc}</p>
-//     </div>
-//   );
-// }
-
-// // ================= STEP =================
-// function Step({
-//   num,
-//   title,
-//   icon,
-// }: {
-//   num: string;
-//   title: string;
-//   icon?: string;
-// }) {
-//   return (
-//     <div className="stepCard">
-//       <div className="stepNum">{num}</div>
-//       {icon && <img src={icon} alt="" className="step-icon" />}
-//       <p>{title}</p>
-//     </div>
-//   );
-// }
-
-// // ================= ACCORDION =================
-// function Accordion({ question, answer }: { question: string; answer: string }) {
-//   const [open, setOpen] = useState(false);
-//   return (
-//     <div className="accordion">
-//       <div
-//         className="accordion-question"
-//         onClick={() => setOpen((prev) => !prev)}
-//       >
-//         {question} <span>{open ? "-" : "+"}</span>
-//       </div>
-//       {open && <div className="accordion-answer">{answer}</div>}
-//     </div>
-//   );
-// }
-
 import { useEffect, useRef, useState } from "react";
 import "../styles/LandingPage.css";
 import Navbar from "./Navbar";
 import { Link } from "react-router-dom";
 
-/* ================= STAT COUNTER ================= */
-const Stat = ({ number, suffix, label }: any) => {
+/* ================= ADVANCED TYPEWRITER ================= */
+function useLoopTypewriter(
+  words: string[],
+  speed = 80,
+  delayAfterComplete = 5000,
+  trigger = true,
+) {
+  const [text, setText] = useState<string>("");
+  const [wordIndex, setWordIndex] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [fade, setFade] = useState(false);
+
+  useEffect(() => {
+    if (!trigger) return;
+
+    const currentWord = words[wordIndex];
+
+    const timeout = setTimeout(
+      () => {
+        if (!isDeleting) {
+          // Typing
+          setText(currentWord.substring(0, text.length + 1));
+
+          if (text === currentWord) {
+            // Wait 5 seconds before deleting
+            setTimeout(() => {
+              setFade(true);
+              setIsDeleting(true);
+            }, delayAfterComplete);
+          }
+        } else {
+          // Deleting
+          setText(currentWord.substring(0, text.length - 1));
+
+          if (text === "") {
+            setFade(false);
+            setIsDeleting(false);
+            setWordIndex((prev) => (prev + 1) % words.length);
+          }
+        }
+      },
+      isDeleting ? speed / 2 : speed,
+    );
+
+    return () => clearTimeout(timeout);
+  }, [text, isDeleting, wordIndex, words, speed, delayAfterComplete, trigger]);
+
+  return { text, fade };
+}
+
+/* ================= STAT CARD ================= */
+interface StatProps {
+  number: number;
+  suffix: string;
+  label: string;
+}
+
+const Stat = ({ number, suffix, label }: StatProps) => {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
@@ -254,7 +74,7 @@ const Stat = ({ number, suffix, label }: any) => {
         setCount(number);
         clearInterval(counter);
       } else {
-        setCount(Math.floor(start));
+        setCount(Number(start.toFixed(0)));
       }
     }, 16);
 
@@ -273,14 +93,35 @@ const Stat = ({ number, suffix, label }: any) => {
 };
 
 /* ================= FEATURE CARD ================= */
-const Feature = ({ title, desc }: any) => (
+interface FeatureProps {
+  title: string;
+  desc: string;
+}
+
+const Feature = ({ title, desc }: FeatureProps) => (
   <div className="glass-card feature-card">
     <h4>{title}</h4>
     <p>{desc}</p>
   </div>
 );
 
+/* ================= LANDING PAGE ================= */
 const LandingPage = () => {
+  /* ================= HERO VISIBILITY ================= */
+  const heroRef = useRef<HTMLDivElement | null>(null);
+  const [heroVisible, setHeroVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => setHeroVisible(entry.isIntersecting),
+      { threshold: 0.3 },
+    );
+
+    if (heroRef.current) observer.observe(heroRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  /* ================= SECTION REFS ================= */
   const sectionsRef = useRef<(HTMLElement | null)[]>([]);
 
   const setSectionRef = (index: number) => (el: HTMLElement | null) => {
@@ -307,37 +148,96 @@ const LandingPage = () => {
     return () => observer.disconnect();
   }, []);
 
+  /* ================= TYPEWRITER ================= */
+  const heroWords = [
+    "Smart Expense Tracking",
+    "Your Finances sorted",
+    "Track Save Repeat",
+  ];
+
+  const overviewWords = [
+    "Monthly Overview",
+    "Daily Overview",
+    "Store Analysis",
+  ];
+
+  // const heroTitle = useLoopTypewriter(
+  //   heroWords,
+  //   80, // slower typing speed
+  //   5000, // wait 5 seconds before deleting
+  //   heroVisible,
+  // );
+
+  // const overviewText = useLoopTypewriter(overviewWords, 80, 5000, heroVisible);
+
+  const { text: heroText, fade: heroFade } = useLoopTypewriter(
+    heroWords,
+    80,
+    5000,
+    heroVisible,
+  );
+
+  const { text: overviewText, fade: overviewFade } = useLoopTypewriter(
+    overviewWords,
+    80,
+    5000,
+    heroVisible,
+  );
+
+  const barData: Record<string, number[]> = {
+    "Monthly Overview": [60, 80, 45, 90, 70],
+    "Daily Overview": [40, 55, 35, 60, 50],
+    "Store Analysis": [70, 50, 80, 65, 75],
+  };
+
+  const currentBars =
+    barData[overviewText as keyof typeof barData] ??
+    barData["Monthly Overview"];
+
   return (
     <>
       <Navbar />
+
       <div className="landing-wrapper">
         {/* ================= HERO ================= */}
-        <section ref={setSectionRef(0)} className="hero-section">
+        <section ref={heroRef} className="hero-section">
           <div className="hero-content">
             <div className="hero-text">
-              <h1>Smart Expense Tracking</h1>
+              <h1 className={`typing-text ${heroFade ? "fade-delete" : ""}`}>
+                {" "}
+                {heroText}
+                <span className="cursor">|</span>
+              </h1>
+
               <p>
-                Scan bills instantly. Extract data with OCR. Visualize spending.
+                Scan bills instantly. Extract data with OCR. Visualize spending
+                patterns. Make smarter financial decisions.
               </p>
 
               <div className="hero-actions">
-                <Link to={"/register"} className="btn-primary">
+                <Link to="/register" className="btn-primary">
                   Get Started
                 </Link>
-                <Link to={"/login"} className="btn-secondary">
+                <Link to="/login" className="btn-secondary">
                   Live Demo
                 </Link>
               </div>
             </div>
 
+            {/* Dashboard Preview */}
             <div className="dashboard-card">
-              <h4>Monthly Overview</h4>
+              <h4
+                className={`typing-text small ${overviewFade ? "fade-delete" : ""}`}
+              >
+                {" "}
+                {overviewText}
+                <span className="cursor small">|</span>
+              </h4>
+
               <div className="bars">
-                <div style={{ height: "60%" }}></div>
-                <div style={{ height: "80%" }}></div>
-                <div style={{ height: "45%" }}></div>
-                <div style={{ height: "90%" }}></div>
-                <div style={{ height: "70%" }}></div>
+                {currentBars.map((height, i) => (
+                  <div key={i} style={{ height: `${height}%` }}></div>
+                ))}
               </div>
             </div>
           </div>
@@ -348,25 +248,20 @@ const LandingPage = () => {
           <div className="stats-header">
             <h2>Trusted by Growing Businesses</h2>
             <p>
-              Real-time expense tracking, AI-powered extraction, and scalable
+              Real-time expense tracking, structured extraction, and scalable
               architecture.
             </p>
           </div>
 
           <div className="stats-grid">
-            <Stat number={12000} suffix="+" label="Bills Processed" />
-            <Stat number={540} suffix="+" label="Active Users" />
-            <Stat number={99} suffix="%" label="OCR Accuracy" />
+            <Stat number={1000} suffix="+" label="Bills Processed" />
+            <Stat number={528} suffix="+" label="Active Users" />
+            <Stat number={99.9} suffix="%" label="OCR Accuracy" />
           </div>
         </section>
 
         {/* ================= FEATURES ================= */}
-        <section ref={setSectionRef(1)} className="section feature-section">
-          <div className="floating-shapes">
-            <div className="blob blob1"></div>
-            <div className="blob blob2"></div>
-          </div>
-
+        <section ref={setSectionRef(0)} className="section feature-section">
           <div className="feature-content">
             <div className="feature-text">
               <h2>Powerful Features Built for Real Users</h2>
@@ -406,129 +301,102 @@ const LandingPage = () => {
           </div>
         </section>
 
-        {/* ================= DEVELOPER ================= */}
-        {/* <section ref={setSectionRef(2)} className="section-center">
-          <div className="developer-card">
-            <img
-              src="https://images.unsplash.com/photo-1502767089025-6572583495b4?w=300"
-              alt="Developer"
-            />
-            <div>
-              <h3>Built by Harish B</h3>
-              <p>
-                Full-stack developer focused on scalable SaaS architecture,
-                Angular + Node ecosystems, and AI integrations.
-              </p>
-            </div>
-          </div>
-        </section> */}
+       {/* ================= FAQ ================= */}
+<section ref={setSectionRef(3)} className="faq-section">
+  <div className="faq-header">
+    <h2>Frequently Asked Questions</h2>
+    <p>Everything you need to know about the platform.</p>
+  </div>
 
-        {/* ================= FAQ ================= */}
-        <section ref={setSectionRef(3)} className="faq-section">
-          <div className="faq-header">
-            <h2>Frequently Asked Questions</h2>
-            <p>Everything you need to know about the platform.</p>
-          </div>
+  <div className="faq-grid">
 
-          <div className="faq-grid">
-            <details className="faq-item">
-              <summary>
-                How accurate is the system?
-                <span>+</span>
-              </summary>
-              <div className="faq-content">
-                Our system delivers up to 99% accuracy depending on input
-                quality and clarity.
-              </div>
-            </details>
+    <details className="faq-item">
+      <summary>
+        How accurate is the system?
+        <span>+</span>
+      </summary>
+      <div className="faq-content">
+        Our system delivers up to 99% accuracy depending on input quality and clarity.
+      </div>
+    </details>
 
-            <details className="faq-item">
-              <summary>
-                Is my data secure?
-                <span>+</span>
-              </summary>
-              <div className="faq-content">
-                We use secure authentication, encrypted storage, and protected
-                APIs to safeguard your data.
-              </div>
-            </details>
+    <details className="faq-item">
+      <summary>
+        Is my data secure?
+        <span>+</span>
+      </summary>
+      <div className="faq-content">
+        We use secure authentication, encrypted storage, and protected APIs to safeguard your data.
+      </div>
+    </details>
 
-            <details className="faq-item">
-              <summary>
-                Can it scale for business use?
-                <span>+</span>
-              </summary>
-              <div className="faq-content">
-                Yes. The modular backend architecture is designed for SaaS-level
-                scalability.
-              </div>
-            </details>
+    <details className="faq-item">
+      <summary>
+        Can it scale for business use?
+        <span>+</span>
+      </summary>
+      <div className="faq-content">
+        Yes. The modular backend architecture is designed for SaaS-level scalability.
+      </div>
+    </details>
 
-            <details className="faq-item">
-              <summary>
-                Is it mobile friendly?
-                <span>+</span>
-              </summary>
-              <div className="faq-content">
-                Fully responsive and optimized for desktop, tablet, and mobile.
-              </div>
-            </details>
+    <details className="faq-item">
+      <summary>
+        Is it mobile friendly?
+        <span>+</span>
+      </summary>
+      <div className="faq-content">
+        Fully responsive and optimized for desktop, tablet, and mobile.
+      </div>
+    </details>
 
-            <details className="faq-item">
-              <summary>
-                Does it support role-based access?
-                <span>+</span>
-              </summary>
-              <div className="faq-content">
-                Yes. Different user roles can have custom permissions and
-                restricted access.
-              </div>
-            </details>
+    <details className="faq-item">
+      <summary>
+        Does it support role-based access?
+        <span>+</span>
+      </summary>
+      <div className="faq-content">
+        Yes. Different user roles can have custom permissions and restricted access.
+      </div>
+    </details>
 
-            <details className="faq-item">
-              <summary>
-                Is integration simple?
-                <span>+</span>
-              </summary>
-              <div className="faq-content">
-                REST APIs and modular components make integration seamless.
-              </div>
-            </details>
-          </div>
-        </section>
+    <details className="faq-item">
+      <summary>
+        Is integration simple?
+        <span>+</span>
+      </summary>
+      <div className="faq-content">
+        REST APIs and modular components make integration seamless.
+      </div>
+    </details>
+
+  </div>
+</section>
+
 
         {/* ================= DEVELOPER ================= */}
         <section ref={setSectionRef(2)} className="section developer-section">
-          <div className="developer-card">
-            <div className="developer-avatar-wrapper">
-              <div className="avatar-ring"></div>
-              <img
-                className="developer-avatar"
-                // src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400"
-                src="../src/assets/developer.jpg"
-                alt="Harish B"
-              />
-            </div>
+          <div className="developer-container">
+            <div className="developer-card">
+              <div className="developer-avatar-wrapper">
+                <div className="avatar-ring"></div>
+                <img
+                  className="developer-avatar"
+                  src="https://images.unsplash.com/photo-1750535135685-7d3322ba2e36?q=80&w=880"
+                  alt="Harish B"
+                />
+              </div>
 
-            <div className="developer-info">
-              <h3>Harish B</h3>
-              <span className="developer-role">
-                Full Stack Developer • AI & SaaS Architecture
-              </span>
+              <div className="developer-info">
+                <h2 className="developer-name">Harish B</h2>
+                <span className="developer-role">
+                  Full Stack Developer • AI SaaS Engineer
+                </span>
 
-              <p>
-                Passionate about building scalable SaaS products using Angular,
-                Node.js, TypeScript, and AI integrations. Focused on
-                performance, clean architecture, and premium UI experiences.
-              </p>
-
-              <div className="developer-actions">
-                <a href="#" className="dev-btn primary">
-                  View Portfolio
-                </a>
-                <a href="#" className="dev-btn secondary">
-                  GitHub
-                </a>
+                <p className="developer-description">
+                  I build production-ready SaaS applications using Angular,
+                  Node.js, TypeScript and AI integrations.
+                </p>
               </div>
             </div>
           </div>
