@@ -6,7 +6,7 @@ import api from "../api";
  */
 export const setInitialBalance = (amount: number) => {
   return api.post(
-    "/balance",
+    "/balance/setBalance",
     { amount },
     {
       withCredentials: true,
