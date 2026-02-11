@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-refresh/only-export-components */
 import {
   createContext,
@@ -59,7 +58,7 @@ export function BalanceProvider({ children }: { children: ReactNode }) {
     // 🔥 ONLY FETCH IF USER EXISTS
     if (!user) return;
     refreshBalance();
-  }, []);
+  }, [user, loading]);
 
   return (
     <BalanceContext.Provider

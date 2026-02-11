@@ -50,7 +50,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem("user", JSON.stringify(user));
     localStorage.setItem("token", token);
     setUser(user);                          // 🔥 instantly updates UI
-    setAuthorizedToken(authorizedToken);    // 🔥 instantly updates UI
+    setAuthorizedToken(token);    // 🔥 instantly updates UI
     setLoading(false);                      // 🔥 prevents stuck loading
   };
 

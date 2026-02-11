@@ -14,8 +14,8 @@ type Activity = {
 };
 
 export default function Activity() {
-  const { user, loading } = useAuth();
-  const { activities, removeActivity } = useActivities();
+  const { user, loading: authLoading } = useAuth();
+  const { activities, removeActivity, loading: activitiesLoading } = useActivities();
   const lastToastId = useRef<string | null>(null);
 
   /* ================= TOAST REAL-TIME ================= */
@@ -49,7 +49,7 @@ export default function Activity() {
 
   return (
     <PageWrapper>
-      {loading ? (
+      {authLoading || activitiesLoading ? (
         <ActivitySkeleton />
       ) : (
         <>

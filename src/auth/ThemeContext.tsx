@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-refresh/only-export-components */
 import {
   createContext,
@@ -7,7 +6,6 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { useAuth } from "./AuthContext";
 
 type Theme = "light" | "dark";
 
@@ -20,17 +18,11 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const { user, loading } = useAuth();
   const [theme, setTheme] = useState<Theme>(() => {
     return (localStorage.getItem("theme") as Theme) || "light";
   });
 
   useEffect(() => {
-    // 🔥 WAIT FOR AUTH TO FINISH
-    if (loading) return;
-
-    // 🔥 ONLY FETCH IF USER EXISTS
-    if (!user) return;
     document.documentElement.setAttribute("data-theme", theme);
     localStorage.setItem("theme", theme);
   }, [theme]);

@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-refresh/only-export-components */
 import {
   createContext,
@@ -31,9 +30,9 @@ type ActivitiesContextType = {
 const ActivitiesContext = createContext<ActivitiesContextType | null>(null);
 
 export const ActivitiesProvider = ({ children }: { children: ReactNode }) => {
-  const { user, loading } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [activities, setActivities] = useState<Activity[]>([]);
-  const [, setLoading] = useState(true);
+  const [activitiesLoading, setActivitiesLoading] = useState<boolean>(true);
 
   /* ================= FETCH ================= */
   const refreshActivities = async () => {
@@ -45,18 +44,18 @@ export const ActivitiesProvider = ({ children }: { children: ReactNode }) => {
     } catch (err) {
       toast.error(`Failed to set balance ${err}`);
     } finally {
-      setLoading(false);
+      setActivitiesLoading(false);
     }
   };
 
   useEffect(() => {
     // 🔥 WAIT FOR AUTH TO FINISH
-    if (loading) return;
+    if (authLoading) return;
 
     // 🔥 ONLY FETCH IF USER EXISTS
     if (!user) return;
     refreshActivities();
-  }, []);
+  }, [authLoading, user]);
 
   /* ================= DELETE (OPTIMISTIC) ================= */
   const removeActivity = async (id: string) => {
@@ -75,7 +74,7 @@ export const ActivitiesProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <ActivitiesContext.Provider
-      value={{ activities, loading, refreshActivities, removeActivity }}
+      value={{ activities, loading: activitiesLoading, refreshActivities, removeActivity }}
     >
       {children}
     </ActivitiesContext.Provider>
