@@ -75,3 +75,36 @@
     background-position: 0 0;
   }
 }
+
+
+/* LANDING PAGE SKELETON CSS */
+.skeleton-hero,
+.skeleton-section {
+  background: linear-gradient(
+    90deg,
+    var(--border) 25%,
+    var(--muted) 50%,
+    var(--border) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 16px;
+  margin-bottom: 20px;
+}
+
+.skeleton-hero {
+  height: 300px;
+}
+
+.skeleton-section {
+  height: 200px;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}

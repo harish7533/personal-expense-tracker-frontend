@@ -4,7 +4,7 @@ import api from "../api";
 import "../styles/UploadBills.css";
 import toast from "react-hot-toast";
 import PageWrapper from "../components/layouts/PageWrapper";
-import { useBalance } from "../auth/BalanceContext";
+import { useBalance } from "../context/BalanceContext";
 
 export default function UploadBills() {
   const [file, setFile] = useState<File | null>(null);

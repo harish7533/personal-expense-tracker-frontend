@@ -1,5 +1,4 @@
-export { useAuth } from "../auth/AuthContext";
-
+export { useAuth } from "../context/AuthContext";
 
 // import { useEffect, useState } from "react";
 
@@ -53,8 +52,6 @@ export { useAuth } from "../auth/AuthContext";
 //     isAuthenticated: !!user,
 //   };
 // }
-
-
 
 // /* eslint-disable react-hooks/set-state-in-effect */
 // import { useEffect, useState } from "react";

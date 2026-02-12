@@ -1,8 +1,8 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { setInitialBalance } from "../api/balance";
-import { useActivities } from "../auth/ActivitiesContext";
-import { useAuth } from "../auth/AuthContext";
+import { useActivities } from "../context/ActivitiesContext";
+import { useAuth } from "../context/AuthContext";
 
 export default function SetBalance() {
   const [amount, setAmount] = useState<number>(0);

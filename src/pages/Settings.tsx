@@ -1,8 +1,8 @@
 import Navbar from "../components/Navbar";
-import { useAuth } from "../auth/AuthContext";
+import { useAuth } from "../context/AuthContext";
 import SettingsSkeleton from "../components/skeletons/SettingsSkeleton";
 import PageWrapper from "../components/layouts/PageWrapper";
-import { useTheme } from "../auth/ThemeContext";
+import { useTheme } from "../context/ThemeContext";
 
 export default function Settings() {
   const { user, loading } = useAuth();

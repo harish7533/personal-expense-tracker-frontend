@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import api from "../api";
-import { useBalance } from "../auth/BalanceContext";
+import { useBalance } from "../context/BalanceContext";
 import "../styles/Bills.css";
 
 export default function Bills() {

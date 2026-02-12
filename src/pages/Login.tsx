@@ -4,7 +4,7 @@ import api from "../api";
 import type { AxiosError } from "axios";
 import { toast } from "react-hot-toast/headless";
 // import { useBanner } from "../hooks/useBanner";
-import { useAuth } from "../auth/AuthContext";
+import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router";
 
 export default function Login() {
@@ -29,7 +29,7 @@ export default function Login() {
       // clear(); // ✅ Reset session expired state on successful login
       toast.success(`Welcome back 👋 ${user}`);
       login(res.data.user, res.data.token);
-      navigate("/dashboard", { replace: true});
+      navigate("/dashboard", { replace: true });
     } catch (err: any) {
       console.error("LOGIN ERROR:", err);
 

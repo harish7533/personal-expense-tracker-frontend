@@ -1,9 +1,8 @@
-import { useActivities as useActivitiesContext } from "../auth/ActivitiesContext";
+import { useActivities as useActivitiesContext } from "../context/ActivitiesContext";
 
 export default function useActivities() {
   return useActivitiesContext();
 }
-
 
 // import { useEffect, useState } from "react";
 // import toast from "react-hot-toast";
@@ -61,7 +60,6 @@ export default function useActivities() {
 //   };
 // }
 
-
 // import { useEffect, useState } from "react";
 // import api from "../api"; // your axios instance
 // import { useAuth } from "./useAuth";
@@ -80,7 +78,7 @@ export default function useActivities() {
 //   const [error, setError] = useState<string>("");
 //   const { user } = useAuth(); // dynamic auth instead of localStorage
 
-//   useEffect(() => {    
+//   useEffect(() => {
 //     const fetchActivities = async () => {
 //       try {
 //         setLoading(true);

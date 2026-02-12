@@ -84,7 +84,7 @@
 
 /* ================= TYPEWRITER ================= */
 
-.typing-title {
+/* .typing-title {
   font-size: 52px;
   font-weight: 700;
   min-height: 60px;
@@ -94,7 +94,26 @@
   font-size: 16px;
   font-weight: 600;
   min-height: 22px;
+} */
+
+.typing-title {
+  font-size: 3rem;
 }
+
+.typing-overview {
+  font-size: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .typing-title {
+    font-size: 2rem;
+  }
+
+  .typing-overview {
+    font-size: 1.1rem;
+  }
+}
+
 
 .cursor {
   display: inline-block;

@@ -1,10 +1,10 @@
 import { useEffect, useRef } from "react";
 import toast from "react-hot-toast";
 import Navbar from "../components/Navbar";
-import { useAuth } from "../auth/AuthContext";
+import { useAuth } from "../context/AuthContext";
 import ActivitySkeleton from "../components/skeletons/ActivitySkeleton";
 import PageWrapper from "../components/layouts/PageWrapper";
-import { useActivities } from "../auth/ActivitiesContext";
+import { useActivities } from "../context/ActivitiesContext";
 
 type Activity = {
   id: string;
@@ -15,7 +15,11 @@ type Activity = {
 
 export default function Activity() {
   const { user, loading: authLoading } = useAuth();
-  const { activities, removeActivity, loading: activitiesLoading } = useActivities();
+  const {
+    activities,
+    removeActivity,
+    loading: activitiesLoading,
+  } = useActivities();
   const lastToastId = useRef<string | null>(null);
 
   /* ================= TOAST REAL-TIME ================= */
@@ -28,7 +32,7 @@ export default function Activity() {
     if (latest.id !== lastToastId.current) {
       // toast(latest.message, {
       //   icon: latest.type === "USER" ? "🧾" : "⚡",
-      //   id: latest.id, 
+      //   id: latest.id,
       // });
 
       toast(latest.message, {
@@ -150,7 +154,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     color: `var(--muted)`,
     opacity: 0.8,
   },
-  
+
   card: {
     background: `var(--card-bg)`,
     padding: 12,

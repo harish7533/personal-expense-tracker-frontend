@@ -2,18 +2,22 @@
 import { useEffect, useState } from "react";
 import api from "../api";
 import {
-  BarChart,
-  Bar,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   Tooltip,
   ResponsiveContainer,
+  CartesianGrid,
+  PieChart,
+  Pie,
   Cell,
+  Legend,
 } from "recharts";
 import Navbar from "../components/Navbar";
 import "../styles/DashBoard.css";
 import Page from "../components/Page";
-import { useAuth } from "../auth/AuthContext";
+import { useAuth } from "../context/AuthContext";
 import DashboardSkeleton from "../components/skeletons/DashboardSkeleton";
 import PageWrapper from "../components/layouts/PageWrapper";
 import BalanceCard from "../components/BalanceCard";
@@ -21,14 +25,14 @@ import BalanceCard from "../components/BalanceCard";
 export default function Dashboard() {
   const { user, loading, token } = useAuth();
 
-  const CHART_COLORS = [
-    "#22c55e",
-    "#6366f1",
-    "#f97316",
-    "#06b6d4",
-    "#a855f7",
-    "#ef4444",
-  ];
+  // const CHART_COLORS = [
+  //   "#22c55e",
+  //   "#6366f1",
+  //   "#f97316",
+  //   "#06b6d4",
+  //   "#a855f7",
+  //   "#ef4444",
+  // ];
 
   const [daily, setDaily] = useState<any[]>([]);
   const [monthly, setMonthly] = useState<any[]>([]);
@@ -38,16 +42,24 @@ export default function Dashboard() {
   const [error, setError] = useState<string>("");
   const [revealed, setRevealed] = useState(false);
   const [hasBills, setHasBills] = useState(true);
+  const storeColorMap: Record<string, string> = {};
 
   /* =========================
      THEME TOOLTIP
   ========================= */
-  const isDark = document.documentElement.getAttribute("data-theme") === "dark";
-
   const tooltipStyle = {
-    backgroundColor: isDark ? "#020617" : "#ffffff",
-    border: `1px solid ${isDark ? "#1f2937" : "#e5e7eb"}`,
-    color: isDark ? "#e5e7eb" : "#111827",
+    backgroundColor: "var(--card-bg)",
+    border: "1px solid var(--border)",
+    borderRadius: "12px",
+    color: "var(--text)",
+  };
+
+  const getStoreColor = (store: string) => {
+    if (!storeColorMap[store]) {
+      const hue = Math.floor(Math.random() * 360);
+      storeColorMap[store] = `hsl(${hue}, 70%, 55%)`;
+    }
+    return storeColorMap[store];
   };
 
   /* =========================
@@ -140,7 +152,9 @@ export default function Dashboard() {
       ) : error ? (
         <>
           <Navbar />
-          <div style={{ textAlign: "center", padding: 80, color: "var(--text)" }}>
+          <div
+            style={{ textAlign: "center", padding: 80, color: "var(--text)" }}
+          >
             <h1>⚠️ Something went wrong</h1>
             <p>Please try again later</p>
           </div>
@@ -148,7 +162,9 @@ export default function Dashboard() {
       ) : !hasBills ? (
         <>
           <Navbar />
-          <div style={{ textAlign: "center", padding: 60, color: "var(--text)" }}>
+          <div
+            style={{ textAlign: "center", padding: 60, color: "var(--text)" }}
+          >
             <h2>No bills yet 🧾</h2>
             <p>Add your first bill to see analytics</p>
           </div>
@@ -156,7 +172,9 @@ export default function Dashboard() {
       ) : !user ? (
         <>
           <Navbar />
-          <p style={{ textAlign: "center", marginTop: 40, color: "var(--text)" }}>
+          <p
+            style={{ textAlign: "center", marginTop: 40, color: "var(--text)" }}
+          >
             Please login to view dashboard
           </p>
         </>
@@ -195,38 +213,77 @@ export default function Dashboard() {
                     </button>
                   </div>
 
-                  <h3>Monthly Spend</h3>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <BarChart data={monthly}>
+                  <h3 className="chart-title">Monthly Spend</h3>
+
+                  <ResponsiveContainer width="100%" height={320}>
+                    <AreaChart data={monthly}>
+                      <defs>
+                        <linearGradient
+                          id="colorSpend"
+                          x1="0"
+                          y1="0"
+                          x2="0"
+                          y2="1"
+                        >
+                          <stop
+                            offset="0%"
+                            stopColor="var(--primary)"
+                            stopOpacity={0.4}
+                          />
+                          <stop
+                            offset="100%"
+                            stopColor="var(--primary)"
+                            stopOpacity={0}
+                          />
+                        </linearGradient>
+                      </defs>
+
+                      <CartesianGrid
+                        strokeDasharray="3 3"
+                        stroke="var(--border)"
+                      />
                       <XAxis dataKey="month" stroke="var(--muted)" />
                       <YAxis stroke="var(--muted)" />
                       <Tooltip contentStyle={tooltipStyle} />
-                      <Bar dataKey="total" radius={[6, 6, 0, 0]}>
-                        {monthly.map((_, i) => (
-                          <Cell
-                            key={i}
-                            fill={CHART_COLORS[i % CHART_COLORS.length]}
-                          />
-                        ))}
-                      </Bar>
-                    </BarChart>
+
+                      <Area
+                        type="monotone"
+                        dataKey="total"
+                        stroke="var(--primary)"
+                        strokeWidth={3}
+                        fill="url(#colorSpend)"
+                        dot={{ r: 4 }}
+                        activeDot={{ r: 6 }}
+                      />
+                    </AreaChart>
                   </ResponsiveContainer>
 
-                  <h3>Store-wise Spend</h3>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <BarChart data={storeWise}>
-                      <XAxis dataKey="store" stroke="var(--muted)" />
-                      <YAxis stroke="var(--muted)" />
+                  <h3 className="chart-title">Store-wise Spend</h3>
+
+                  <ResponsiveContainer width="100%" height={320}>
+                    <PieChart>
                       <Tooltip contentStyle={tooltipStyle} />
-                      <Bar dataKey="total" radius={[6, 6, 0, 0]}>
-                        {storeWise.map((_, i) => (
+
+                      <Pie
+                        data={storeWise}
+                        dataKey="total"
+                        nameKey="store"
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={70}
+                        outerRadius={110}
+                        paddingAngle={3}
+                      >
+                        {storeWise.map((entry, index) => (
                           <Cell
-                            key={i}
-                            fill={CHART_COLORS[i % CHART_COLORS.length]}
+                            key={`cell-${index}`}
+                            fill={getStoreColor(entry.store)}
                           />
                         ))}
-                      </Bar>
-                    </BarChart>
+                      </Pie>
+
+                      <Legend />
+                    </PieChart>
                   </ResponsiveContainer>
                 </div>
               )}
@@ -263,20 +320,45 @@ export default function Dashboard() {
                       </button>
                     </div>
 
-                    <ResponsiveContainer width="100%" height={300}>
-                      <BarChart data={daily}>
+                    <ResponsiveContainer width="100%" height={320}>
+                      <AreaChart data={daily}>
+                        <defs>
+                          <linearGradient
+                            id="colorDaily"
+                            x1="0"
+                            y1="0"
+                            x2="0"
+                            y2="1"
+                          >
+                            <stop
+                              offset="0%"
+                              stopColor="#22c55e"
+                              stopOpacity={0.4}
+                            />
+                            <stop
+                              offset="100%"
+                              stopColor="#22c55e"
+                              stopOpacity={0}
+                            />
+                          </linearGradient>
+                        </defs>
+
+                        <CartesianGrid
+                          strokeDasharray="3 3"
+                          stroke="var(--border)"
+                        />
                         <XAxis dataKey="date" stroke="var(--muted)" />
                         <YAxis stroke="var(--muted)" />
                         <Tooltip contentStyle={tooltipStyle} />
-                        <Bar dataKey="total" radius={[6, 6, 0, 0]}>
-                          {daily.map((_, i) => (
-                            <Cell
-                              key={i}
-                              fill={i % 2 === 0 ? "#22c55e" : "#16a34a"}
-                            />
-                          ))}
-                        </Bar>
-                      </BarChart>
+
+                        <Area
+                          type="monotone"
+                          dataKey="total"
+                          stroke="#22c55e"
+                          strokeWidth={2}
+                          fill="url(#colorDaily)"
+                        />
+                      </AreaChart>
                     </ResponsiveContainer>
                   </div>
                 </>

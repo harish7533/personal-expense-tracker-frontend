@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useBalance } from "../auth/BalanceContext";
+import { useBalance } from "../context/BalanceContext";
 
 export default function BalanceCard() {
   const { balance } = useBalance();

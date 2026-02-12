@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
-import { useTheme } from "../auth/ThemeContext";
+import { useTheme } from "../context/ThemeContext";
 import { markAllAsRead } from "../api/activity";
-import { useAuth } from "../auth/AuthContext";
-import { useActivities } from "../auth/ActivitiesContext";
+import { useAuth } from "../context/AuthContext";
+import { useActivities } from "../context/ActivitiesContext";
 
 import { FiSettings, FiBell, FiLogOut, FiMoon, FiSun } from "react-icons/fi";
 
@@ -35,7 +35,7 @@ export default function Navbar() {
 
   const initials = getInitials(user?.username);
 
-    /* ================= CLOSE ON OUTSIDE CLICK ================= */
+  /* ================= CLOSE ON OUTSIDE CLICK ================= */
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -64,11 +64,12 @@ export default function Navbar() {
     return null; // or return a small loader
   }
 
-
-
   return (
     <nav style={styles.nav}>
-      <h3 style={{ cursor: "pointer", color: "var(--text)" }} onClick={() => navigate("/dashboard")}>
+      <h3
+        style={{ cursor: "pointer", color: "var(--text)" }}
+        onClick={() => navigate("/dashboard")}
+      >
         🧾 Expense Tracker
       </h3>
 
@@ -79,11 +80,7 @@ export default function Navbar() {
             onClick={() => setOpen((prev) => !prev)}
             style={styles.profileBtn}
           >
-            {user
-              ? initials
-              : theme === "dark"
-                ? "🌞"
-                : "🌙"}
+            {user ? initials : theme === "dark" ? "🌞" : "🌙"}
 
             {/* Badge */}
             {user && unreadCount > 0 && (

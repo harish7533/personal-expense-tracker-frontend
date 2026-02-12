@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 import { getStores, addStore } from "../api/stores";
 import { getCategories, addCategory } from "../api/catagories";
 import PageWrapper from "../components/layouts/PageWrapper";
-import { useBalance } from "../auth/BalanceContext";
+import { useBalance } from "../context/BalanceContext";
 
 interface Item {
   name: string;
@@ -198,7 +198,7 @@ export default function CreateBill() {
         updateBalance((prev: number) => prev - Number(payload.totalAmount));
         await refreshBalance();
       }
-      
+
       toast.success(
         `🧾 Bill saved for ${finalStoreName} (₹${totalAmount.toFixed(2)})`,
       );
