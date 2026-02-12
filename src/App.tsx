@@ -12,18 +12,9 @@ import Activity from "./pages/Activity";
 import { Toaster } from "react-hot-toast";
 import Banner from "./components/Banner";
 import SetBalance from "./pages/SetBalance";
-import { useEffect } from "react";
 import DashboardLayout from "./components/dashboard/DashBoardLayout";
 
 function App() {
-  useEffect(() => {
-    if (!("Notification" in window)) return;
-
-    if (Notification.permission === "default") {
-      Notification.requestPermission();
-    }
-  }, []);
-
   return (
     <BrowserRouter>
       <Toaster

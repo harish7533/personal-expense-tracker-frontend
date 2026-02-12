@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable react-refresh/only-export-components */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createContext, useContext, useEffect, useState } from "react";
@@ -8,7 +9,7 @@ export interface Transaction {
   id: string;
   type: "income" | "expense";
   amount: number;
-  category: string,
+  category: string;
   description: string;
   created_at: string;
 }
@@ -21,41 +22,50 @@ interface FinanceContextType {
     type: "income" | "expense",
     amount: number,
     description: string,
-    category: string,
+    category: string
   ) => Promise<void>;
   loading: boolean;
   goal: number;
-  setSavingsGoal: ( amount: number ) => Promise<void>;
+  monthlyLimit: number;
+  overspending: boolean;
+  setSavingsGoal: (amount: number) => Promise<void>;
 }
 
 const FinanceContext = createContext<FinanceContextType | null>(null);
 
 export const FinanceProvider = ({ children }: any) => {
   const { user } = useAuth();
+
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [goal, setGoal] = useState<number>(0);
-  const [loading] = useState(true);
+  const [monthlyLimit] = useState<number>(20000); // later fetch from DB
+  const [loading, setLoading] = useState(true);
+  const [notified, setNotified] = useState(false);
 
-  // Fetch Transactions
-  //   useEffect(() => {
-  //     if (!user) return;
+  /* -----------------------------
+     Fetch Transactions Initially
+  ------------------------------ */
+  useEffect(() => {
+    if (!user) return;
 
-  //     const fetchTransactions = async () => {
-  //       const { data, error } = await supabase
-  //         .from("transactions")
-  //         .select("*")
-  //         .order("created_at", { ascending: false });
+    const fetchTransactions = async () => {
+      const { data } = await supabase
+        .from("transactions")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false });
 
-  //       if (!error && data) {
-  //         setTransactions(data);
-  //       }
+      if (data) setTransactions(data);
 
-  //       setLoading(false);
-  //     };
+      setLoading(false);
+    };
 
-  //     fetchTransactions();
-  //   }, [user]);
+    fetchTransactions();
+  }, [user]);
 
+  /* -----------------------------
+     Realtime Subscription
+  ------------------------------ */
   useEffect(() => {
     if (!user) return;
 
@@ -73,12 +83,27 @@ export const FinanceProvider = ({ children }: any) => {
           if (payload.eventType === "INSERT") {
             setTransactions((prev) => [payload.new as Transaction, ...prev]);
           }
-        },
+        }
       )
       .subscribe();
 
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user]);
+
+  /* -----------------------------
+     Fetch Savings Goal
+  ------------------------------ */
+  useEffect(() => {
+    if (!user) return;
+
     const fetchGoal = async () => {
-      const { data } = await supabase.from("savings_goal").select("*").single();
+      const { data } = await supabase
+        .from("savings_goal")
+        .select("*")
+        .eq("user_id", user.id)
+        .single();
 
       if (data) {
         setGoal(Number(data.target_amount));
@@ -86,40 +111,11 @@ export const FinanceProvider = ({ children }: any) => {
     };
 
     fetchGoal();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
   }, [user]);
 
-  // Add Transaction
-  const addTransaction = async (
-    type: "income" | "expense",
-    amount: number,
-    description: string,
-    category: string,
-  ) => {
-    if (!user) return;
-
-    const { data, error } = await supabase
-      .from("transactions")
-      .insert([
-        {
-          user_id: user.id,
-          type,
-          amount,
-          description,
-          category
-        },
-      ])
-      .select()
-      .single();
-
-    if (!error && data) {
-      setTransactions((prev) => [data, ...prev]);
-    }
-  };
-
+  /* -----------------------------
+     Calculations
+  ------------------------------ */
   const income = transactions
     .filter((t) => t.type === "income")
     .reduce((sum, t) => sum + Number(t.amount), 0);
@@ -128,6 +124,62 @@ export const FinanceProvider = ({ children }: any) => {
     .filter((t) => t.type === "expense")
     .reduce((sum, t) => sum + Number(t.amount), 0);
 
+  const overspending = expense > monthlyLimit;
+
+  /* -----------------------------
+     Overspending Notification
+  ------------------------------ */
+  useEffect(() => {
+    if (
+      overspending &&
+      Notification.permission === "granted" &&
+      !notified
+    ) {
+      new Notification("⚠ Overspending Alert", {
+        body: "You have exceeded your monthly budget!",
+      });
+
+      setNotified(true);
+    }
+
+    if (!overspending) {
+      setNotified(false);
+    }
+  }, [overspending, notified]);
+
+  /* -----------------------------
+     Add Transaction
+  ------------------------------ */
+  const addTransaction = async (
+    type: "income" | "expense",
+    amount: number,
+    description: string,
+    category: string
+  ) => {
+    if (!user) return;
+
+    const { data } = await supabase
+      .from("transactions")
+      .insert([
+        {
+          user_id: user.id,
+          type,
+          amount,
+          description,
+          category,
+        },
+      ])
+      .select()
+      .single();
+
+    if (data) {
+      setTransactions((prev) => [data, ...prev]);
+    }
+  };
+
+  /* -----------------------------
+     Savings Goal
+  ------------------------------ */
   const setSavingsGoal = async (amount: number) => {
     if (!user) return;
 
@@ -148,6 +200,8 @@ export const FinanceProvider = ({ children }: any) => {
         addTransaction,
         loading,
         goal,
+        monthlyLimit,
+        overspending,
         setSavingsGoal,
       }}
     >

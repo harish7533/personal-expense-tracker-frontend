@@ -1,25 +1,26 @@
+import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { useFinance } from "../../context/FincanceContext";
+
 import StatCard from "./StatCard";
 import IncomeExpenseToggle from "./IncomeExpenseToggle";
 import ExpensePieChart from "./ExpensePieChart";
 import IncomeWheel from "./IncomeWheel";
-import { useFinance } from "../../context/FincanceContext";
-import { useNavigate } from "react-router-dom";
-import "../../styles/DashBoardLayout.css";
-
-import { motion } from "framer-motion";
 import TransactionTimeline from "./TransactionTimeline";
 import AIInsightCard from "./AIInsightCard";
 import WeeklyTrendCard from "./WeeklyTrendCard";
 import MonthlyAnalyticsChart from "./MonthlyAnalyticsChart";
 import SavingsGoalCard from "./SavingsGoalCard";
 import CategoryAnalyticsChart from "./CategoryAnalyticsChart";
+import EnableNotificationCard from "../EnableNotificationCard";
+
+import "../../styles/DashBoardLayout.css";
 
 const container = {
-  hidden: {},
+  hidden: { opacity: 0 },
   show: {
-    transition: {
-      staggerChildren: 0.15,
-    },
+    opacity: 1,
+    transition: { staggerChildren: 0.12 },
   },
 };
 
@@ -30,43 +31,59 @@ export default function DashboardLayout() {
   const remaining = income - expense;
 
   return (
-    <motion.div
-      className="dashboard-grid"
-      variants={container}
-      initial="hidden"
-      animate="show"
-    >
-      <StatCard
-        title="Income"
-        amount={income}
-        type="income"
-        onView={() => navigate("/income-details")}
-      />
+    <>
+      {/* Notification Permission Card */}
+      <EnableNotificationCard />
 
-      <StatCard
-        title="Expense"
-        amount={expense}
-        type="expense"
-        onView={() => navigate("/expense-details")}
-      />
+      <motion.div
+        className="dashboard-grid"
+        variants={container}
+        initial="hidden"
+        animate="show"
+      >
+        {/* Income Card */}
+        <StatCard
+          title="Income"
+          amount={income}
+          type="income"
+          onView={() => navigate("/dashboard/income-details")}
+        />
 
-      <IncomeWheel remaining={remaining} total={income} />
+        {/* Expense Card */}
+        <StatCard
+          title="Expense"
+          amount={expense}
+          type="expense"
+          onView={() => navigate("/dashboard/expense-details")}
+        />
 
-      <ExpensePieChart income={income} expense={expense} />
+        {/* Remaining Income Spin Wheel */}
+        <IncomeWheel remaining={remaining} total={income} />
 
-      <IncomeExpenseToggle />
+        {/* Expense Pie Chart */}
+        <ExpensePieChart income={income} expense={expense} />
 
-      <AIInsightCard />
+        {/* Toggle Add Income / Expense */}
+        <IncomeExpenseToggle />
 
-      <WeeklyTrendCard />
+        {/* AI Insight */}
+        <AIInsightCard />
 
-      <MonthlyAnalyticsChart />
+        {/* Weekly Trend */}
+        <WeeklyTrendCard />
 
-      <SavingsGoalCard />
+        {/* Monthly Analytics */}
+        <MonthlyAnalyticsChart />
 
-      <CategoryAnalyticsChart />
+        {/* Savings Goal */}
+        <SavingsGoalCard />
 
-      <TransactionTimeline />
-    </motion.div>
+        {/* Category Analytics */}
+        <CategoryAnalyticsChart />
+
+        {/* Timeline */}
+        <TransactionTimeline />
+      </motion.div>
+    </>
   );
 }
