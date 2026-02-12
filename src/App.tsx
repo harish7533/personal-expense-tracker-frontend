@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import Dashboard from "./pages/Dashboard";
+// import Dashboard from "./pages/Dashboard";
 import Bills from "./pages/Bills";
 import UploadBills from "./pages/UploadBills";
 import CreateBill from "./pages/CreateBill";
@@ -13,6 +13,7 @@ import { Toaster } from "react-hot-toast";
 import Banner from "./components/Banner";
 import SetBalance from "./pages/SetBalance";
 import { useEffect } from "react";
+import DashboardLayout from "./components/dashboard/DashBoardLayout";
 
 function App() {
   useEffect(() => {
@@ -56,7 +57,8 @@ function App() {
           path="/dashboard"
           element={
             <ProtectedRoute>
-              <Dashboard />
+              {/* <Dashboard /> */}
+              <DashboardLayout/>
             </ProtectedRoute>
           }
         />
