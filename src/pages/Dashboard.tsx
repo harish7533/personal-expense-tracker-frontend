@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import api from "../api";
 import {
   AreaChart,
@@ -10,9 +11,11 @@ import {
   ResponsiveContainer,
   CartesianGrid,
   PieChart,
+  LineChart,
   Pie,
   Cell,
   Legend,
+  Line,
 } from "recharts";
 import Navbar from "../components/Navbar";
 import "../styles/DashBoard.css";
@@ -20,21 +23,22 @@ import Page from "../components/Page";
 import { useAuth } from "../context/AuthContext";
 import DashboardSkeleton from "../components/skeletons/DashboardSkeleton";
 import PageWrapper from "../components/layouts/PageWrapper";
-import BalanceCard from "../components/BalanceCard";
+import type { Transaction } from "../context/FincanceContext";
+import { motion } from "framer-motion";
+import {
+  TrendingDown,
+  TrendingUp,
+  ArrowDownCircle,
+  IndianRupee,
+} from "lucide-react";
 
-export default function Dashboard() {
+interface Props {
+  transactions: Transaction[];
+}
+
+export default function Dashboard({ transactions }: Props) {
   const { user, loading, token } = useAuth();
 
-  // const CHART_COLORS = [
-  //   "#22c55e",
-  //   "#6366f1",
-  //   "#f97316",
-  //   "#06b6d4",
-  //   "#a855f7",
-  //   "#ef4444",
-  // ];
-
-  const [daily, setDaily] = useState<any[]>([]);
   const [monthly, setMonthly] = useState<any[]>([]);
   const [storeWise, setStoreWise] = useState<any[]>([]);
   const [from, setFrom] = useState("");
@@ -43,6 +47,8 @@ export default function Dashboard() {
   const [revealed, setRevealed] = useState(false);
   const [hasBills, setHasBills] = useState(true);
   const storeColorMap: Record<string, string> = {};
+  const [mode, setMode] = useState<"income" | "expense">("income");
+  const [amount, setAmount] = useState("");
 
   /* =========================
      THEME TOOLTIP
@@ -63,6 +69,69 @@ export default function Dashboard() {
   };
 
   /* =========================
+     BUILD CUMULATIVE DATA
+  ========================== */
+
+  const chartData = useMemo(() => {
+    let balance = 0;
+
+    return transactions
+      .sort(
+        (a, b) =>
+          new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
+      )
+      .map((t) => {
+        if (t.type === "income") balance += t.amount;
+        else balance -= t.amount;
+
+        return {
+          date: new Date(t.created_at).toLocaleDateString(),
+          balance,
+        };
+      });
+  }, [transactions]);
+
+  const latest = chartData[chartData.length - 1]?.balance || 0;
+  const previous = chartData[chartData.length - 2]?.balance || latest;
+
+  const isUpTrend = latest >= previous;
+
+  const handleAddTransaction = () => {
+    if (!amount) return;
+
+    console.log({
+      type: mode,
+      amount: Number(amount),
+    });
+
+    setAmount("");
+  };
+
+  const today = new Date().toDateString();
+
+  const dailyExpense = transactions
+    .filter(
+      (t) =>
+        t.type === "expense" && new Date(t.created_at).toDateString() === today,
+    )
+    .reduce((sum, t) => sum + t.amount, 0);
+
+  const totalIncome = transactions
+    .filter((t) => t.type === "income")
+    .reduce((sum, t) => sum + t.amount, 0);
+
+  const expensePercent =
+    totalIncome > 0 ? (dailyExpense / totalIncome) * 100 : 0;
+
+  const safePercent = Math.min(expensePercent, 100);
+
+  const getExpenseColor = () => {
+    if (safePercent < 40) return "#22c55e"; // green
+    if (safePercent < 75) return "#facc15"; // yellow
+    return "#ef4444"; // red
+  };
+
+  /* =========================
      FETCH ANALYTICS
   ========================= */
   const buildParams = () => {
@@ -75,36 +144,15 @@ export default function Dashboard() {
   const fetchAdminAnalytics = async () => {
     const params = buildParams();
 
-    const [monthlyRes, storeRes, dailyRes] = await Promise.all([
-      api.get("/analytics/monthly", {
-        headers: { Authorization: `Bearer ${token}` },
-        params,
-      }),
+    const [storeRes] = await Promise.all([
       api.get("/analytics/store", {
-        headers: { Authorization: `Bearer ${token}` },
-        params,
-      }),
-      api.get("/analytics/daily", {
         headers: { Authorization: `Bearer ${token}` },
         params,
       }),
     ]);
 
-    setMonthly(monthlyRes.data);
     setStoreWise(storeRes.data);
-    setDaily(dailyRes.data);
   };
-
-  // const fetchUserAnalytics = async () => {
-  //   const params = buildParams();
-
-  //   const dailyRes = await api.get("/bills/analytics/daily", {
-  //     headers: { Authorization: `Bearer ${token}` },
-  //     params,
-  //   });
-
-  //   setDaily(dailyRes.data);
-  // };
 
   const loadAnalytics = async () => {
     try {
@@ -113,7 +161,7 @@ export default function Dashboard() {
       if (user?.role === "ADMIN") {
         await fetchAdminAnalytics();
       } else {
-        const res = await api.get("/analytics/daily", {
+        const res = await api.get("/analytics/monthly", {
           headers: { Authorization: `Bearer ${token}` },
           params: buildParams(),
         });
@@ -121,7 +169,7 @@ export default function Dashboard() {
         if (!res.data || res.data.length === 0) {
           setHasBills(false);
         } else {
-          setDaily(res.data);
+          setMonthly(res.data);
         }
       }
 
@@ -139,7 +187,6 @@ export default function Dashboard() {
 
   useEffect(() => {
     loadAnalytics();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   /* =========================
@@ -290,78 +337,252 @@ export default function Dashboard() {
 
               {/* ================= USER ================= */}
               {user.role === "USER" && (
-                <>
-                  <BalanceCard />
-                  <div className="dashboard-content">
-                    <h2>📊 User Dashboard</h2>
-                    <h3>📈 Your Daily Spend</h3>
+                <div className="min-h-screen p-6 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 dark:text-white">
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    {/* ================= INCOME/EXPENSE CARD ================= */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="rounded-2xl backdrop-blur-lg bg-white/5 border border-white/10 shadow-xl p-6 mb-6"
+                    >
+                      <div className="flex justify-between items-center mb-6">
+                        <h2 className="text-lg font-semibold">
+                          Add Transaction
+                        </h2>
 
-                    <div className="dashboard-filters">
-                      <label>
-                        From:
-                        <input
-                          type="date"
-                          value={from}
-                          onChange={(e) => setFrom(e.target.value)}
-                        />
-                      </label>
-
-                      <label>
-                        To:
-                        <input
-                          type="date"
-                          value={to}
-                          onChange={(e) => setTo(e.target.value)}
-                        />
-                      </label>
-
-                      <button className="submit" onClick={loadAnalytics}>
-                        Apply
-                      </button>
-                    </div>
-
-                    <ResponsiveContainer width="100%" height={320}>
-                      <AreaChart data={daily}>
-                        <defs>
-                          <linearGradient
-                            id="colorDaily"
-                            x1="0"
-                            y1="0"
-                            x2="0"
-                            y2="1"
+                        <div className="flex bg-white/10 rounded-xl p-1">
+                          <button
+                            onClick={() => setMode("income")}
+                            className={`px-4 py-1 rounded-lg transition ${
+                              mode === "income"
+                                ? "bg-green-500 text-white"
+                                : "text-gray-400"
+                            }`}
                           >
-                            <stop
-                              offset="0%"
-                              stopColor="#22c55e"
-                              stopOpacity={0.4}
-                            />
-                            <stop
-                              offset="100%"
-                              stopColor="#22c55e"
-                              stopOpacity={0}
-                            />
-                          </linearGradient>
-                        </defs>
+                            Income
+                          </button>
 
-                        <CartesianGrid
-                          strokeDasharray="3 3"
-                          stroke="var(--border)"
-                        />
-                        <XAxis dataKey="date" stroke="var(--muted)" />
-                        <YAxis stroke="var(--muted)" />
-                        <Tooltip contentStyle={tooltipStyle} />
+                          <button
+                            onClick={() => setMode("expense")}
+                            className={`px-4 py-1 rounded-lg transition ${
+                              mode === "expense"
+                                ? "bg-red-500 text-white"
+                                : "text-gray-400"
+                            }`}
+                          >
+                            Expense
+                          </button>
+                        </div>
+                      </div>
 
-                        <Area
-                          type="monotone"
-                          dataKey="total"
-                          stroke="#22c55e"
-                          strokeWidth={2}
-                          fill="url(#colorDaily)"
-                        />
-                      </AreaChart>
-                    </ResponsiveContainer>
+                      <div className="flex flex-col md:flex-row gap-4">
+                        <div className="flex-1 relative">
+                          <input
+                            type="number"
+                            placeholder="Enter amount..."
+                            value={amount}
+                            onChange={(e) => setAmount(e.target.value)}
+                            className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/10 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                          />
+
+                          <div className="absolute right-3 top-3 text-gray-400">
+                            {mode === "income" ? (
+                              <IndianRupee size={18} />
+                            ) : (
+                              <ArrowDownCircle size={18} />
+                            )}
+                          </div>
+                        </div>
+
+                        <button
+                          onClick={handleAddTransaction}
+                          className={`px-6 py-3 rounded-xl font-semibold transition ${
+                            mode === "income"
+                              ? "bg-green-500 hover:bg-green-600"
+                              : "bg-red-500 hover:bg-red-600"
+                          } text-white`}
+                        >
+                          Add {mode}
+                        </button>
+                      </div>
+                    </motion.div>
+
+                    {/* ================= EXPENSE WHEEL CARD ================= */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 30 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.3 }}
+                      className="rounded-2xl backdrop-blur-lg bg-white/5 border border-white/10 shadow-xl p-6 flex flex-col items-center justify-center"
+                    >
+                      <h2 className="text-lg font-semibold mb-6">
+                        Daily Expense Usage
+                      </h2>
+
+                      <div className="relative w-44 h-44">
+                        <svg viewBox="0 0 36 36" className="w-full h-full">
+                          {/* Background Circle */}
+                          <path
+                            d="M18 2.0845
+           a 15.9155 15.9155 0 0 1 0 31.831
+           a 15.9155 15.9155 0 0 1 0 -31.831"
+                            fill="none"
+                            stroke="rgba(255,255,255,0.08)"
+                            strokeWidth="3.5"
+                          />
+
+                          {/* Animated Progress */}
+                          <motion.path
+                            d="M18 2.0845
+           a 15.9155 15.9155 0 0 1 0 31.831
+           a 15.9155 15.9155 0 0 1 0 -31.831"
+                            fill="none"
+                            stroke={getExpenseColor()}
+                            strokeWidth="3.5"
+                            strokeDasharray={`${safePercent}, 100`}
+                            strokeLinecap="round"
+                            initial={{ strokeDasharray: "0, 100" }}
+                            animate={{ strokeDasharray: `${safePercent}, 100` }}
+                            transition={{ duration: 1.2 }}
+                          />
+                        </svg>
+
+                        {/* Center Content */}
+                        <div className="absolute inset-0 flex flex-col items-center justify-center">
+                          <div
+                            className="text-3xl font-bold"
+                            style={{ color: getExpenseColor() }}
+                          >
+                            {safePercent.toFixed(1)}%
+                          </div>
+                          <div className="text-sm text-gray-400">
+                            of total income
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="mt-6 text-center space-y-1">
+                        <p className="text-sm text-gray-400">Today Spent</p>
+                        <p className="text-lg font-semibold text-red-400">
+                          ₹ {dailyExpense.toFixed(2)}
+                        </p>
+                      </div>
+                    </motion.div>
+
+                    {/* ================= GRAPH CARD ================= */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 30 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="rounded-2xl backdrop-blur-lg bg-white/5 dark:bg-white/5 border border-white/10 shadow-xl p-6"
+                    >
+                      <div className="flex items-center justify-between mb-4">
+                        <h2 className="text-lg font-semibold">
+                          Portfolio Trend
+                        </h2>
+
+                        <div
+                          className={`flex items-center gap-2 ${
+                            isUpTrend ? "text-green-400" : "text-red-400"
+                          }`}
+                        >
+                          {isUpTrend ? (
+                            <TrendingUp size={18} />
+                          ) : (
+                            <TrendingDown size={18} />
+                          )}
+                          <span className="font-semibold">
+                            {latest.toFixed(2)}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="h-72">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <LineChart data={chartData}>
+                            <CartesianGrid
+                              strokeDasharray="3 3"
+                              stroke="rgba(255,255,255,0.05)"
+                            />
+
+                            <XAxis
+                              dataKey="date"
+                              tick={{ fontSize: 12 }}
+                              stroke="#8884d8"
+                            />
+
+                            <YAxis tick={{ fontSize: 12 }} stroke="#8884d8" />
+
+                            <Tooltip
+                              contentStyle={{
+                                background: "rgba(30,30,30,0.9)",
+                                border: "none",
+                                borderRadius: "12px",
+                              }}
+                            />
+
+                            <Line
+                              type="monotone"
+                              dataKey="balance"
+                              stroke={isUpTrend ? "#22c55e" : "#ef4444"}
+                              strokeWidth={2}
+                              dot={false}
+                              activeDot={{
+                                r: 6,
+                                fill: isUpTrend ? "#22c55e" : "#ef4444",
+                              }}
+                              isAnimationActive
+                              animationDuration={1000}
+                            />
+                          </LineChart>
+                        </ResponsiveContainer>
+                      </div>
+
+                      {/* LIVE MOVING DOT */}
+                      <motion.div
+                        className={`w-3 h-3 rounded-full mt-4 ${
+                          isUpTrend ? "bg-green-400" : "bg-red-400"
+                        }`}
+                        animate={{ scale: [1, 1.4, 1] }}
+                        transition={{
+                          repeat: Infinity,
+                          duration: 1.2,
+                        }}
+                      />
+                    </motion.div>
+
+                    {/* ================= SUMMARY CARD ================= */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 30 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.2 }}
+                      className="rounded-2xl backdrop-blur-lg bg-white/5 border border-white/10 shadow-xl p-6"
+                    >
+                      <h2 className="text-lg font-semibold mb-6">
+                        Balance Summary
+                      </h2>
+
+                      <div className="text-4xl font-bold mb-4">
+                        {latest.toFixed(2)}
+                      </div>
+
+                      <div
+                        className={`flex items-center gap-2 ${
+                          isUpTrend ? "text-green-400" : "text-red-400"
+                        }`}
+                      >
+                        {isUpTrend ? (
+                          <TrendingUp size={18} />
+                        ) : (
+                          <TrendingDown size={18} />
+                        )}
+                        <span>
+                          {isUpTrend
+                            ? "Uptrend detected"
+                            : "Downtrend detected"}
+                        </span>
+                      </div>
+                    </motion.div>
                   </div>
-                </>
+                </div>
               )}
             </div>
           </Page>

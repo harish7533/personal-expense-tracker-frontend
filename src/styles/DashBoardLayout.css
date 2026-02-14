@@ -1,8 +1,59 @@
-.dashboard-grid {
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px;
+  max-width: 1400px;
+  margin: auto;
+}
+
+/* ===========================
+   TOP SECTION (2 LEFT / 2 RIGHT)
+=========================== */
+
+.dashboard-top {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 25px;
-  padding: 30px;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.left-stack,
+.right-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ===========================
+   MID SECTION
+=========================== */
+
+.dashboard-mid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+/* ===========================
+   BOTTOM ANALYTICS
+=========================== */
+
+.dashboard-bottom {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+
+@media (max-width: 1024px) {
+  .dashboard-top,
+  .dashboard-mid,
+  .dashboard-bottom {
+    grid-template-columns: 1fr;
+  }
 }
 
 .view-btn {

@@ -36,52 +36,51 @@ export default function DashboardLayout() {
       <EnableNotificationCard />
 
       <motion.div
-        className="dashboard-grid"
+        className="dashboard-container"
         variants={container}
         initial="hidden"
         animate="show"
       >
-        {/* Income Card */}
-        <StatCard
-          title="Income"
-          amount={income}
-          type="income"
-          onView={() => navigate("/dashboard/income-details")}
-        />
+        {/* ===== TOP STATS SECTION ===== */}
+        <div className="dashboard-top">
+          <div className="left-stack">
+            <StatCard
+              title="Income"
+              amount={income}
+              type="income"
+              onView={() => navigate("/dashboard/income-details")}
+            />
+            <IncomeWheel remaining={remaining} total={income} />
+          </div>
 
-        {/* Expense Card */}
-        <StatCard
-          title="Expense"
-          amount={expense}
-          type="expense"
-          onView={() => navigate("/dashboard/expense-details")}
-        />
+          <div className="right-stack">
+            <StatCard
+              title="Expense"
+              amount={expense}
+              type="expense"
+              onView={() => navigate("/dashboard/expense-details")}
+            />
+            <ExpensePieChart income={income} expense={expense} />
+          </div>
+        </div>
 
-        {/* Remaining Income Spin Wheel */}
-        <IncomeWheel remaining={remaining} total={income} />
+        {/* ===== ACTION + AI ===== */}
+        <div className="dashboard-mid">
+          <IncomeExpenseToggle />
+          <AIInsightCard />
+        </div>
 
-        {/* Expense Pie Chart */}
-        <ExpensePieChart income={income} expense={expense} />
-
-        {/* Toggle Add Income / Expense */}
-        <IncomeExpenseToggle />
-
-        {/* AI Insight */}
-        <AIInsightCard />
-
-        {/* Weekly Trend */}
+        {/* ===== FULL WIDTH ANALYTICS ===== */}
         <WeeklyTrendCard />
-
-        {/* Monthly Analytics */}
         <MonthlyAnalyticsChart />
 
-        {/* Savings Goal */}
-        <SavingsGoalCard />
+        {/* ===== SIDE ANALYTICS ===== */}
+        <div className="dashboard-bottom">
+          <SavingsGoalCard />
+          <CategoryAnalyticsChart />
+        </div>
 
-        {/* Category Analytics */}
-        <CategoryAnalyticsChart />
-
-        {/* Timeline */}
+        {/* ===== TIMELINE ===== */}
         <TransactionTimeline />
       </motion.div>
     </>

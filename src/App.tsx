@@ -49,10 +49,12 @@ function App() {
           element={
             <ProtectedRoute>
               {/* <Dashboard /> */}
-              <DashboardLayout/>
+              <DashboardLayout />
             </ProtectedRoute>
           }
         />
+
+        {/* <Route path="/dashboard" element={<DashboardLayout />} /> */}
 
         <Route
           path="/upload"

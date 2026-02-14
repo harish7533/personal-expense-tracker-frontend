@@ -1,6 +1,10 @@
 .dashboard-page {
   min-height: 100vh;
-  background: var(--bg);
+  background: linear-gradient(
+    180deg,
+    var(--background) 0%,
+    var(--card-bg) 100%
+  );
   color: var(--text);
   padding-top: 64px; /* navbar height */
 }
@@ -146,5 +150,145 @@ h1, h2, p {
 
   .dashboard-content h2 {
     font-size: 22px;
+  }
+}
+
+
+/* LATEST DASHOBARD STYLES WITH INCOME/EXPENSE CREATEBILL GLASSMORPHISM UI */
+.modern-user-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Top Section */
+.top-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+/* Glass Card */
+.glass-card {
+  --webit-backdrop-filter: blur(18px);
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 18px;
+  padding: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* Action Card */
+.action-card .action-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.income-btn {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+  cursor: pointer;
+}
+
+.expense-btn {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  cursor: pointer;
+}
+
+/* Wheel */
+.wheel-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.circular-chart {
+  width: 140px;
+  height: 140px;
+}
+
+.circle-bg {
+  fill: none;
+  stroke: var(--border);
+  stroke-width: 3.8;
+}
+
+.circle {
+  fill: none;
+  stroke: var(--primary);
+  stroke-width: 3.8;
+  stroke-linecap: round;
+  transition: stroke-dasharray 0.6s ease;
+}
+
+.percentage {
+  fill: var(--text);
+  font-size: 0.5em;
+  text-anchor: middle;
+}
+
+/* `nsactions */
+.transaction-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.transaction-item {
+  display: flex;
+  align-items: center;
+  padding: 14px;
+  border-radius: 14px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  transition: 0.2s ease;
+}
+
+.transaction-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.tx-icon {
+  font-size: 20px;
+  margin-right: 12px;
+}
+
+.tx-info {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.tx-info p {
+  color: var(--text);
+}
+
+.tx-info span {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+
+/* Responsive */
+@media (max-width: 900px) {
+  .top-grid {
+    grid-template-columns: 1fr;
   }
 }

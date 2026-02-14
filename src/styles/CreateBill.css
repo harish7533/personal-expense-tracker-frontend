@@ -16,7 +16,7 @@
   padding: 20px;
 }
 
-.bill-card {
+/* .bill-card {
   background: var(--card-bg);
   color: var(--text);
   width: 100%;
@@ -24,6 +24,17 @@
   padding: 30px;
   border-radius: 18px;
   box-shadow: var(--shadow);
+} */
+
+.bill-card {
+  --webit-backdrop-filter: blur(20px);
+  background: var(--card-bg);
+  border-radius: 20px;
+  padding: 40px;
+  border: 1px solid var(--border);
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.4);
+  max-width: 900px;
+  margin: auto;
 }
 
 .bill-card h1 {
@@ -62,11 +73,18 @@ select:focus {
   margin-top: 20px;
 }
 
-.item-row {
+/* .item-row {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1fr auto;
   gap: 10px;
   margin-bottom: 10px;
+} */
+
+.item-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr auto;
+  gap: 10px;
+  margin-bottom: 12px;
 }
 
 .item-row input {
@@ -225,7 +243,7 @@ button {
 /* 📱 Responsive */
 @media (max-width: 768px) {
   .item-row {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
   }
   .submit {
     font-size: 15px;
