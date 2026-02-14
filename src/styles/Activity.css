@@ -1,0 +1,64 @@
+/* Mobile Adaptiveness */
+@media (max-width: 768px) {
+  .activity-card {
+    padding: 14px 16px;
+  }
+
+  .activity-card span,
+  .activity-card small {
+    font-size: 14px;
+  }
+
+  .activity-card button.close-btn {
+    top: 8px;
+    right: 8px;
+    font-size: 14px;
+  }
+
+  .notificationsWrapper {
+    right: 12;
+    bottom: 12;
+    width: "90%"
+  }
+
+  .notification {
+    min-width: "auto";
+    width: "100%";
+    padding: 14px
+  }
+
+  .closeBtn {
+    top: 6;
+    right: 6;
+    font-size: 12px;
+  }
+
+  .cardMessage {
+    font-size: 14px
+  }
+}
+
+/* Fade Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px)
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0)
+  }
+}

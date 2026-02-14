@@ -1,17 +1,10 @@
 import { useEffect, useRef } from "react";
-import toast from "react-hot-toast";
 import Navbar from "../components/Navbar";
-import { useAuth } from "../context/AuthContext";
-import ActivitySkeleton from "../components/skeletons/ActivitySkeleton";
 import PageWrapper from "../components/layouts/PageWrapper";
+import { useAuth } from "../context/AuthContext";
 import { useActivities } from "../context/ActivitiesContext";
-
-type Activity = {
-  id: string;
-  type: string;
-  message: string;
-  created_at: string;
-};
+import ActivitySkeleton from "../components/skeletons/ActivitySkeleton";
+import "../styles/Activity.css";
 
 export default function Activity() {
   const { user, loading: authLoading } = useAuth();
@@ -28,25 +21,15 @@ export default function Activity() {
 
     const latest = activities[0];
 
-    // Prevent duplicate toasts
+    // Show toast for latest activity
     if (latest.id !== lastToastId.current) {
-      // toast(latest.message, {
-      //   icon: latest.type === "USER" ? "🧾" : "⚡",
-      //   id: latest.id,
-      // });
-
-      toast(latest.message, {
-        icon: latest.type === "DEBIT" ? "💸" : "💰",
-        id: latest.id,
-      });
-
       lastToastId.current = latest.id;
     }
   }, [activities, user]);
 
   if (!user)
     return (
-      <p style={{ textAlign: "center", marginTop: 40 }}>
+      <p style={{ textAlign: "center", marginTop: 40, color: "var(--text)" }}>
         Please log in to view activities.
       </p>
     );
@@ -59,31 +42,37 @@ export default function Activity() {
         <>
           <Navbar />
           <div style={styles.container}>
-            <h4>🔔 Activity</h4>
+            <h4 style={styles.heading}>🔔 Activity</h4>
 
             {activities.length === 0 ? (
               <p style={styles.empty}>No activities yet 📝</p>
             ) : (
-              activities.map((a) => (
-                <div
-                  key={a.id}
-                  className={`card ${a.type === "CREDIT" ? "credit" : "debit"}`}
-                >
-                  <span>{a.message}</span>
-                  <small>
-                    {a.balance_before} → {a.balance_after}
-                  </small>
-                  <small style={{ opacity: 0.6 }}>
-                    {new Date(a.created_at).toLocaleString()}
-                  </small>
-                  <button
-                    onClick={() => removeActivity(a.id)}
-                    style={styles.closeBtn}
+              <div style={styles.notificationsWrapper}>
+                {activities.slice(0, 20).map((a, index) => (
+                  <div
+                    key={a.id}
+                    style={{
+                      ...styles.notification,
+                      ...(a.type === "CREDIT" ? styles.credit : styles.debit),
+                      bottom: 20 + index * 80, // stack notifications
+                    }}
                   >
-                    ✖
-                  </button>
-                </div>
-              ))
+                    <span style={styles.cardMessage}>{a.message}</span>
+                    <small>
+                      {a.balance_before} → {a.balance_after}
+                    </small>
+                    <small style={{ opacity: 0.6 }}>
+                      {new Date(a.created_at).toLocaleString()}
+                    </small>
+                    <button
+                      style={styles.closeBtn}
+                      onClick={() => removeActivity(a.id)}
+                    >
+                      ✖
+                    </button>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
         </>
@@ -92,89 +81,65 @@ export default function Activity() {
   );
 }
 
-// type Props = {
-//   value: number;
-// };
-
-// export default function AnimatedBalance({ value }: Props) {
-//   const [display, setDisplay] = useState(value);
-//   const prev = useRef(value);
-
-//   useEffect(() => {
-//     const start = prev.current;
-//     const end = value;
-//     const diff = end - start;
-//     const duration = 500;
-//     const startTime = performance.now();
-
-//     const animate = (now: number) => {
-//       const progress = Math.min((now - startTime) / duration, 1);
-//       setDisplay(Math.round(start + diff * progress));
-
-//       if (progress < 1) requestAnimationFrame(animate);
-//       else prev.current = value;
-//     };
-
-//     requestAnimationFrame(animate);
-//   }, [value]);
-
-//   const isIncrease = value > prev.current;
-
-//   return (
-//     <span
-//       style={{
-//         fontWeight: 600,
-//         color: isIncrease ? "#22c55e" : "#ef4444",
-//         transition: "color 0.3s",
-//       }}
-//     >
-//       ₹{display.toLocaleString()}
-//     </span>
-//   );
-// }
-
 /* ===================== STYLES ===================== */
-
 const styles: { [key: string]: React.CSSProperties } = {
   container: {
     padding: 24,
     maxWidth: 800,
     margin: "auto",
     fontFamily: "'Inter', sans-serif",
-    color: `var(--text)`,
+    color: "var(--text)",
+    position: "relative",
+    minHeight: "80vh",
   },
+
+  heading: { marginBottom: 16 },
 
   empty: {
     marginTop: 60,
     padding: 40,
     textAlign: "center",
-    background: `var(--card-bg)`,
+    background: "var(--card-bg)",
     borderRadius: 12,
-    boxShadow: `var(--shadow)`,
-    color: `var(--muted)`,
+    boxShadow: "var(--shadow)",
+    color: "var(--muted)",
     opacity: 0.8,
   },
 
-  card: {
-    background: `var(--card-bg)`,
-    padding: 12,
-    borderRadius: 10,
-    marginBottom: 10,
+  notificationsWrapper: {
+    position: "fixed",
+    right: 20,
+    bottom: 20,
     display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    animation: "fadeIn 0.4s ease",
+    flexDirection: "column-reverse",
+    alignItems: "flex-end",
+    zIndex: 9999,
+    gap: 12,
   },
 
-  credit: {
-    background: "#e6fffa",
-    color: "#047857",
+  notification: {
+    minWidth: 260,
+    maxWidth: 320,
+    background: "var(--card-bg)",
+    color: "var(--text)",
+    padding: 16,
+    borderRadius: 12,
+    boxShadow: "0 8px 20px rgba(0,0,0,0.15)",
+    display: "flex",
+    flexDirection: "column",
+    gap: 4,
+    position: "absolute",
+    right: 0,
+    opacity: 0,
+    transform: "translateY(20px)",
+    animation: "slideUp 0.4s forwards",
+    transition: "all 0.3s ease-in-out",
   },
 
-  debit: {
-    background: "#fee2e2",
-    color: "#b91c1c",
-  },
+  cardMessage: { fontSize: 15 },
+
+  credit: { borderLeft: "4px solid #22c55e" },
+  debit: { borderLeft: "4px solid #ef4444" },
 
   closeBtn: {
     position: "absolute",
@@ -183,7 +148,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     border: "none",
     background: "transparent",
     cursor: "pointer",
-    fontSize: 16,
-    color: `var(--text-secondary)`,
+    fontSize: 14,
+    color: "var(--text-secondary)",
   },
 };

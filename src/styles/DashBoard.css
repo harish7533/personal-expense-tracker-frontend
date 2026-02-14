@@ -1,22 +1,28 @@
+/* ============================= */
+/* GENERAL DASHBOARD STYLES */
+/* ============================= */
+
 .dashboard-page {
   min-height: 100vh;
-  background: linear-gradient(
-    180deg,
-    var(--background) 0%,
-    var(--card-bg) 100%
-  );
+  background: linear-gradient(180deg, var(--background) 0%, var(--card-bg) 100%);
   color: var(--text);
   padding-top: 64px; /* navbar height */
+  padding: 40px 20px 80px;
+  font-family: sans-serif;
 }
 
 .dashboard-content {
+  max-width: 1100px;
+  margin: auto;
   padding: 24px;
 }
 
+.dashboard-page h1,
 .dashboard-page h2,
 .dashboard-page h3,
-h1, h2, p {
+.dashboard-page p {
   color: var(--text);
+  margin: 0;
 }
 
 .dashboard-page label {
@@ -33,31 +39,8 @@ h1, h2, p {
 }
 
 /* ============================= */
-/* DASHBOARD PAGE */
+/* ADMIN FILTERS AND CHARTS */
 /* ============================= */
-
-.dashboard-page {
-  padding: 40px 20px 80px;
-}
-
-.dashboard-content {
-  max-width: 1100px;
-  margin: auto;
-}
-
-/* Headings */
-
-.dashboard-content h2 {
-  font-size: 28px;
-  margin-bottom: 30px;
-}
-
-.dashboard-content h3 {
-  margin-top: 40px;
-  margin-bottom: 20px;
-}
-
-/* Filters */
 
 .dashboard-filters {
   display: flex;
@@ -104,8 +87,7 @@ h1, h2, p {
   transform: translateY(-2px);
 }
 
-/* Chart Cards */
-
+/* Chart Container */
 .recharts-responsive-container {
   background: var(--card-bg);
   padding: 20px;
@@ -117,7 +99,9 @@ h1, h2, p {
   background: #0f172a;
 }
 
-/* Fade animation */
+/* ============================= */
+/* FADE ANIMATION */
+/* ============================= */
 
 .fade-in {
   opacity: 0;
@@ -128,6 +112,254 @@ h1, h2, p {
 .fade-in.show {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* ============================= */
+/* MODERN USER DASHBOARD */
+/* ============================= */
+
+.modern-user-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.top-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 1024px) {
+  .top-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .top-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* GLASS CARD BASE */
+.glass-card {
+  background: rgba(255, 255, 255, 0.05);
+  --webkit-backdrop-filter: blur(18px);
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  padding: 24px;
+}
+
+/* ============================= */
+/* ADD TRANSACTION CARD */
+/* ============================= */
+
+.income-expense-card .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.mode-buttons {
+  display: flex;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 4px;
+}
+
+.mode-buttons button {
+  flex: 1;
+  padding: 6px 16px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s ease;
+  color: #d1d5db;
+  font-weight: 600;
+}
+
+.mode-buttons button.active-income {
+  background: #22c55e;
+  color: #fff;
+}
+
+.mode-buttons button.active-expense {
+  background: #ef4444;
+  color: #fff;
+}
+
+.income-expense-card input {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  position: relative;
+}
+
+.input-icon {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  color: #9ca3af;
+}
+
+.add-btn {
+  padding: 12px 24px;
+  border-radius: 18px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  border: none;
+  transition: 0.3s ease;
+  margin-left: 12px;
+}
+
+.add-btn.income {
+  background: #22c55e;
+}
+
+.add-btn.income:hover {
+  background: #16a34a;
+}
+
+.add-btn.expense {
+  background: #ef4444;
+}
+
+.add-btn.expense:hover {
+  background: #dc2626;
+}
+
+/* ============================= */
+/* EXPENSE WHEEL CARD */
+/* ============================= */
+
+.expense-wheel-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.expense-wheel-card svg {
+  width: 176px;
+  height: 176px;
+}
+
+.circle-bg {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.08);
+  stroke-width: 3.5;
+}
+
+.circle-progress {
+  fill: none;
+  stroke-width: 3.5;
+  stroke-linecap: round;
+  transition: stroke-dasharray 0.6s ease;
+}
+
+.center-content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.percent {
+  font-size: 1.875rem;
+  font-weight: 700;
+}
+
+.label {
+  font-size: 0.875rem;
+  color: #9ca3af;
+}
+
+.today-spent {
+  margin-top: 24px;
+  text-align: center;
+}
+
+.today-spent .amount {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #f87171;
+}
+
+/* ============================= */
+/* GRAPH CARD */
+/* ============================= */
+
+.graph-card h2 {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.trend {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+
+.trend.up {
+  color: #22c55e;
+}
+
+.trend.down {
+  color: #ef4444;
+}
+
+.live-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 9999px;
+  margin-top: 16px;
+  animation: pulse 1.2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.4); }
+}
+
+/* ============================= */
+/* SUMMARY CARD */
+/* ============================= */
+
+.summary-card h2 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 24px;
+}
+
+.balance {
+  font-size: 2.25rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.trend-summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.trend-summary.up {
+  color: #22c55e;
+}
+
+.trend-summary.down {
+  color: #ef4444;
 }
 
 /* ============================= */
@@ -152,7 +384,6 @@ h1, h2, p {
     font-size: 22px;
   }
 }
-
 
 /* LATEST DASHOBARD STYLES WITH INCOME/EXPENSE CREATEBILL GLASSMORPHISM UI */
 .modern-user-dashboard {
@@ -217,26 +448,6 @@ h1, h2, p {
   height: 140px;
 }
 
-.circle-bg {
-  fill: none;
-  stroke: var(--border);
-  stroke-width: 3.8;
-}
-
-.circle {
-  fill: none;
-  stroke: var(--primary);
-  stroke-width: 3.8;
-  stroke-linecap: round;
-  transition: stroke-dasharray 0.6s ease;
-}
-
-.percentage {
-  fill: var(--text);
-  font-size: 0.5em;
-  text-anchor: middle;
-}
-
 /* `nsactions */
 .transaction-list {
   display: flex;
@@ -285,10 +496,25 @@ h1, h2, p {
   font-size: 13px;
 }
 
-
 /* Responsive */
 @media (max-width: 900px) {
   .top-grid {
     grid-template-columns: 1fr;
   }
+}
+
+.up-trend {
+  background-color: #22c55e;
+  font-weight: 400;
+}
+.down-trend {
+  background-color: #ef4444;
+  font-weight: 400;
+}
+
+.heading {
+  font-size: 1.125rem;    /* text-lg: 18px font size */
+  line-height: 1.75rem;   /* text-lg: 28px line height */
+  font-weight: 600;       /* font-semibold */
+  margin-bottom: 1.5rem;  /* mb-6: 24px bottom margin */
 }

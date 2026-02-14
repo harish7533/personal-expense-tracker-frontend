@@ -38,7 +38,7 @@ export default function Register() {
   };
 
   return (
-    <div style={{ maxWidth: 400, margin: "200px auto" }}>
+    <div style={{ maxWidth: "80vw", margin: "200px auto" }}>
       <h2>Create Account</h2>
 
       <input placeholder="Email" onChange={(e) => setEmail(e.target.value)} />

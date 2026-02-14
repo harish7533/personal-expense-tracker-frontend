@@ -202,7 +202,7 @@ export default function Dashboard({ transactions }: Props) {
           <div
             style={{ textAlign: "center", padding: 80, color: "var(--text)" }}
           >
-            <h1>⚠️ Something went wrong</h1>
+            <h1>⚠️ {error}</h1>
             <p>Please try again later</p>
           </div>
         </>
@@ -337,70 +337,57 @@ export default function Dashboard({ transactions }: Props) {
 
               {/* ================= USER ================= */}
               {user.role === "USER" && (
-                <div className="min-h-screen p-6 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 dark:text-white">
-                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="modern-user-dashboard">
+                  <div className="top-grid">
                     {/* ================= INCOME/EXPENSE CARD ================= */}
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className="rounded-2xl backdrop-blur-lg bg-white/5 border border-white/10 shadow-xl p-6 mb-6"
+                      className="income-expense-card glass-card"
                     >
-                      <div className="flex justify-between items-center mb-6">
-                        <h2 className="text-lg font-semibold">
+                      <div className="card-header">
+                        <h2 className="heading">
                           Add Transaction
                         </h2>
 
-                        <div className="flex bg-white/10 rounded-xl p-1">
+                        <div className="mode-buttons">
                           <button
                             onClick={() => setMode("income")}
-                            className={`px-4 py-1 rounded-lg transition ${
-                              mode === "income"
-                                ? "bg-green-500 text-white"
-                                : "text-gray-400"
-                            }`}
+                            className={mode === "income" ? "active-income" : ""}
                           >
                             Income
                           </button>
 
                           <button
                             onClick={() => setMode("expense")}
-                            className={`px-4 py-1 rounded-lg transition ${
-                              mode === "expense"
-                                ? "bg-red-500 text-white"
-                                : "text-gray-400"
-                            }`}
+                            className={
+                              mode === "expense" ? "active-expense" : ""
+                            }
                           >
                             Expense
                           </button>
                         </div>
                       </div>
 
-                      <div className="flex flex-col md:flex-row gap-4">
-                        <div className="flex-1 relative">
-                          <input
-                            type="number"
-                            placeholder="Enter amount..."
-                            value={amount}
-                            onChange={(e) => setAmount(e.target.value)}
-                            className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/10 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                          />
+                      <div className="transaction-inputs">
+                        <input
+                          type="number"
+                          placeholder="Enter amount..."
+                          value={amount}
+                          onChange={(e) => setAmount(e.target.value)}
+                        />
 
-                          <div className="absolute right-3 top-3 text-gray-400">
-                            {mode === "income" ? (
-                              <IndianRupee size={18} />
-                            ) : (
-                              <ArrowDownCircle size={18} />
-                            )}
-                          </div>
+                        <div className="input-icon">
+                          {mode === "income" ? (
+                            <IndianRupee size={18} />
+                          ) : (
+                            <ArrowDownCircle size={18} />
+                          )}
                         </div>
 
                         <button
                           onClick={handleAddTransaction}
-                          className={`px-6 py-3 rounded-xl font-semibold transition ${
-                            mode === "income"
-                              ? "bg-green-500 hover:bg-green-600"
-                              : "bg-red-500 hover:bg-red-600"
-                          } text-white`}
+                          className={`add-btn ${mode}`}
                         >
                           Add {mode}
                         </button>
@@ -412,9 +399,9 @@ export default function Dashboard({ transactions }: Props) {
                       initial={{ opacity: 0, y: 30 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.3 }}
-                      className="rounded-2xl backdrop-blur-lg bg-white/5 border border-white/10 shadow-xl p-6 flex flex-col items-center justify-center"
+                      className="expense-wheel-card glass-card"
                     >
-                      <h2 className="text-lg font-semibold mb-6">
+                      <h2 className="heading">
                         Daily Expense Usage
                       </h2>
 
@@ -428,6 +415,7 @@ export default function Dashboard({ transactions }: Props) {
                             fill="none"
                             stroke="rgba(255,255,255,0.08)"
                             strokeWidth="3.5"
+                            className="circle-bg"
                           />
 
                           {/* Animated Progress */}
@@ -443,27 +431,23 @@ export default function Dashboard({ transactions }: Props) {
                             initial={{ strokeDasharray: "0, 100" }}
                             animate={{ strokeDasharray: `${safePercent}, 100` }}
                             transition={{ duration: 1.2 }}
+                            className="circle-bg-progress"
                           />
                         </svg>
 
                         {/* Center Content */}
-                        <div className="absolute inset-0 flex flex-col items-center justify-center">
-                          <div
-                            className="text-3xl font-bold"
-                            style={{ color: getExpenseColor() }}
-                          >
+                        <div className="center-content">
+                          <div style={{ color: getExpenseColor() }}>
                             {safePercent.toFixed(1)}%
                           </div>
-                          <div className="text-sm text-gray-400">
-                            of total income
-                          </div>
+                          <div className="label">of total income</div>
                         </div>
                       </div>
 
-                      <div className="mt-6 text-center space-y-1">
-                        <p className="text-sm text-gray-400">Today Spent</p>
-                        <p className="text-lg font-semibold text-red-400">
-                          ₹ {dailyExpense.toFixed(2)}
+                      <div className="today-spent">
+                        <p>Today Spent</p>
+                        <p className="amount">
+                          <IndianRupee /> {dailyExpense.toFixed(2)}
                         </p>
                       </div>
                     </motion.div>
@@ -472,18 +456,14 @@ export default function Dashboard({ transactions }: Props) {
                     <motion.div
                       initial={{ opacity: 0, y: 30 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className="rounded-2xl backdrop-blur-lg bg-white/5 dark:bg-white/5 border border-white/10 shadow-xl p-6"
+                      className="graph-card glass-card"
                     >
-                      <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-lg font-semibold">
+                      <div className="flex-row">
+                        <h2 className="heading">
                           Portfolio Trend
                         </h2>
 
-                        <div
-                          className={`flex items-center gap-2 ${
-                            isUpTrend ? "text-green-400" : "text-red-400"
-                          }`}
-                        >
+                        <div className={`trend ${isUpTrend ? "up" : "down"}`}>
                           {isUpTrend ? (
                             <TrendingUp size={18} />
                           ) : (
@@ -495,7 +475,7 @@ export default function Dashboard({ transactions }: Props) {
                         </div>
                       </div>
 
-                      <div className="h-72">
+                      <div className="chart-container">
                         <ResponsiveContainer width="100%" height="100%">
                           <LineChart data={chartData}>
                             <CartesianGrid
@@ -538,8 +518,8 @@ export default function Dashboard({ transactions }: Props) {
 
                       {/* LIVE MOVING DOT */}
                       <motion.div
-                        className={`w-3 h-3 rounded-full mt-4 ${
-                          isUpTrend ? "bg-green-400" : "bg-red-400"
+                        className={`live-dot ${
+                          isUpTrend ? "up-trend" : "down-trend"
                         }`}
                         animate={{ scale: [1, 1.4, 1] }}
                         transition={{
@@ -554,19 +534,19 @@ export default function Dashboard({ transactions }: Props) {
                       initial={{ opacity: 0, y: 30 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.2 }}
-                      className="rounded-2xl backdrop-blur-lg bg-white/5 border border-white/10 shadow-xl p-6"
+                      className="summary-card glass-card"
                     >
-                      <h2 className="text-lg font-semibold mb-6">
+                      <h2 className="heading">
                         Balance Summary
                       </h2>
 
-                      <div className="text-4xl font-bold mb-4">
+                      <div className="balance">
                         {latest.toFixed(2)}
                       </div>
 
                       <div
-                        className={`flex items-center gap-2 ${
-                          isUpTrend ? "text-green-400" : "text-red-400"
+                        className={`trend-summary ${
+                          isUpTrend ? "up" : "down"
                         }`}
                       >
                         {isUpTrend ? (
