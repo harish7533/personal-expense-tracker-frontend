@@ -1,7 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-// import Dashboard from "./pages/Dashboard";
 import Bills from "./pages/Bills";
 import UploadBills from "./pages/UploadBills";
 import CreateBill from "./pages/CreateBill";
@@ -12,7 +11,7 @@ import Activity from "./pages/Activity";
 import { Toaster } from "react-hot-toast";
 import Banner from "./components/Banner";
 import SetBalance from "./pages/SetBalance";
-import DashboardLayout from "./components/dashboard/DashBoardLayout";
+import Dashboard from "./pages/Dashboard";
 
 function App() {
   return (
@@ -49,7 +48,7 @@ function App() {
           element={
             <ProtectedRoute>
               {/* <Dashboard /> */}
-              <DashboardLayout />
+              <Dashboard transactions={[]} />
             </ProtectedRoute>
           }
         />
