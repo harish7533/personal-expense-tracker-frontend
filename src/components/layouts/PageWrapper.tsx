@@ -1,33 +1,25 @@
 import { type ReactNode } from "react";
 
-export default function PageWrapper({
-  children,
-}: {
-  children: ReactNode;
-}) {
+export default function PageWrapper({ children }: { children: ReactNode }) {
   return (
-    <div className="min-h-[100dvh] flex flex-col bg-[var(--bg)]">
-      <main className="flex-1 px-4 py-6 pt-20 pb-24 md:pb-6">
-        {children}
-      </main>
+    <div style={styles.container}>
+      <main style={styles.main}>{children}</main>
     </div>
   );
 }
 
-// import { type ReactNode } from "react";
-
-// export default function PageWrapper({ children }: { children: ReactNode }) {
-//   return (
-//     <main style={styles.wrapper}>
-//       {children}
-//     </main>
-//   );
-// }
-
-// const styles: { [key: string]: React.CSSProperties } = {
-//   wrapper: {
-//     paddingTop: "72px", // 👈 height of Navbar
-//     minHeight: "100vh",
-//     background: "var(--bg)",
-//   },
-// };
+const styles: { [key: string]: React.CSSProperties } = {
+  wrapper: {
+    minHeight: "100dvh",
+    background: "var(--bg)",
+    display: "flex",
+    flexDirection: "column",
+  },
+  main: {
+    flex: 1,
+    paddingLeft: "1rem",
+    paddingRight: "1rem",
+    paddingTop: "5rem",
+    paddingBottom: "6rem",
+  },
+};

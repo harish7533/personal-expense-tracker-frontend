@@ -1,29 +1,48 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { useTheme } from "../context/ThemeContext";
 import { markAllAsRead } from "../api/activity";
 import { useAuth } from "../context/AuthContext";
 import { useActivities } from "../context/ActivitiesContext";
+import "../styles/NavBar.css";
 
-import { FiSettings, FiBell, FiLogOut, FiMoon, FiSun } from "react-icons/fi";
+import {
+  Home,
+  NotebookPenIcon,
+  PlusCircle,
+  LogOut,
+  Sun,
+  Moon,
+  Settings,
+  Bell,
+} from "lucide-react";
 
 export default function Navbar() {
   const navigate = useNavigate();
+  const location = useLocation();
+
   const { theme, toggleTheme } = useTheme();
   const { user, logout, loading } = useAuth();
   const { activities, refreshActivities } = useActivities();
 
-  const [open, setOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [desktopOpen, setDesktopOpen] = useState(false);
+  // const [mobileOpen, setMobileOpen] = useState(false);
 
-  /* ================= SAFE UNREAD COUNT ================= */
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  // const sheetRef = useRef<HTMLDivElement | null>(null);
+  const navRef = useRef<HTMLDivElement>(null);
+  const indicatorRef = useRef<HTMLDivElement>(null);
+
+  // const startY = useRef<number | null>(null);
+  // const currentY = useRef(0);
+  // const startTime = useRef(0);
+
   const unreadCount = activities?.filter((a: any) => !a?.read)?.length ?? 0;
 
-  /* ================= SAFE INITIALS ================= */
   function getInitials(name?: string | null) {
-    if (!name || typeof name !== "string") return "U";
-
+    if (!name) return "U";
     return name
       .trim()
       .split(" ")
@@ -35,14 +54,59 @@ export default function Navbar() {
 
   const initials = getInitials(user?.username);
 
-  /* ================= CLOSE ON OUTSIDE CLICK ================= */
+  const navItems = [
+    { icon: Home, path: "/dashboard" },
+    { icon: NotebookPenIcon, path: "/bills" },
+    { icon: PlusCircle, path: "/create", center: true },
+    { icon: Bell, path: "/activity" },
+
+    ...(user
+      ? [
+          {
+            icon: LogOut,
+            action: "logout",
+          },
+        ]
+      : [
+        {
+            icon: theme === "dark" ? Sun : Moon,
+            action: "theme",
+          }
+      ]),
+  ];
+
+  /* ================= ACTIVE INDICATOR ================= */
+  useEffect(() => {
+    if (!navRef.current || !indicatorRef.current) return;
+
+    const activeIndex = navItems.findIndex(
+      (item) => item.path === location.pathname,
+    );
+
+    if (activeIndex === -1) return;
+
+    const navWidth = navRef.current.offsetWidth;
+    const itemWidth = navWidth / navItems.length;
+
+    indicatorRef.current.style.width = `${itemWidth}px`;
+    indicatorRef.current.style.transform = `translateX(${
+      itemWidth * activeIndex
+    }px)`;
+  }, [location.pathname]);
+
+  // /* ================= AUTO CLOSE MOBILE ON ROUTE ================= */
+  // useEffect(() => {
+  //   setMobileOpen(false);
+  // }, [location.pathname]);
+
+  /* ================= DESKTOP OUTSIDE CLICK ================= */
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
         dropdownRef.current &&
         !dropdownRef.current.contains(event.target as Node)
       ) {
-        setOpen(false);
+        setDesktopOpen(false);
       }
     }
 
@@ -52,137 +116,232 @@ export default function Navbar() {
 
   /* ================= AUTO MARK AS READ ================= */
   useEffect(() => {
-    if (open && unreadCount > 0) {
+    if (desktopOpen && unreadCount > 0) {
       markAllAsRead()
         .then(() => refreshActivities())
         .catch(() => {});
     }
-  }, [open, unreadCount, refreshActivities]);
+  }, [desktopOpen, unreadCount, refreshActivities]);
 
-  /* ================= WAIT FOR AUTH LOAD ================= */
-  if (loading) {
-    return null; // or return a small loader
-  }
+  if (loading) return null;
 
-  <nav
-    className="hidden md:flex fixed top-0 left-0 right-0 z-50 
-  items-center justify-between px-6 h-16
-  backdrop-blur-xl bg-white/60 dark:bg-black/40
-  border-b border-white/20 dark:border-white/10
-  shadow-sm"
-  >
-    {/* Logo */}
-    <h3
-      className="text-lg font-semibold cursor-pointer text-[var(--text)]"
-      onClick={() => navigate("/dashboard")}
-    >
-      🧾 Expense Tracker
-    </h3>
+  return (
+    <>
+      {/* ================= DESKTOP NAV ================= */}
+      <nav className="navbar-desktop">
+        <h3 className="navbar-logo" onClick={() => navigate("/dashboard")}>
+          🧾 Expense Tracker
+        </h3>
 
-    {/* Right Side */}
-    <div className="flex items-center gap-4">
-      {/* 🔔 Activity */}
-      {user && (
-        <div className="relative">
-          <button
-            onClick={() => navigate("/activity")}
-            className="relative p-2 rounded-xl hover:bg-white/30 
-          dark:hover:bg-white/10 transition-all duration-200"
-          >
-            <FiBell size={18} />
-          </button>
+        <div className="navbar-right">
+          {user && (
+            <div className="nav-icon-wrapper">
+              <button
+                onClick={() => navigate("/activity")}
+                className="nav-icon-btn"
+              >
+                <Bell size={18} />
+              </button>
 
-          {unreadCount > 0 && (
-            <span
-              className="absolute -top-1 -right-1 
-            text-[10px] px-1.5 py-0.5 rounded-full
-            bg-red-500 text-white font-medium"
-            >
-              {unreadCount > 9 ? "9+" : unreadCount}
-            </span>
+              {unreadCount > 0 && (
+                <span className="nav-badge">
+                  {unreadCount > 9 ? "9+" : unreadCount}
+                </span>
+              )}
+            </div>
           )}
-        </div>
-      )}
 
-      {/* ⚙️ Settings */}
-      {user && (
-        <button
-          onClick={() => navigate("/settings")}
-          className="p-2 rounded-xl hover:bg-white/30 
-        dark:hover:bg-white/10 transition-all duration-200"
-        >
-          <FiSettings size={18} />
-        </button>
-      )}
+          {user && (
+            <button
+              onClick={() => navigate("/settings")}
+              className="nav-icon-btn"
+            >
+              <Settings size={18} />
+            </button>
+          )}
 
-      {/* 👤 Profile */}
-      <div className="relative" ref={dropdownRef}>
-        <button
-          onClick={() => setOpen((prev) => !prev)}
-          className="w-9 h-9 rounded-full 
-        bg-gradient-to-br from-indigo-500 to-purple-600
-        text-white font-semibold text-sm
-        flex items-center justify-center
-        shadow-md hover:scale-105 transition-all duration-200"
-        >
-          {user ? initials : theme === "dark" ? "🌞" : "🌙"}
-        </button>
+          <div className="nav-profile" ref={dropdownRef}>
+            <button
+              onClick={() => setDesktopOpen((prev) => !prev)}
+              className="nav-avatar"
+            >
+              {user ? initials : theme === "dark" ? "🌞" : "🌙"}
+            </button>
 
-        {open && (
-          <div
-            className="absolute right-0 mt-3 w-52
-          backdrop-blur-xl bg-white/80 dark:bg-black/60
-          border border-white/20 dark:border-white/10
-          shadow-xl rounded-xl p-2"
-          >
-            {user ? (
-              <>
-                <div className="px-3 py-2 text-sm border-b border-white/20">
-                  <p className="font-semibold">{user?.username || "User"}</p>
-                  <p className="text-xs opacity-70">{user?.email}</p>
+            {desktopOpen && (
+              <div className="nav-dropdown">
+                <div className="nav-user-info">
+                  <p className="nav-username">{user?.username}</p>
+                  <p className="nav-email">{user?.email}</p>
                 </div>
 
-                <button
-                  onClick={() => {
-                    toggleTheme();
-                    setOpen(false);
-                  }}
-                  className="flex items-center gap-2 w-full px-3 py-2 text-sm rounded-lg
-                hover:bg-white/30 dark:hover:bg-white/10 transition"
-                >
-                  {theme === "dark" ? (
-                    <FiSun size={14} />
-                  ) : (
-                    <FiMoon size={14} />
-                  )}
-                  {theme === "dark" ? "Light Mode" : "Dark Mode"}
+                <button onClick={toggleTheme} className="dropdown-btn">
+                  {theme === "dark" ? <Sun size={14} /> : <Moon size={14} />}
+                  Toggle Theme
                 </button>
 
+                {user && (
+                  <button
+                    onClick={() => {
+                      logout();
+                      navigate("/login");
+                    }}
+                    className="dropdown-btn logout"
+                  >
+                    <LogOut size={14} />
+                    Logout
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </nav>
+
+      {/* ================= MOBILE TOP TITLE ================= */}
+      <div className="mobile-top-bar">
+        <h4 className="mobile-title" onClick={() => navigate("/dashboard")}>
+          🧾 Expense Tracker
+        </h4>
+      </div>
+
+      {/* ================= MOBILE DOCK ================= */}
+      <nav className="navbar-mobile">
+        <div className="mobile-nav-inner" ref={navRef}>
+          <div ref={indicatorRef} className="active-indicator" />
+
+          {navItems.map(({ icon: Icon, path, center, action }) => {
+            const active = location.pathname === path;
+
+            if (center) {
+              return (
+                <Link key={path} to={path} className="floating-create-wrapper">
+                  <div className="floating-create-btn">
+                    <Icon size={26} />
+                  </div>
+                </Link>
+              );
+            }
+
+            // 🔥 If item has path → normal navigation
+            if (path) {
+              return (
+                <Link
+                  key={path}
+                  to={path}
+                  className={`mobile-link ${active ? "active" : ""}`}
+                >
+                  <Icon size={22} />
+                </Link>
+              );
+            }
+
+            // 🔥 If item has action
+            if (action === "theme") {
+              return (
                 <button
+                  key="theme"
+                  onClick={toggleTheme}
+                  className="mobile-link"
+                  style={{ background: "var(--background" }}
+                >
+                  <Icon size={22} />
+                </button>
+              );
+            }
+
+            if (action === "logout") {
+              return (
+                <button
+                  key="logout"
                   onClick={() => {
                     logout();
                     navigate("/login");
                   }}
-                  className="flex items-center gap-2 w-full px-3 py-2 text-sm rounded-lg
-                text-red-500 hover:bg-red-500/10 transition"
+                  className="mobile-link"                  
+                  style={{ background: "var(--background" }}
                 >
-                  <FiLogOut size={14} />
-                  Logout
+                  <Icon size={22} />
                 </button>
-              </>
-            ) : (
-              <button
-                onClick={toggleTheme}
-                className="w-full px-3 py-2 text-sm rounded-lg hover:bg-white/30"
-              >
+              );
+            }
+
+            return null;
+          })}
+        </div>
+
+        {/* ================= MOBILE SHEET ================= */}
+        {/* {mobileOpen && (
+          <div className="mobile-overlay" onClick={() => setMobileOpen(false)}>
+            <div
+              ref={sheetRef}
+              className="mobile-sheet animated"
+              onClick={(e) => e.stopPropagation()}
+              onTouchStart={(e) => {
+                startY.current = e.touches[0].clientY;
+                startTime.current = Date.now();
+              }}
+              onTouchMove={(e) => {
+                if (startY.current === null || !sheetRef.current) return;
+
+                const delta = e.touches[0].clientY - startY.current;
+
+                if (delta > 0) {
+                  currentY.current = delta;
+
+                  // rubber band effect
+                  const resistance = delta * 0.6;
+
+                  sheetRef.current.style.transform = `translateY(${resistance}px)`;
+                }
+              }}
+              onTouchEnd={() => {
+                if (!sheetRef.current) return;
+
+                const delta = currentY.current;
+                const duration = Date.now() - startTime.current;
+                const velocity = delta / duration;
+
+                // Close conditions:
+                // 1. Dragged enough distance
+                // 2. Fast swipe
+                if (delta > 120 || velocity > 0.6) {
+                  sheetRef.current.style.transform = "translateY(100%)";
+
+                  setTimeout(() => {
+                    setMobileOpen(false);
+                    sheetRef.current!.style.transform = "translateY(0)";
+                  }, 250);
+                } else {
+                  sheetRef.current.style.transform = "translateY(0)";
+                }
+
+                startY.current = null;
+                currentY.current = 0;
+              }}
+            >
+              <div className="sheet-handle" />
+
+              <button onClick={toggleTheme} className="">
+                {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
                 Toggle Theme
               </button>
-            )}
+
+              <button
+                onClick={() => {
+                  logout();
+                  navigate("/login");
+                }}
+                className="sheet-btn logout"
+              >
+                <LogOut size={18} />
+              </button>
+            </div>
           </div>
-        )}
-      </div>
-    </div>
-  </nav>;
+        )} */}
+      </nav>
+    </>
+  );
 }
 
 // import { useNavigate } from "react-router-dom";
@@ -391,38 +550,21 @@ export default function Navbar() {
 //     borderRadius: 8,
 //   },
 
-//   profileBtn: {
-//     position: "relative",
-//     background: "var(--accent)",
-//     border: "none",
-//     borderRadius: "50%",
-//     width: 40,
-//     height: 40,
-//     fontSize: 14,
-//     fontWeight: 600,
-//     color: "#fff",
-//     cursor: "pointer",
-//     display: "flex",
-//     alignItems: "center",
-//     justifyContent: "center",
-//   },
-
-//   // dropdown: {
-//   //   position: "absolute",
-//   //   top: 52,
-//   //   right: 0,
-//   //   background: "var(--card-bg)",
-//   //   border: "1px solid var(--border)",
-//   //   borderRadius: 12,
-//   //   width: 220,
-//   //   boxShadow: "var(--shadow)",
-//   //   padding: 12,
-//   //   display: "flex",
-//   //   flexDirection: "column",
-//   //   gap: 8,
-//   //   animation: "dropdownIn 0.18s ease-out",
-//   //   transformOrigin: "top right",
-//   // },
+// profileBtn: {
+//   position: "relative",
+//   background: "var(--accent)",
+//   border: "none",
+//   borderRadius: "50%",
+//   width: 40,
+//   height: 40,
+//   fontSize: 14,
+//   fontWeight: 600,
+//   color: "#fff",
+//   cursor: "pointer",
+//   display: "flex",
+//   alignItems: "center",
+//   justifyContent: "center",
+// },
 
 //   dropdown: {
 //     position: "absolute",
@@ -495,3 +637,215 @@ export default function Navbar() {
 //     justifyContent: "center",
 //   },
 // };
+
+//  return (
+//     <>
+//       {/* ================= DESKTOP NAV ================= */}
+//       <nav
+//         className="hidden md:flex fixed top-0 left-0 right-0 z-50
+//         items-center justify-between px-6 h-16
+//         backdrop-blur-xl bg-white/60 dark:bg-black/40
+//         border-b border-white/20 dark:border-white/10
+//         shadow-sm"
+//       >
+//         <h3
+//           className="text-lg font-semibold cursor-pointer"
+//           onClick={() => navigate("/dashboard")}
+//         >
+//           🧾 Expense Tracker
+//         </h3>
+
+//         <div className="flex items-center gap-4">
+//           {user && (
+//             <div className="relative">
+//               <button
+//                 onClick={() => navigate("/activity")}
+//                 className="p-2 rounded-xl hover:bg-white/30 dark:hover:bg-white/10 transition"
+//               >
+//                 <Bell size={18} />
+//               </button>
+
+//               {unreadCount > 0 && (
+//                 <span className="absolute -top-1 -right-1 text-[10px] px-1.5 py-0.5 rounded-full bg-red-500 text-white">
+//                   {unreadCount > 9 ? "9+" : unreadCount}
+//                 </span>
+//               )}
+//             </div>
+//           )}
+
+//           {user && (
+//             <button
+//               onClick={() => navigate("/settings")}
+//               className="p-2 rounded-xl hover:bg-white/30 dark:hover:bg-white/10 transition"
+//             >
+//               <Settings size={18} />
+//             </button>
+//           )}
+
+//           <div className="relative" ref={dropdownRef}>
+//             <button
+//               onClick={() => setDesktopOpen((prev) => !prev)}
+//               className="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white font-semibold text-sm flex items-center justify-center shadow-md"
+//             >
+//               {user ? initials : theme === "dark" ? "🌞" : "🌙"}
+//             </button>
+
+//             {desktopOpen && (
+//               <div className="absolute right-0 mt-3 w-52 backdrop-blur-xl bg-white/80 dark:bg-black/60 border border-white/20 dark:border-white/10 shadow-xl rounded-xl p-2">
+//                 {user && (
+//                   <>
+//                     <div className="px-3 py-2 text-sm border-b border-white/20">
+//                       <p className="font-semibold">{user?.username}</p>
+//                       <p className="text-xs opacity-70">{user?.email}</p>
+//                     </div>
+
+//                     <button
+//                       onClick={() => {
+//                         toggleTheme();
+//                         setDesktopOpen(false);
+//                       }}
+//                       className="flex items-center gap-2 w-full px-3 py-2 text-sm rounded-lg hover:bg-white/30 dark:hover:bg-white/10"
+//                     >
+//                       {theme === "dark" ? (
+//                         <Sun size={14} />
+//                       ) : (
+//                         <Moon size={14} />
+//                       )}
+//                       Toggle Theme
+//                     </button>
+
+//                     <button
+//                       onClick={() => {
+//                         logout();
+//                         navigate("/login");
+//                       }}
+//                       className="flex items-center gap-2 w-full px-3 py-2 text-sm rounded-lg text-red-500 hover:bg-red-500/10"
+//                     >
+//                       <LogOut size={14} />
+//                       Logout
+//                     </button>
+//                   </>
+//                 )}
+//               </div>
+//             )}
+//           </div>
+//         </div>
+//       </nav>
+
+//       {/* ================= MOBILE NAV ================= */}
+//       <nav
+//         className="md:hidden fixed bottom-0 left-0 right-0 z-50
+//         backdrop-blur-2xl bg-white/70 dark:bg-black/60
+//         border-t border-white/20 dark:border-white/10
+//         shadow-[0_-8px_30px_rgba(0,0,0,0.08)]"
+//         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+//       >
+//         <div className="flex justify-around items-center h-16 relative">
+//           {navItems.map(({ icon: Icon, path }) => {
+//             const active = location.pathname === path;
+//             const isCreate = path === "/create";
+
+//             return (
+//               <Link
+//                 key={path}
+//                 to={path}
+//                 className={`relative flex items-center justify-center transition-all duration-300 ${
+//                   isCreate ? "translate-y-[-18px]" : ""
+//                 }`}
+//               >
+//                 {isCreate ? (
+//                   <div
+//                     className={`w-14 h-14 rounded-full flex items-center justify-center shadow-xl ${
+//                       active
+//                         ? "bg-green-500 text-white scale-110"
+//                         : "bg-gradient-to-br from-green-400 to-emerald-600 text-white"
+//                     }`}
+//                   >
+//                     <Icon size={26} />
+//                   </div>
+//                 ) : (
+//                   <div
+//                     className={`${
+//                       active
+//                         ? "text-green-500 scale-110"
+//                         : "text-gray-500 dark:text-gray-400"
+//                     }`}
+//                   >
+//                     <Icon size={22} />
+//                   </div>
+//                 )}
+//               </Link>
+//             );
+//           })}
+
+//           {user && (
+//             <button
+//               onClick={() => setMobileOpen(true)}
+//               className="text-gray-500 dark:text-gray-400"
+//             >
+//               <User size={22} />
+//             </button>
+//           )}
+//         </div>
+//       </nav>
+
+//       {/* ================= MOBILE BOTTOM SHEET ================= */}
+//       {mobileOpen && (
+//         <div
+//           className="fixed inset-0 z-[60] flex items-end bg-black/40 backdrop-blur-sm"
+//           onClick={() => setMobileOpen(false)}
+//         >
+//           <div
+//             ref={sheetRef}
+//             onClick={(e) => e.stopPropagation()}
+//             onTouchStart={(e) => (startY.current = e.touches[0].clientY)}
+//             onTouchMove={(e) => {
+//               if (startY.current === null || !sheetRef.current) return;
+
+//               const delta = e.touches[0].clientY - startY.current;
+
+//               if (delta > 0) {
+//                 currentY.current = delta;
+//                 sheetRef.current.style.transform = `translateY(${delta}px)`;
+//               }
+//             }}
+//             onTouchEnd={() => {
+//               if (currentY.current > 100) {
+//                 setMobileOpen(false);
+//               } else if (sheetRef.current) {
+//                 sheetRef.current.style.transform = "translateY(0)";
+//               }
+
+//               startY.current = null;
+//               currentY.current = 0;
+//             }}
+//             className="w-full rounded-t-3xl p-6 bg-white dark:bg-zinc-900 transition-transform duration-300"
+//             style={{
+//               paddingBottom: "env(safe-area-inset-bottom)",
+//             }}
+//           >
+//             <div className="w-12 h-1.5 bg-gray-300 dark:bg-gray-600 rounded-full mx-auto mb-6" />
+
+//             <button
+//               onClick={toggleTheme}
+//               className="flex items-center gap-3 w-full p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-zinc-800"
+//             >
+//               {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+//               Toggle Theme
+//             </button>
+
+//             <button
+//               onClick={() => {
+//                 logout();
+//                 navigate("/login");
+//               }}
+//               className="flex items-center gap-3 w-full p-3 rounded-xl text-red-500 hover:bg-red-500/10"
+//             >
+//               <LogOut size={18} />
+//               Logout
+//             </button>
+//           </div>
+//         </div>
+//       )}
+//     </>
+//   );

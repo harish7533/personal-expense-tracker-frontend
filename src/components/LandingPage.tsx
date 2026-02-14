@@ -161,15 +161,6 @@ const LandingPage = () => {
     "Store Analysis",
   ];
 
-  // const heroTitle = useLoopTypewriter(
-  //   heroWords,
-  //   80, // slower typing speed
-  //   5000, // wait 5 seconds before deleting
-  //   heroVisible,
-  // );
-
-  // const overviewText = useLoopTypewriter(overviewWords, 80, 5000, heroVisible);
-
   const { text: heroText, fade: heroFade } = useLoopTypewriter(
     heroWords,
     80,
@@ -301,78 +292,79 @@ const LandingPage = () => {
           </div>
         </section>
 
-       {/* ================= FAQ ================= */}
-<section ref={setSectionRef(3)} className="faq-section">
-  <div className="faq-header">
-    <h2>Frequently Asked Questions</h2>
-    <p>Everything you need to know about the platform.</p>
-  </div>
+        {/* ================= FAQ ================= */}
+        <section ref={setSectionRef(3)} className="faq-section">
+          <div className="faq-header">
+            <h2>Frequently Asked Questions</h2>
+            <p>Everything you need to know about the platform.</p>
+          </div>
 
-  <div className="faq-grid">
+          <div className="faq-grid">
+            <details className="faq-item">
+              <summary>
+                How accurate is the system?
+                <span>+</span>
+              </summary>
+              <div className="faq-content">
+                Our system delivers up to 99% accuracy depending on input
+                quality and clarity.
+              </div>
+            </details>
 
-    <details className="faq-item">
-      <summary>
-        How accurate is the system?
-        <span>+</span>
-      </summary>
-      <div className="faq-content">
-        Our system delivers up to 99% accuracy depending on input quality and clarity.
-      </div>
-    </details>
+            <details className="faq-item">
+              <summary>
+                Is my data secure?
+                <span>+</span>
+              </summary>
+              <div className="faq-content">
+                We use secure authentication, encrypted storage, and protected
+                APIs to safeguard your data.
+              </div>
+            </details>
 
-    <details className="faq-item">
-      <summary>
-        Is my data secure?
-        <span>+</span>
-      </summary>
-      <div className="faq-content">
-        We use secure authentication, encrypted storage, and protected APIs to safeguard your data.
-      </div>
-    </details>
+            <details className="faq-item">
+              <summary>
+                Can it scale for business use?
+                <span>+</span>
+              </summary>
+              <div className="faq-content">
+                Yes. The modular backend architecture is designed for SaaS-level
+                scalability.
+              </div>
+            </details>
 
-    <details className="faq-item">
-      <summary>
-        Can it scale for business use?
-        <span>+</span>
-      </summary>
-      <div className="faq-content">
-        Yes. The modular backend architecture is designed for SaaS-level scalability.
-      </div>
-    </details>
+            <details className="faq-item">
+              <summary>
+                Is it mobile friendly?
+                <span>+</span>
+              </summary>
+              <div className="faq-content">
+                Fully responsive and optimized for desktop, tablet, and mobile.
+              </div>
+            </details>
 
-    <details className="faq-item">
-      <summary>
-        Is it mobile friendly?
-        <span>+</span>
-      </summary>
-      <div className="faq-content">
-        Fully responsive and optimized for desktop, tablet, and mobile.
-      </div>
-    </details>
+            <details className="faq-item">
+              <summary>
+                Does it support role-based access?
+                <span>+</span>
+              </summary>
+              <div className="faq-content">
+                Yes. Different user roles can have custom permissions and
+                restricted access.
+              </div>
+            </details>
 
-    <details className="faq-item">
-      <summary>
-        Does it support role-based access?
-        <span>+</span>
-      </summary>
-      <div className="faq-content">
-        Yes. Different user roles can have custom permissions and restricted access.
-      </div>
-    </details>
-
-    <details className="faq-item">
-      <summary>
-        Is integration simple?
-        <span>+</span>
-      </summary>
-      <div className="faq-content">
-        REST APIs and modular components make integration seamless.
-      </div>
-    </details>
-
-  </div>
-</section>
-
+            <details className="faq-item">
+              <summary>
+                Is integration simple?
+                <span>+</span>
+              </summary>
+              <div className="faq-content">
+                REST APIs and modular components make integration seamless.
+              </div>
+            </details>
+          </div>
+        </section>
 
         {/* ================= DEVELOPER ================= */}
         <section ref={setSectionRef(2)} className="section developer-section">

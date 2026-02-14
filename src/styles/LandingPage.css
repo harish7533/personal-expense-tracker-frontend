@@ -29,7 +29,7 @@
 /* ================= HERO ================= */
 
 .hero-section {
-  min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   align-items: center;
   padding: 100px 24px;
@@ -104,17 +104,6 @@
   font-size: 1.5rem;
 }
 
-@media (max-width: 768px) {
-  .typing-title {
-    font-size: 2rem;
-  }
-
-  .typing-overview {
-    font-size: 1.1rem;
-  }
-}
-
-
 .cursor {
   display: inline-block;
   margin-left: 4px;
@@ -129,8 +118,6 @@
   0%, 50%, 100% { opacity: 1; }
   25%, 75% { opacity: 0; }
 }
-
-
 
 /* ================= DASHBOARD PREVIEW ================= */
 
@@ -164,8 +151,6 @@
   border-radius: 6px;
   animation: grow 1.5s ease-in-out infinite alternate;
 }
-
-
 
 @keyframes grow {
   from { transform: scaleY(0.6); }
@@ -443,6 +428,14 @@
   .developer-actions {
     justify-content: center;
   }
+
+  .typing-title {
+    font-size: 2rem;
+  }
+
+  .typing-overview {
+    font-size: 1.1rem;
+  }
 }
 
 /* ================= ACCORDION ================= */
@@ -478,6 +471,13 @@
   text-align: center;
   padding: 40px;
   opacity: 0.6;
+}
+
+@media (max-width: 768px) {
+  .footer {
+    margin-top: -40px;
+    padding: 0 0 120px 0;
+  }
 }
 
 /* ================= FAQ SECTION ================= */
