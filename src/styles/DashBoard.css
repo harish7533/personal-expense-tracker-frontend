@@ -142,16 +142,6 @@
   }
 }
 
-/* GLASS CARD BASE */
-.glass-card {
-  background: rgba(255, 255, 255, 0.05);
-  --webkit-backdrop-filter: blur(18px);
-  border-radius: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-  padding: 24px;
-}
-
 /* ============================= */
 /* ADD TRANSACTION CARD */
 /* ============================= */
@@ -269,9 +259,9 @@
   position: absolute;
   inset: 0;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 10px;
 }
 
 .percent {
@@ -360,6 +350,22 @@
 
 .trend-summary.down {
   color: #ef4444;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--input-bg);
+  color: var(--text);
+  font-size: 15px;
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--primary);
 }
 
 /* ============================= */

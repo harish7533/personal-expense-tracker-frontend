@@ -36,11 +36,11 @@ export default function Activity() {
 
   return (
     <PageWrapper>
+      <Navbar />
       {authLoading || activitiesLoading ? (
         <ActivitySkeleton />
       ) : (
         <>
-          <Navbar />
           <div style={styles.container}>
             <h4 style={styles.heading}>🔔 Activity</h4>
 
@@ -48,13 +48,13 @@ export default function Activity() {
               <p style={styles.empty}>No activities yet 📝</p>
             ) : (
               <div style={styles.notificationsWrapper}>
-                {activities.slice(0, 20).map((a, index) => (
+                {activities.slice(0, 20).map((a) => (
                   <div
                     key={a.id}
                     style={{
                       ...styles.notification,
                       ...(a.type === "CREDIT" ? styles.credit : styles.debit),
-                      bottom: 20 + index * 80, // stack notifications
+                      // bottom: 20 + index * 120, // stack notifications
                     }}
                   >
                     <span style={styles.cardMessage}>{a.message}</span>
@@ -107,9 +107,6 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
 
   notificationsWrapper: {
-    position: "fixed",
-    right: 20,
-    bottom: 20,
     display: "flex",
     flexDirection: "column-reverse",
     alignItems: "flex-end",
@@ -119,21 +116,21 @@ const styles: { [key: string]: React.CSSProperties } = {
 
   notification: {
     minWidth: 260,
-    maxWidth: 320,
+    maxWidth: "80vw",
     background: "var(--card-bg)",
     color: "var(--text)",
     padding: 16,
     borderRadius: 12,
     boxShadow: "0 8px 20px rgba(0,0,0,0.15)",
     display: "flex",
-    flexDirection: "column",
+    flexDirection: "row",
+    alignItems: "center",
     gap: 4,
-    position: "absolute",
-    right: 0,
     opacity: 0,
     transform: "translateY(20px)",
     animation: "slideUp 0.4s forwards",
     transition: "all 0.3s ease-in-out",
+    marginTop: 20,
   },
 
   cardMessage: { fontSize: 15 },
@@ -143,8 +140,8 @@ const styles: { [key: string]: React.CSSProperties } = {
 
   closeBtn: {
     position: "absolute",
-    top: 8,
-    right: 8,
+    top: 7,
+    right: 10,
     border: "none",
     background: "transparent",
     cursor: "pointer",

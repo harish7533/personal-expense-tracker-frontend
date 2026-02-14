@@ -33,12 +33,12 @@ export default function Settings() {
       ) : (
         <>
           <Navbar />
-
           <div style={styles.container}>
             <motion.h2
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.7 }}
+              style={{ marginBottom: 25 }}
             >
               ⚙️ Settings
             </motion.h2>
@@ -51,9 +51,9 @@ export default function Settings() {
               variants={cardVariants}
               transition={{ duration: 0.4 }}
             >
-              <h4>Account</h4>
+              <h4>Account Details</h4>
               <p>
-                <strong>Username:</strong> {user?.username || "—"}
+                <strong>Username:</strong> {user?.username || "-"}
               </p>
               <p>
                 <strong>Status:</strong>{" "}
@@ -105,6 +105,29 @@ export default function Settings() {
                   >
                     Bills
                   </button>
+                  <button
+                    style={styles.routeBtn}
+                    onClick={() => navigate("/create")}
+                  >
+                    Create Bill
+                  </button>
+                  <button
+                    style={styles.routeBtn}
+                    onClick={() => navigate("/upload")}
+                  >
+                    Upload Bill
+                  </button>
+                  <button style={styles.routeBtn} onClick={toggleTheme}>
+                    Toggle Theme
+                  </button>
+                  {user && (
+                    <button
+                      style={{ ...styles.routeBtn, ...styles.logoutBtn }}
+                      onClick={logout}
+                    >
+                      Logout
+                    </button>
+                  )}
                 </div>
               </motion.div>
             )}
@@ -119,12 +142,6 @@ export default function Settings() {
               >
                 <h4>📱 Quick Actions</h4>
                 <div style={styles.mobileRoutes}>
-                  <button
-                    style={styles.routeBtn}
-                    onClick={() => navigate("/bills")}
-                  >
-                    Bills
-                  </button>
                   <button
                     style={styles.routeBtn}
                     onClick={() => navigate("/create")}
@@ -202,10 +219,11 @@ const styles: Record<string, React.CSSProperties> = {
     borderRadius: 10,
     border: "none",
     cursor: "pointer",
-    background: "linear-gradient(135deg, #22c55e, #6366f1)",
-    color: "var(--text)",
-    fontWeight: 500,
+    background: "rgb(99, 102, 241)",
+    color: "white",
+    fontWeight: 600,
     transition: "transform 0.3s ease",
+    marginTop: 15,
   },
   logoutBtn: {
     background: "#ef4444",

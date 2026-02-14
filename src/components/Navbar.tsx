@@ -59,20 +59,7 @@ export default function Navbar() {
     { icon: NotebookPenIcon, path: "/bills" },
     { icon: PlusCircle, path: "/create", center: true },
     { icon: Bell, path: "/activity" },
-
-    ...(user
-      ? [
-          {
-            icon: LogOut,
-            action: "logout",
-          },
-        ]
-      : [
-        {
-            icon: theme === "dark" ? Sun : Moon,
-            action: "theme",
-          }
-      ]),
+    { icon: Settings, path: "/settings" },
   ];
 
   /* ================= ACTIVE INDICATOR ================= */
@@ -210,7 +197,7 @@ export default function Navbar() {
         <div className="mobile-nav-inner" ref={navRef}>
           <div ref={indicatorRef} className="active-indicator" />
 
-          {navItems.map(({ icon: Icon, path, center, action }) => {
+          {navItems.map(({ icon: Icon, path, center }) => {
             const active = location.pathname === path;
 
             if (center) {
@@ -233,36 +220,6 @@ export default function Navbar() {
                 >
                   <Icon size={22} />
                 </Link>
-              );
-            }
-
-            // 🔥 If item has action
-            if (action === "theme") {
-              return (
-                <button
-                  key="theme"
-                  onClick={toggleTheme}
-                  className="mobile-link"
-                  style={{ background: "var(--background" }}
-                >
-                  <Icon size={22} />
-                </button>
-              );
-            }
-
-            if (action === "logout") {
-              return (
-                <button
-                  key="logout"
-                  onClick={() => {
-                    logout();
-                    navigate("/login");
-                  }}
-                  className="mobile-link"                  
-                  style={{ background: "var(--background" }}
-                >
-                  <Icon size={22} />
-                </button>
               );
             }
 

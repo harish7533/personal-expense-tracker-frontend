@@ -39,6 +39,7 @@ interface Props {
 export default function Dashboard({ transactions }: Props) {
   const { user, loading, token } = useAuth();
 
+  const [daily, setDaily] = useState<any[]>([]);
   const [monthly, setMonthly] = useState<any[]>([]);
   const [storeWise, setStoreWise] = useState<any[]>([]);
   const [from, setFrom] = useState("");
@@ -166,10 +167,16 @@ export default function Dashboard({ transactions }: Props) {
           params: buildParams(),
         });
 
-        if (!res.data || res.data.length === 0) {
+        const resDaily = await api.get("/analytics/daily", {
+          headers: { Authorization: `Bearer ${token}`},
+          params: buildParams(),
+        })
+
+        if (!res.data || res.data.length === 0 && !resDaily.data || resDaily.data.length === 0) {
           setHasBills(false);
         } else {
           setMonthly(res.data);
+          setDaily(resDaily.data);
         }
       }
 
@@ -346,9 +353,7 @@ export default function Dashboard({ transactions }: Props) {
                       className="income-expense-card glass-card"
                     >
                       <div className="card-header">
-                        <h2 className="heading">
-                          Add Transaction
-                        </h2>
+                        <h2 className="heading">Add Transaction</h2>
 
                         <div className="mode-buttons">
                           <button
@@ -401,9 +406,7 @@ export default function Dashboard({ transactions }: Props) {
                       transition={{ delay: 0.3 }}
                       className="expense-wheel-card glass-card"
                     >
-                      <h2 className="heading">
-                        Daily Expense Usage
-                      </h2>
+                      <h2 className="heading">Daily Expense Usage</h2>
 
                       <div className="relative w-44 h-44">
                         <svg viewBox="0 0 36 36" className="w-full h-full">
@@ -447,7 +450,7 @@ export default function Dashboard({ transactions }: Props) {
                       <div className="today-spent">
                         <p>Today Spent</p>
                         <p className="amount">
-                          <IndianRupee /> {dailyExpense.toFixed(2)}
+                          <IndianRupee size={12} /> {dailyExpense.toFixed(2)}
                         </p>
                       </div>
                     </motion.div>
@@ -459,9 +462,7 @@ export default function Dashboard({ transactions }: Props) {
                       className="graph-card glass-card"
                     >
                       <div className="flex-row">
-                        <h2 className="heading">
-                          Portfolio Trend
-                        </h2>
+                        <h2 className="heading">Portfolio Trend</h2>
 
                         <div className={`trend ${isUpTrend ? "up" : "down"}`}>
                           {isUpTrend ? (
@@ -536,18 +537,12 @@ export default function Dashboard({ transactions }: Props) {
                       transition={{ delay: 0.2 }}
                       className="summary-card glass-card"
                     >
-                      <h2 className="heading">
-                        Balance Summary
-                      </h2>
+                      <h2 className="heading">Balance Summary</h2>
 
-                      <div className="balance">
-                        {latest.toFixed(2)}
-                      </div>
+                      <div className="balance">{latest.toFixed(2)}</div>
 
                       <div
-                        className={`trend-summary ${
-                          isUpTrend ? "up" : "down"
-                        }`}
+                        className={`trend-summary ${isUpTrend ? "up" : "down"}`}
                       >
                         {isUpTrend ? (
                           <TrendingUp size={18} />
@@ -561,6 +556,23 @@ export default function Dashboard({ transactions }: Props) {
                         </span>
                       </div>
                     </motion.div>
+
+                    {/* ===== TRANSACTION LIST ===== */}
+                    <div className="glass-card">
+                      <h3>Recent Transactions</h3>
+
+                      <div className="transaction-list">
+                        {daily.slice(-5).map((tx: any, index: number) => (
+                          <div key={index} className="transaction-item">
+                            <div className="tx-icon">💸</div>
+                            <div className="tx-info">
+                              <p>{tx.date}</p>
+                              <span>₹ {tx.total}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
               )}
