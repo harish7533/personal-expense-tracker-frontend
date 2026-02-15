@@ -4,6 +4,7 @@ import api from "../api";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import"../styles/page.css";
 
 export default function Register() {
   const [email, setEmail] = useState("");
@@ -38,7 +39,7 @@ export default function Register() {
   };
 
   return (
-    <div style={{ maxWidth: "80vw", margin: "200px auto" }}>
+    <div className="register">
       <h2>Create Account</h2>
 
       <input placeholder="Email" onChange={(e) => setEmail(e.target.value)} />

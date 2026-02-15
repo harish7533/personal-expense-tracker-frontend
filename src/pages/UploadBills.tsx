@@ -75,7 +75,7 @@ export default function UploadBills() {
 
         <div className="upload-page">
           <div className="upload-card">
-            <h1>Upload Bill</h1>
+            <h1 style={{ color: "var(--text)" }}>Upload Bill</h1>
 
             <p className="subtitle">
               Upload a bill image to auto-extract items & analytics 📸
@@ -120,7 +120,7 @@ export default function UploadBills() {
             </small>
 
             {showToast && (
-              <div className={`showToast ${showToast.type}`}>
+              <div style={{ color: "var(--text)" }} className={`showToast ${showToast.type}`}>
                 {showToast.type === "success" ? "✅" : "❌"} {showToast.msg}
               </div>
             )}

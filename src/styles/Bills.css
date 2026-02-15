@@ -1,6 +1,7 @@
 .bills-container {
   padding: 30px;
   animation: fadeIn 0.5s ease-in;
+  color: var(--text);
 }
 
 .bills-title {
@@ -27,7 +28,7 @@
 
 .filter-btn {
   background: var(--accent);
-  color: white;
+  color: var(--text);
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -51,6 +52,7 @@
   --webkit-backdrop-filter: blur(8px);
   transition: 0.3s;
   animation: slideUp 0.4s ease;
+  color: var(--text);
 }
 
 .bill-card:hover {
@@ -88,6 +90,13 @@
   text-align: center;
   margin-top: 20px;
   opacity: 0.6;
+  color: var(--text);
+}
+
+@media (max-width: 768px) {
+  .filter-btn {
+    padding: 12px 24px;
+  }
 }
 
 @keyframes slideUp {

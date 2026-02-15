@@ -6,6 +6,7 @@ import { toast } from "react-hot-toast/headless";
 // import { useBanner } from "../hooks/useBanner";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router";
+import"../styles/page.css";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -50,7 +51,7 @@ export default function Login() {
   };
 
   return (
-    <div style={{ maxWidth: "80vw", margin: "200px auto" }}>
+    <div className="login">
       <h2>🔐 Login</h2>
 
       <input

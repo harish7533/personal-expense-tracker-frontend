@@ -168,11 +168,15 @@ export default function Dashboard({ transactions }: Props) {
         });
 
         const resDaily = await api.get("/analytics/daily", {
-          headers: { Authorization: `Bearer ${token}`},
+          headers: { Authorization: `Bearer ${token}` },
           params: buildParams(),
-        })
+        });
 
-        if (!res.data || res.data.length === 0 && !resDaily.data || resDaily.data.length === 0) {
+        if (
+          !res.data ||
+          (res.data.length === 0 && !resDaily.data) ||
+          resDaily.data.length === 0
+        ) {
           setHasBills(false);
         } else {
           setMonthly(res.data);
@@ -345,6 +349,34 @@ export default function Dashboard({ transactions }: Props) {
               {/* ================= USER ================= */}
               {user.role === "USER" && (
                 <div className="modern-user-dashboard">
+                  {/* ================= CURRENT BALANCE CARD ================= */}
+                  <motion.div
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="current-balance-card glass-card"
+                  >
+                    <div className="balance-left">
+                      <p className="balance-label">Current Balance</p>
+                      <h1 className="balance-amount">
+                        <IndianRupee size={20} /> {latest.toFixed(2)}
+                      </h1>
+                    </div>
+
+                    <div
+                      className={`balance-trend ${isUpTrend ? "up" : "down"}`}
+                    >
+                      {isUpTrend ? (
+                        <TrendingUp size={20} />
+                      ) : (
+                        <TrendingDown size={20} />
+                      )}
+                      <span>
+                        {isUpTrend ? "Growing steadily" : "Needs attention"}
+                      </span>
+                    </div>
+                  </motion.div>
+
                   <div className="top-grid">
                     {/* ================= INCOME/EXPENSE CARD ================= */}
                     <motion.div

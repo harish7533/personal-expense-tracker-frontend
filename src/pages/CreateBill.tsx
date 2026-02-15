@@ -44,7 +44,7 @@ export default function CreateBill() {
         setStoreOptions(stores.length ? stores : DEFAULT_STORES),
       )
       .catch(() => setStoreOptions(DEFAULT_STORES));
-  }, [DEFAULT_STORES]);
+  }, []);
 
   const finalStoreName =
     storeOption === "Other" ? customStoreName.trim() : storeOption;
@@ -84,7 +84,7 @@ export default function CreateBill() {
         setCategoryOptions(cats.length ? cats : DEFAULT_CATEGORIES),
       )
       .catch(() => setCategoryOptions(DEFAULT_CATEGORIES));
-  }, [DEFAULT_CATEGORIES]);
+  }, []);
 
   const finalCategory = category === "Other" ? customCategory.trim() : category;
 
@@ -272,7 +272,7 @@ export default function CreateBill() {
                   onClick={addCustomStore}
                   className="button"
                 >
-                  ➕ Add
+                  Add
                 </button>
               </div>
             )}
@@ -285,11 +285,11 @@ export default function CreateBill() {
               onChange={(e) => setBillDate(e.target.value)}
             />
 
-            <p className="date-preview">
+            {/* <p style={{ color: "var(--text)", marginTop: 5 }}>
               {" "}
               🕒{" "}
               {new Date(buildDateTime(billDate)).toLocaleString("en-IN")}{" "}
-            </p>
+            </p> */}
 
             {/* Category */}
             <select
@@ -318,7 +318,7 @@ export default function CreateBill() {
                   onClick={addCustomCategory}
                   className="button"
                 >
-                  ➕ Add
+                  Add
                 </button>
               </div>
             )}
@@ -338,7 +338,7 @@ export default function CreateBill() {
 
             <div style={{ marginBottom: 20, marginTop: 20 }}>
               <label
-                style={{ fontWeight: 600, marginBottom: 6, display: "block" }}
+                style={{ fontWeight: 600, marginBottom: 6, display: "block", color: "var(--text)" }}
               >
                 Bill Text
               </label>
@@ -355,7 +355,7 @@ export default function CreateBill() {
                 }}
               />
 
-              <p style={{ fontSize: 12, opacity: 0.7, marginTop: 6 }}>
+              <p style={{ fontSize: 12, opacity: 0.7, marginTop: 6, color: "var(--text)" }}>
                 You can paste OCR output or manually typed bill data.
               </p>
             </div>
