@@ -1,64 +1,140 @@
-/* Mobile Adaptiveness */
-@media (max-width: 768px) {
-  .activity-card {
-    padding: 14px 16px;
+  .container {
+    padding: 24px;
+    max-width: 800px;
+    margin: "auto";
+    color: "var(--text)";
+    position: relative;
+    min-height: "80vh";
   }
 
-  .activity-card span,
-  .activity-card small {
-    font-size: 14px;
+  .heading {
+    margin-bottom: 16px;
   }
 
-  .activity-card button.close-btn {
-    top: 8px;
-    right: 8px;
-    font-size: 14px;
+  .empty {
+    margin-top: 60px;
+    padding: 40px;
+    text-align: center;
+    background: "var(--card-bg)";
+    border-radius: 12px;
+    box-shadow: "var(--shadow)";
+    color: "var(--muted)";
+    opacity: 0.8;
   }
 
   .notificationsWrapper {
-    right: 12;
-    bottom: 12;
-    width: "90%"
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: flex-end;
+    z-index: 9999;
+    gap: 12;
   }
 
   .notification {
-    min-width: "auto";
-    width: "100%";
-    padding: 14px
-  }
-
-  .closeBtn {
-    top: 6;
-    right: 6;
-    font-size: 12px;
+    min-width: 260px;
+    max-width: 80vw;
+    background: "var(--card-bg)";
+    color: "var(--text)";
+    padding: 16px;
+    border-radius: 12px;
+    box-shadow: "0 8px 20px var(--border)";
+    display: flex;
+    flex-direction: "row";
+    align-items: "center";
+    gap: 4px;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: "slideUp 0.4s forwards";
+    transition: "all 0.3s ease-in-out";
+    margin-top: 20;
   }
 
   .cardMessage {
-    font-size: 14px
-  }
-}
-
-/* Fade Animation */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
+    font-size: 15px;
   }
 
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px)
+  .credit {
+    border-left: "4px solid #22c55e"
   }
 
-  to {
-    opacity: 1;
-    transform: translateY(0)
+  .debit {
+    border-left: "4px solid #ef4444"
   }
-}
+
+  .closeBtn {
+    position: absolute;
+    top: 7px;
+    right: 10px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 14px;
+    color: "var(--text-secondary)"
+  }
+
+  /* Mobile Adaptiveness */
+  @media (max-width: 768px) {
+    .activity-card {
+      padding: 14px 16px;
+    }
+
+    .activity-card span,
+    .activity-card small {
+      font-size: 14px;
+    }
+
+    .activity-card button.close-btn {
+      top: 8px;
+      right: 8px;
+      font-size: 14px;
+    }
+
+    .notificationsWrapper {
+      right: 12;
+      bottom: 12;
+      width: 90%;
+      align-items: flex-start;
+    }
+
+    .notification {
+      min-width: auto;
+      width: 100%;
+      padding: 14px;
+      flex-direction: row;
+    }
+
+    .closeBtn {
+      top: 6;
+      right: 6;
+      font-size: 12px;
+    }
+
+    .cardMessage {
+      font-size: 14px
+    }
+  }
+
+  /* Fade Animation */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px)
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0)
+    }
+  }

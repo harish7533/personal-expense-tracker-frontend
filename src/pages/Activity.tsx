@@ -41,23 +41,21 @@ export default function Activity() {
         <ActivitySkeleton />
       ) : (
         <>
-          <div style={styles.container}>
-            <h4 style={styles.heading}>🔔 Activity</h4>
+          <div className="container">
+            <h4 className="heading">🔔 Activity</h4>
 
             {activities.length === 0 ? (
-              <p style={styles.empty}>No activities yet 📝</p>
+              <p className="empty">No activities yet 📝</p>
             ) : (
-              <div style={styles.notificationsWrapper}>
+              <div className="notificationsWrapper">
                 {activities.slice(0, 20).map((a) => (
                   <div
                     key={a.id}
-                    style={{
-                      ...styles.notification,
-                      ...(a.type === "CREDIT" ? styles.credit : styles.debit),
-                      // bottom: 20 + index * 120, // stack notifications
-                    }}
+                    className={`notification ${
+                      a.type === "CREDIT" ? "credit" : "debit"
+                    }`}
                   >
-                    <span style={styles.cardMessage}>{a.message}</span>
+                    <span className="cardMessage">{a.message}</span>
                     <small>
                       {a.balance_before} → {a.balance_after}
                     </small>
@@ -65,7 +63,7 @@ export default function Activity() {
                       {new Date(a.created_at).toLocaleString()}
                     </small>
                     <button
-                      style={styles.closeBtn}
+                      className="closeBtn"
                       onClick={() => removeActivity(a.id)}
                     >
                       ✖
@@ -81,71 +79,71 @@ export default function Activity() {
   );
 }
 
-/* ===================== STYLES ===================== */
-const styles: { [key: string]: React.CSSProperties } = {
-  container: {
-    padding: 24,
-    maxWidth: 800,
-    margin: "auto",
-    fontFamily: "'Inter', sans-serif",
-    color: "var(--text)",
-    position: "relative",
-    minHeight: "80vh",
-  },
+// /* ===================== STYLES ===================== */
+// const styles: { [key: string]: React.CSSProperties } = {
+//   container: {
+//     padding: 24,
+//     maxWidth: 800,
+//     margin: "auto",
+//     fontFamily: "'Inter', sans-serif",
+//     color: "var(--text)",
+//     position: "relative",
+//     minHeight: "80vh",
+//   },
 
-  heading: { marginBottom: 16 },
+//   heading: { marginBottom: 16 },
 
-  empty: {
-    marginTop: 60,
-    padding: 40,
-    textAlign: "center",
-    background: "var(--card-bg)",
-    borderRadius: 12,
-    boxShadow: "var(--shadow)",
-    color: "var(--muted)",
-    opacity: 0.8,
-  },
+//   empty: {
+//     marginTop: 60,
+//     padding: 40,
+//     textAlign: "center",
+//     background: "var(--card-bg)",
+//     borderRadius: 12,
+//     boxShadow: "var(--shadow)",
+//     color: "var(--muted)",
+//     opacity: 0.8,
+//   },
 
-  notificationsWrapper: {
-    display: "flex",
-    flexDirection: "column-reverse",
-    alignItems: "flex-end",
-    zIndex: 9999,
-    gap: 12,
-  },
+//   notificationsWrapper: {
+//     display: "flex",
+//     flexDirection: "column-reverse",
+//     alignItems: "flex-end",
+//     zIndex: 9999,
+//     gap: 12,
+//   },
 
-  notification: {
-    minWidth: 260,
-    maxWidth: "80vw",
-    background: "var(--card-bg)",
-    color: "var(--text)",
-    padding: 16,
-    borderRadius: 12,
-    boxShadow: "0 8px 20px rgba(0,0,0,0.15)",
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-    opacity: 0,
-    transform: "translateY(20px)",
-    animation: "slideUp 0.4s forwards",
-    transition: "all 0.3s ease-in-out",
-    marginTop: 20,
-  },
+//   notification: {
+//     minWidth: 260,
+//     maxWidth: "80vw",
+//     background: "var(--card-bg)",
+//     color: "var(--text)",
+//     padding: 16,
+//     borderRadius: 12,
+//     boxShadow: "0 8px 20px rgba(0,0,0,0.15)",
+//     display: "flex",
+//     flexDirection: "row",
+//     alignItems: "center",
+//     gap: 4,
+//     opacity: 0,
+//     transform: "translateY(20px)",
+//     animation: "slideUp 0.4s forwards",
+//     transition: "all 0.3s ease-in-out",
+//     marginTop: 20,
+//   },
 
-  cardMessage: { fontSize: 15 },
+//   cardMessage: { fontSize: 15 },
 
-  credit: { borderLeft: "4px solid #22c55e" },
-  debit: { borderLeft: "4px solid #ef4444" },
+//   credit: { borderLeft: "4px solid #22c55e" },
+//   debit: { borderLeft: "4px solid #ef4444" },
 
-  closeBtn: {
-    position: "absolute",
-    top: 7,
-    right: 10,
-    border: "none",
-    background: "transparent",
-    cursor: "pointer",
-    fontSize: 14,
-    color: "var(--text-secondary)",
-  },
-};
+//   closeBtn: {
+//     position: "absolute",
+//     top: 7,
+//     right: 10,
+//     border: "none",
+//     background: "transparent",
+//     cursor: "pointer",
+//     fontSize: 14,
+//     color: "var(--text-secondary)",
+//   },
+// };

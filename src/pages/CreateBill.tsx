@@ -192,7 +192,7 @@ export default function CreateBill() {
 
     try {
       setLoading(true);
-      const res = await api.post("/bills/create", payload);
+      const res = await api.post("/bills/create", payload, { withCredentials: true });
 
       if (res.status === 200) {
         updateBalance((prev: number) => prev - Number(payload.totalAmount));
@@ -283,6 +283,7 @@ export default function CreateBill() {
               max={today}
               value={billDate}
               onChange={(e) => setBillDate(e.target.value)}
+              style={{ marginBottom: 20 }}
             />
 
             {/* <p style={{ color: "var(--text)", marginTop: 5 }}>
