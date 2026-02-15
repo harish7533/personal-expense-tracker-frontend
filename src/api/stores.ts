@@ -7,6 +7,6 @@ export const getStores = async () => {
 };
 
 export const addStore = async (name: string) => {
-  const res = await api.post("/stores", { name });
+  const res = await api.post("/stores/create", { name });
   return res.data;
 };
