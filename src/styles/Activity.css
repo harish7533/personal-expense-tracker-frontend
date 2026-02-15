@@ -1,10 +1,10 @@
   .container {
     padding: 24px;
     max-width: 800px;
-    margin: "auto";
-    color: "var(--text)";
+    margin: auto;
+    color: var(--text);
     position: relative;
-    min-height: "80vh";
+    min-height: 80vh;
   }
 
   .heading {
@@ -15,10 +15,10 @@
     margin-top: 60px;
     padding: 40px;
     text-align: center;
-    background: "var(--card-bg)";
+    background: var(--card-bg);
     border-radius: 12px;
-    box-shadow: "var(--shadow)";
-    color: "var(--muted)";
+    box-shadow: var(--shadow);
+    color: var(--muted);
     opacity: 0.8;
   }
 
@@ -26,27 +26,26 @@
     display: flex;
     flex-direction: column-reverse;
     align-items: flex-end;
-    z-index: 9999;
-    gap: 12;
+    gap: 12px;
   }
 
   .notification {
     min-width: 260px;
     max-width: 80vw;
-    background: "var(--card-bg)";
-    color: "var(--text)";
+    background: var(--card-bg);
+    color: var(--text);
     padding: 16px;
     border-radius: 12px;
-    box-shadow: "0 8px 20px var(--border)";
+    box-shadow: 0 8px 20px var(--border);
     display: flex;
-    flex-direction: "row";
-    align-items: "center";
+    flex-direction: row;
+    align-items: center;
     gap: 4px;
     opacity: 0;
     transform: translateY(20px);
-    animation: "slideUp 0.4s forwards";
-    transition: "all 0.3s ease-in-out";
-    margin-top: 20;
+    animation: slideUp 0.4s forwards;
+    transition: all 0.3s ease-in-out;
+    margin-top: 20px;
   }
 
   .cardMessage {
@@ -54,11 +53,11 @@
   }
 
   .credit {
-    border-left: "4px solid #22c55e"
+    border-left: 4px solid #22c55e;
   }
 
   .debit {
-    border-left: "4px solid #ef4444"
+    border-left: 4px solid #ef4444;
   }
 
   .closeBtn {
@@ -69,7 +68,7 @@
     background: transparent;
     cursor: pointer;
     font-size: 14px;
-    color: "var(--text-secondary)"
+    color: var(--text-secondary);
   }
 
   /* Mobile Adaptiveness */

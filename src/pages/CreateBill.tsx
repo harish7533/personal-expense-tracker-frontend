@@ -183,6 +183,7 @@ export default function CreateBill() {
         hsnc: null,
         verified: true,
       })),
+      analytics: analytics,
       discountAmount: 0,
       taxAmount: 0,
       source: "MANUAL",
@@ -412,13 +413,13 @@ export default function CreateBill() {
           </form>
         </div>
 
-        {analytics && (
+        {/* {analytics && (
           <div className="analytics-preview">
             <p>🧾 Items: {analytics.totalItems}</p>
             <p>📦 Qty: {analytics.totalQty}</p>
             <p>💰 Avg Rate: ₹ {analytics.avgRate}</p>
           </div>
-        )}
+        )} */}
       </>
     </PageWrapper>
   );

@@ -4,16 +4,16 @@
   animation: pageFade 0.45s ease both;
 }
 
-.login h2,
-.register h2 {
+.login,
+.register {
   color: var(--text);
   max-width: 500px;
   margin: 200px auto;
 }
 
 @media (max-width: 768px) {
-  .login h2,
-  .register h2 {
+  .login,
+  .register {
     max-width: "80vw";
   }
 }

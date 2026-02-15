@@ -117,14 +117,13 @@ export default function Bills() {
         ) : (
           <div className="bill-grid">
             {bills.map((b) => (
-              <div key={b.id} className="bill-card">
+              <div key={b.user_id} className="bill-card">
                 <div className="bill-header">
-                  <h3>{b.storeName}</h3>
-                  <span className="amount">₹{b.totalAmount}</span>
+                  <h3>{b.store_name}</h3>
+                  <span className="amount">₹{b.total_amount}</span>
                 </div>
 
-                <p>Bill No: {b.billNo}</p>
-                <p>Date: {b.billDate}</p>
+                <p>Date: {b.bill_date}</p>
                 <p>Category: {b.category}</p>
 
                 <button
