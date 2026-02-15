@@ -52,7 +52,7 @@ export default function Activity() {
                   <div
                     key={a.id}
                     className={`notification ${
-                      a.type === "CREDIT" ? "credit" : "debit"
+                      a.type === "DEBIT" ? "debit" : "credit"
                     }`}
                   >
                     <span className="cardMessage">{a.message}</span>

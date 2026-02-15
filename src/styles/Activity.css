@@ -62,8 +62,8 @@
 
   .closeBtn {
     position: absolute;
-    top: 7px;
-    right: 10px;
+    top: 14px;
+    right: 20px;
     border: none;
     background: transparent;
     cursor: pointer;
@@ -96,15 +96,14 @@
     }
 
     .notification {
-      min-width: auto;
-      width: 100%;
       padding: 14px;
-      flex-direction: row;
+      flex-direction: column;
+      align-items: flex-start;
     }
 
     .closeBtn {
-      top: 6;
-      right: 6;
+      top: 15px;
+      right: 20px;
       font-size: 12px;
     }
 

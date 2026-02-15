@@ -12,7 +12,7 @@ import { useAuth } from "./AuthContext";
 
 export type Activity = {
   id: string;
-  type: "DEBIT" | "CREDIT" | "USER";
+  type: "DEBIT" | "CREDIT";
   message: string;
   created_at: string;
   amount: number;
