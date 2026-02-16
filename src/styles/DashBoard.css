@@ -223,6 +223,7 @@
   transition: 0.3s ease;
   color: #d1d5db;
   font-weight: 600;
+  margin: 5px;
 }
 
 .mode-buttons button.active-income {
@@ -406,7 +407,9 @@
   color: #ef4444;
 }
 
-input {
+input,
+select
+ {
   width: 100%;
   padding: 12px;
   margin-top: 10px;
@@ -417,7 +420,8 @@ input {
   font-size: 15px;
 }
 
-input:focus {
+input:focus,
+select:focus {
   outline: none;
   border-color: var(--primary);
 }
@@ -537,8 +541,8 @@ input:focus {
 
 .transaction-inputs svg {
   position: absolute;
-  top: 23px;
-  right: 666px;
+  top: 12px;
+  right: 655px;
 }
 
 .tx-icon {

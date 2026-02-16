@@ -24,6 +24,7 @@ import { useAuth } from "../context/AuthContext";
 import DashboardSkeleton from "../components/skeletons/DashboardSkeleton";
 import PageWrapper from "../components/layouts/PageWrapper";
 import type { Transaction } from "../context/FincanceContext";
+import { getCategories, addCategory } from "../api/catagories";
 import { motion } from "framer-motion";
 import {
   TrendingDown,
@@ -31,6 +32,8 @@ import {
   ArrowDownCircle,
   IndianRupee,
 } from "lucide-react";
+import { useBalance } from "../context/BalanceContext";
+import toast from "react-hot-toast";
 
 interface Props {
   transactions: Transaction[];
@@ -50,6 +53,46 @@ export default function Dashboard({ transactions }: Props) {
   const storeColorMap: Record<string, string> = {};
   const [mode, setMode] = useState<"income" | "expense">("income");
   const [amount, setAmount] = useState("");
+  const [description, setDescription] = useState("");
+  const { balance, refreshBalance } = useBalance();
+/* ================= CATEGORIES ================= */
+
+  const DEFAULT_CATEGORIES = ["GROCERY", "GENERAL"];
+
+  const [categoryOptions, setCategoryOptions] = useState<string[]>([]);
+  const [category, setCategory] = useState("");
+  const [customCategory, setCustomCategory] = useState("");
+
+  useEffect(() => {
+    getCategories()
+      .then((cats: string[]) =>
+        setCategoryOptions(cats.length ? cats : DEFAULT_CATEGORIES),
+      )
+      .catch(() => setCategoryOptions(DEFAULT_CATEGORIES));
+  }, []);
+
+  const finalCategory = category === "Other" ? customCategory.trim() : category;
+
+  const addCustomCategory = async () => {
+    const name = customCategory.trim().toUpperCase();
+    if (!name) return;
+
+    if (categoryOptions.includes(name)) {
+      setCategory(name);
+      setCustomCategory("");
+      return;
+    }
+
+    try {
+      await addCategory(name);
+      setCategoryOptions((prev) => [...prev, name]);
+      setCategory(name);
+      setCustomCategory("");
+      toast.success(`🏷️ Category "${name}" added`);
+    } catch {
+      toast.error("Failed to save category");
+    }
+  };
 
   /* =========================
      THEME TOOLTIP
@@ -74,7 +117,7 @@ export default function Dashboard({ transactions }: Props) {
   ========================== */
 
   const chartData = useMemo(() => {
-    let balance = 0;
+    let runningBalance = 0;
 
     return transactions
       .sort(
@@ -82,30 +125,49 @@ export default function Dashboard({ transactions }: Props) {
           new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
       )
       .map((t) => {
-        if (t.type === "income") balance += t.amount;
-        else balance -= t.amount;
+        if (t.type === "income") runningBalance += t.amount;
+        else runningBalance -= t.amount;
 
         return {
           date: new Date(t.created_at).toLocaleDateString(),
-          balance,
+          runningBalance,
         };
       });
   }, [transactions]);
 
-  const latest = chartData[chartData.length - 1]?.balance || 0;
-  const previous = chartData[chartData.length - 2]?.balance || latest;
+  // const latest = chartData[chartData.length - 1]?.balance || 0;
+  const latest = balance;
+  const previous = chartData[chartData.length - 2]?.runningBalance || balance;
 
   const isUpTrend = latest >= previous;
 
-  const handleAddTransaction = () => {
-    if (!amount) return;
+  const handleAddTransaction = async () => {
+    if (!amount || !token) return;
 
-    console.log({
-      type: mode,
-      amount: Number(amount),
-    });
+    const numericAmount = Number(amount);
 
-    setAmount("");
+    try {
+      await api.post(
+        "/balance/transactions/create",
+        {
+          type: mode,
+          amount: numericAmount,
+          description: description,
+          category: finalCategory
+        },
+        { withCredentials: true },
+      );
+
+      // 🔥 Refresh from DB (single source of truth)
+      await refreshBalance();
+
+      setAmount("");
+
+      // Optional: reload analytics
+      await loadAnalytics();
+    } catch (err) {
+      console.error("Transaction failed", err);
+    }
   };
 
   const today = new Date().toDateString();
@@ -412,7 +474,52 @@ export default function Dashboard({ transactions }: Props) {
                           placeholder="Enter amount..."
                           value={amount}
                           onChange={(e) => setAmount(e.target.value)}
+                          style={{ marginBottom: 12 }}
                         />
+
+                        <input
+                          type="text"
+                          placeholder="Enter the transaction description"
+                          value={description}
+                          onChange={(e) => setDescription(e.target.value)}
+                          style={{ marginBottom: 12 }}
+
+                        />
+
+                        {/* Category */}
+                        <select
+                          value={category}
+                          onChange={(e) => setCategory(e.target.value)}
+                          style={{ marginBottom: 12 }}
+
+                        >
+                          <option value="">Select Type</option>
+                          {categoryOptions.map((c) => (
+                            <option key={c} value={c}>
+                              {c}
+                            </option>
+                          ))}
+                          <option value="Other">Other</option>
+                        </select>
+
+                        {category === "Other" && (
+                          <div className="other-store">
+                            <input
+                              placeholder="Enter category"
+                              value={customCategory}
+                              onChange={(e) =>
+                                setCustomCategory(e.target.value)
+                              }
+                            />
+                            <button
+                              type="button"
+                              onClick={addCustomCategory}
+                              className="button"
+                            >
+                              Add
+                            </button>
+                          </div>
+                        )}
 
                         <div className="input-icon">
                           {mode === "income" ? (

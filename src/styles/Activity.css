@@ -25,12 +25,12 @@
   .notificationsWrapper {
     display: flex;
     flex-direction: column-reverse;
-    align-items: flex-end;
+    align-items: flex-start;
     gap: 12px;
   }
 
   .notification {
-    min-width: 260px;
+    min-width: 50vw;
     max-width: 80vw;
     background: var(--card-bg);
     color: var(--text);
@@ -89,14 +89,12 @@
     }
 
     .notificationsWrapper {
-      right: 12;
-      bottom: 12;
-      width: 90%;
       align-items: flex-start;
     }
 
     .notification {
-      padding: 14px;
+      min-width: 80vw;
+      max-width: none;
       flex-direction: column;
       align-items: flex-start;
     }

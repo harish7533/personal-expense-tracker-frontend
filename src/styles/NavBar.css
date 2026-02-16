@@ -185,7 +185,7 @@
    ACTIVE INDICATOR
 ======================================================= */
 
-.active-indicator {
+/* .active-indicator {
   position: absolute;
   bottom: 6px;
   height: 4px;
@@ -193,7 +193,7 @@
   background: linear-gradient(90deg, #6366f1, #4f46e5);
   transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
               width 0.35s ease;
-}
+} */
 
 /* =======================================================
    MOBILE LINKS
