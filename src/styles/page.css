@@ -14,7 +14,7 @@
 @media (max-width: 768px) {
   .login,
   .register {
-    max-width: "80vw";
+    max-width: 80vw;
   }
 }
 

@@ -1,3 +1,5 @@
+import "../../styles/Skeleton.css"
+
 export default function DashboardSkeleton() {
   return (
     <div style={styles.container}>
