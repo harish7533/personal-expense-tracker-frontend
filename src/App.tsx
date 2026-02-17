@@ -10,7 +10,7 @@ import Settings from "./pages/Settings";
 import Activity from "./pages/Activity";
 import { Toaster } from "react-hot-toast";
 import Banner from "./components/Banner";
-import SetBalance from "./pages/SetBalance";
+// import SetBalance from "./pages/SetBalance";
 import Dashboard from "./pages/Dashboard";
 
 function App() {
@@ -40,7 +40,7 @@ function App() {
 
         <Route path="/register" element={<Register />} />
 
-        <Route path="/set-balance" element={<SetBalance />} />
+        {/* <Route path="/set-balance" element={<SetBalance />} /> */}
 
         {/* 🔒 Protected */}
         <Route

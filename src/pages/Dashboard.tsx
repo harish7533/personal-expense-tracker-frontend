@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import api from "../api";
 import {
   AreaChart,
@@ -55,7 +56,7 @@ export default function Dashboard({ transactions }: Props) {
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
   const { balance, refreshBalance } = useBalance();
-/* ================= CATEGORIES ================= */
+  /* ================= CATEGORIES ================= */
 
   const DEFAULT_CATEGORIES = ["GROCERY", "GENERAL"];
 
@@ -153,7 +154,7 @@ export default function Dashboard({ transactions }: Props) {
           type: mode,
           amount: numericAmount,
           description: description,
-          category: finalCategory
+          category: finalCategory,
         },
         { withCredentials: true },
       );
@@ -286,7 +287,127 @@ export default function Dashboard({ transactions }: Props) {
             style={{ textAlign: "center", padding: 60, color: "var(--text)" }}
           >
             <h2>No bills yet 🧾</h2>
-            <p>Add your first bill to see analytics</p>
+            <p>
+              Create your first bill{" "}
+              <Link to={"/create"} className="btn-primary">
+                Create
+              </Link>{" "}
+              before that make sure add your income.
+            </p>
+            <div className="modern-user-dashboard">
+              {/* ================= CURRENT BALANCE CARD ================= */}
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="current-balance-card glass-card"
+              >
+                <div className="balance-left">
+                  <p className="balance-label">Current Balance</p>
+                  <h1 className="balance-amount">
+                    <IndianRupee size={20} /> {latest.toFixed(2)}
+                  </h1>
+                </div>
+
+                <div className={`balance-trend ${isUpTrend ? "up" : "down"}`}>
+                  {isUpTrend ? (
+                    <TrendingUp size={20} />
+                  ) : (
+                    <TrendingDown size={20} />
+                  )}
+                  <span>
+                    {isUpTrend ? "Growing steadily" : "Needs attention"}
+                  </span>
+                </div>
+              </motion.div>
+
+              <div className="top-grid">
+                {/* ================= INCOME/EXPENSE CARD ================= */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="income-expense-card glass-card"
+                >
+                  <div className="card-header">
+                    <h2 className="heading">Add Transaction</h2>
+
+                    <div className="mode-buttons">
+                      <button
+                        onClick={() => setMode("income")}
+                        className={mode === "income" ? "active-income" : ""}
+                      >
+                        Income
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="transaction-inputs">
+                    <input
+                      type="number"
+                      placeholder="Enter amount..."
+                      value={amount}
+                      onChange={(e) => setAmount(e.target.value)}
+                      style={{ marginBottom: 12 }}
+                    />
+
+                    <input
+                      type="text"
+                      placeholder="Enter the transaction description"
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                      style={{ marginBottom: 12 }}
+                    />
+
+                    {/* Category */}
+                    <select
+                      value={category}
+                      onChange={(e) => setCategory(e.target.value)}
+                      style={{ marginBottom: 12 }}
+                    >
+                      <option value="">Select Type</option>
+                      {categoryOptions.map((c) => (
+                        <option key={c} value={c}>
+                          {c}
+                        </option>
+                      ))}
+                      <option value="Other">Other</option>
+                    </select>
+
+                    {category === "Other" && (
+                      <div className="other-store">
+                        <input
+                          placeholder="Enter category"
+                          value={customCategory}
+                          onChange={(e) => setCustomCategory(e.target.value)}
+                        />
+                        <button
+                          type="button"
+                          onClick={addCustomCategory}
+                          className="button"
+                        >
+                          Add
+                        </button>
+                      </div>
+                    )}
+
+                    <div className="input-icon">
+                      {mode === "income" ? (
+                        <IndianRupee size={18} />
+                      ) : (
+                        <ArrowDownCircle size={18} />
+                      )}
+                    </div>
+
+                    <button
+                      onClick={handleAddTransaction}
+                      className={`add-btn ${mode}`}
+                    >
+                      Add {mode}
+                    </button>
+                  </div>
+                </motion.div>
+              </div>
+            </div>
           </div>
         </>
       ) : !user ? (
@@ -483,7 +604,6 @@ export default function Dashboard({ transactions }: Props) {
                           value={description}
                           onChange={(e) => setDescription(e.target.value)}
                           style={{ marginBottom: 12 }}
-
                         />
 
                         {/* Category */}
@@ -491,7 +611,6 @@ export default function Dashboard({ transactions }: Props) {
                           value={category}
                           onChange={(e) => setCategory(e.target.value)}
                           style={{ marginBottom: 12 }}
-
                         >
                           <option value="">Select Type</option>
                           {categoryOptions.map((c) => (

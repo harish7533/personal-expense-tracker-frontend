@@ -34,6 +34,7 @@ export default function Navbar() {
   // const sheetRef = useRef<HTMLDivElement | null>(null);
   const navRef = useRef<HTMLDivElement>(null);
   const indicatorRef = useRef<HTMLDivElement>(null);
+  const linkRefs = useRef<(HTMLAnchorElement | null)[]>([]);
 
   // const startY = useRef<number | null>(null);
   // const currentY = useRef(0);
@@ -63,23 +64,35 @@ export default function Navbar() {
   ];
 
   /* ================= ACTIVE INDICATOR ================= */
-  useEffect(() => {
-    if (!navRef.current || !indicatorRef.current) return;
+  const updateIndicator = () => {
+    if (!indicatorRef.current) return;
 
     const activeIndex = navItems.findIndex(
-      (item) => item.path === location.pathname,
+      (item) =>
+        !item.center && location.pathname.startsWith(item.path)
     );
 
-    if (activeIndex === -1) return;
+    if (activeIndex === -1) {
+      indicatorRef.current.style.width = "0px";
+      return;
+    }
 
-    const navWidth = navRef.current.offsetWidth;
-    const itemWidth = navWidth / navItems.length;
+    const activeElement = linkRefs.current[activeIndex];
+    if (!activeElement) return;
 
-    indicatorRef.current.style.width = `${itemWidth}px`;
-    indicatorRef.current.style.transform = `translateX(${
-      itemWidth * activeIndex
-    }px)`;
+    indicatorRef.current.style.width = `${activeElement.offsetWidth}px`;
+    indicatorRef.current.style.transform = `translateX(${activeElement.offsetLeft}px)`;
+  };
+
+  useEffect(() => {
+    updateIndicator();
   }, [location.pathname]);
+
+  useEffect(() => {
+    window.addEventListener("resize", updateIndicator);
+    return () => window.removeEventListener("resize", updateIndicator);
+  }, []);
+
 
   // /* ================= AUTO CLOSE MOBILE ON ROUTE ================= */
   // useEffect(() => {
@@ -197,7 +210,7 @@ export default function Navbar() {
         <div className="mobile-nav-inner" ref={navRef}>
           <div ref={indicatorRef} className="active-indicator" />
 
-          {navItems.map(({ icon: Icon, path, center }) => {
+          {navItems.map(({ icon: Icon, path, center }, index) => {
             const active = location.pathname === path;
 
             if (center) {
@@ -216,6 +229,9 @@ export default function Navbar() {
                 <Link
                   key={path}
                   to={path}
+                  ref={(el) => {
+                    (linkRefs.current[index] = el)
+                  }}
                   className={`mobile-link ${active ? "active" : ""}`}
                 >
                   <Icon size={22} />
