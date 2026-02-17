@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useMemo, useRef, useState } from "react";
 import api from "../api";
 import {
   AreaChart,
@@ -26,7 +25,7 @@ import DashboardSkeleton from "../components/skeletons/DashboardSkeleton";
 import PageWrapper from "../components/layouts/PageWrapper";
 import type { Transaction } from "../context/FincanceContext";
 import { getCategories, addCategory } from "../api/catagories";
-import { motion } from "framer-motion";
+import { motion, animate } from "framer-motion";
 import {
   TrendingDown,
   TrendingUp,
@@ -38,6 +37,11 @@ import toast from "react-hot-toast";
 
 interface Props {
   transactions: Transaction[];
+}
+
+interface AnimatedNumberProps {
+  value: number;
+  duration?: number;
 }
 
 export default function Dashboard({ transactions }: Props) {
@@ -224,6 +228,7 @@ export default function Dashboard({ transactions }: Props) {
 
       if (user?.role === "ADMIN") {
         await fetchAdminAnalytics();
+        await refreshBalance();
       } else {
         const res = await api.get("/analytics/monthly", {
           headers: { Authorization: `Bearer ${token}` },
@@ -234,6 +239,8 @@ export default function Dashboard({ transactions }: Props) {
           headers: { Authorization: `Bearer ${token}` },
           params: buildParams(),
         });
+
+        await refreshBalance();
 
         if (
           !res.data ||
@@ -287,13 +294,7 @@ export default function Dashboard({ transactions }: Props) {
             style={{ textAlign: "center", padding: 60, color: "var(--text)" }}
           >
             <h2>No bills yet 🧾</h2>
-            <p>
-              Create your first bill{" "}
-              <Link to={"/create"} className="btn-primary">
-                Create
-              </Link>{" "}
-              before that make sure add your income.
-            </p>
+            <p>Create your first bill before that make sure add your income.</p>
             <div className="modern-user-dashboard">
               {/* ================= CURRENT BALANCE CARD ================= */}
               <motion.div
@@ -305,7 +306,9 @@ export default function Dashboard({ transactions }: Props) {
                 <div className="balance-left">
                   <p className="balance-label">Current Balance</p>
                   <h1 className="balance-amount">
-                    <IndianRupee size={20} /> {latest.toFixed(2)}
+                    <IndianRupee size={20} />
+                    {/* {latest.toFixed(2)} */}
+                    <AnimatedNumber value={latest} />
                   </h1>
                 </div>
 
@@ -456,48 +459,50 @@ export default function Dashboard({ transactions }: Props) {
 
                   <h3 className="chart-title">Monthly Spend</h3>
 
-                  <ResponsiveContainer width="100%" height={320}>
-                    <AreaChart data={monthly}>
-                      <defs>
-                        <linearGradient
-                          id="colorSpend"
-                          x1="0"
-                          y1="0"
-                          x2="0"
-                          y2="1"
-                        >
-                          <stop
-                            offset="0%"
-                            stopColor="var(--primary)"
-                            stopOpacity={0.4}
-                          />
-                          <stop
-                            offset="100%"
-                            stopColor="var(--primary)"
-                            stopOpacity={0}
-                          />
-                        </linearGradient>
-                      </defs>
+                  <div className="store-chart-wrapper">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <AreaChart data={monthly}>
+                        <defs>
+                          <linearGradient
+                            id="colorSpend"
+                            x1="0"
+                            y1="0"
+                            x2="0"
+                            y2="1"
+                          >
+                            <stop
+                              offset="0%"
+                              stopColor="var(--primary)"
+                              stopOpacity={0.4}
+                            />
+                            <stop
+                              offset="100%"
+                              stopColor="var(--primary)"
+                              stopOpacity={0}
+                            />
+                          </linearGradient>
+                        </defs>
 
-                      <CartesianGrid
-                        strokeDasharray="3 3"
-                        stroke="var(--border)"
-                      />
-                      <XAxis dataKey="month" stroke="var(--muted)" />
-                      <YAxis stroke="var(--muted)" />
-                      <Tooltip contentStyle={tooltipStyle} />
+                        <CartesianGrid
+                          strokeDasharray="3 3"
+                          stroke="var(--border)"
+                        />
+                        <XAxis dataKey="month" stroke="var(--muted)" />
+                        <YAxis stroke="var(--muted)" />
+                        <Tooltip contentStyle={tooltipStyle} />
 
-                      <Area
-                        type="monotone"
-                        dataKey="total"
-                        stroke="var(--primary)"
-                        strokeWidth={3}
-                        fill="url(#colorSpend)"
-                        dot={{ r: 4 }}
-                        activeDot={{ r: 6 }}
-                      />
-                    </AreaChart>
-                  </ResponsiveContainer>
+                        <Area
+                          type="monotone"
+                          dataKey="total"
+                          stroke="var(--primary)"
+                          strokeWidth={3}
+                          fill="url(#colorSpend)"
+                          dot={{ r: 4 }}
+                          activeDot={{ r: 6 }}
+                        />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </div>
 
                   <h3 className="chart-title">Store-wise Spend</h3>
 
@@ -542,7 +547,9 @@ export default function Dashboard({ transactions }: Props) {
                     <div className="balance-left">
                       <p className="balance-label">Current Balance</p>
                       <h1 className="balance-amount">
-                        <IndianRupee size={20} /> {latest.toFixed(2)}
+                        <IndianRupee size={20} />
+                        {/* {latest.toFixed(2)} */}
+                        <AnimatedNumber value={latest} />
                       </h1>
                     </div>
 
@@ -841,3 +848,51 @@ export default function Dashboard({ transactions }: Props) {
     </PageWrapper>
   );
 }
+
+const AnimatedNumber = ({ value, duration = 1.2 }: AnimatedNumberProps) => {
+  const [displayValue, setDisplayValue] = useState(value);
+  const prevValueRef = useRef(value);
+
+  useEffect(() => {
+    const controls = animate(prevValueRef.current, value, {
+      duration,
+      ease: [0.22, 1, 0.36, 1],
+      onUpdate(latest) {
+        setDisplayValue(latest);
+      },
+    });
+
+    prevValueRef.current = value;
+
+    return () => controls.stop();
+  }, [value]);
+
+  return (
+    <motion.span
+      key={value} // 🔥 triggers flip animation when value changes
+      initial={{ rotateX: -90, opacity: 0 }}
+      animate={{ rotateX: 0, opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      style={{
+        display: "inline-block",
+        transformOrigin: "bottom",
+      }}
+    >
+      <motion.span
+        animate={{
+          scale: [1, 1.08, 1], // subtle pop
+        }}
+        transition={{ duration: 0.4 }}
+        style={{
+          textShadow: "0 0 14px rgba(99,102,241,0.6)", // glow pulse
+        }}
+      >
+        {displayValue.toLocaleString("en-IN", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })}
+      </motion.span>
+    </motion.span>
+  );
+};
+

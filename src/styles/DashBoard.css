@@ -70,6 +70,7 @@
   align-items: center;
   gap: 8px;
   color: var(--text);
+  perspective: 600px;
 }
 
 .balance-trend {
@@ -280,6 +281,23 @@
 .add-btn.expense:hover {
   background: #dc2626;
 }
+
+.store-chart-wrapper {
+  width: 100%;
+  height: 420px;
+  padding: 20px;
+  border-radius: 16px;
+  background: var(--card-bg);
+  box-shadow: var(--card-shadow);
+}
+
+@media (max-width: 768px) {
+  .store-chart-wrapper {
+    height: 300px;
+    padding: 14px;
+  }
+}
+
 
 /* ============================= */
 /* EXPENSE WHEEL CARD */
